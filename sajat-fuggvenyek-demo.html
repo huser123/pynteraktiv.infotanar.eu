@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Függvények Interaktív Bemutató</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Függvény specifikus kiemelő színek */
+            --function-name: #e74c3c;    /* Függvénynevek színe */
+            --function-param: #3498db;   /* Paraméterek színe */
+            --function-return: #f1c40f;  /* Return értékek színe */
+            --function-local: #9b59b6;   /* Lokális változók színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 2rem;
+            padding: 4rem 1rem 2rem;
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            width: 75vw;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigáció stílusa */
+        .nav {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Szekció címek */
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            font-size: 1.75rem;
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+
+
+        /* Reszponzív dizájn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-code"></i> Python Függvények
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link"><i class="fas fa-book-open"></i> Bevezető</a></li>
+                <li><a href="#alapok" class="nav-link"><i class="fas fa-cube"></i> Alapok</a></li>
+                <li><a href="#definialas" class="nav-link"><i class="fas fa-code"></i> Definiálás</a></li>
+                <li><a href="#visszateres" class="nav-link"><i class="fas fa-undo"></i> Return</a></li>
+                <li><a href="#valtozok" class="nav-link"><i class="fas fa-globe"></i> Változók</a></li>
+                <li><a href="#dokumentalas" class="nav-link"><i class="fas fa-file-code"></i> Dokumentálás</a></li>
+                <li><a href="#gyakorlatok" class="nav-link"><i class="fas fa-tasks"></i> Gyakorlatok</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+
+    <!-- Bevezető szekció -->
+<section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Bevezetés a Python Függvényekhez
+    </h1>
+
+    <div class="card">
+        <h2>Mi az a függvény?</h2>
+        <p>A függvény olyan újrafelhasználható kódblokk, amely egy specifikus feladatot hajt végre. A függvények segítségével:</p>
+
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-recycle"></i>
+                <h3>Újrafelhasználható kód</h3>
+                <p>Nem kell ugyanazt a kódot többször megírni</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-puzzle-piece"></i>
+                <h3>Modularitás</h3>
+                <p>Komplex feladatok kisebb részekre bontása</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-tools"></i>
+                <h3>Karbantarthatóság</h3>
+                <p>Könnyebb módosítani és hibát keresni</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Egy egyszerű függvény</h2>
+        <p>Nézzük meg, hogyan néz ki egy alapvető Python függvény:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="basic-function">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">def koszont():
+    """Ez egy egyszerű üdvözlő függvény"""
+    print("Üdvözöllek a Python függvények világában!")
+
+# A függvény meghívása
+koszont()</code></pre>
+        </div>
+
+        <div class="function-anatomy">
+            <h3>A függvény részei:</h3>
+            <div class="anatomy-grid">
+                <div class="anatomy-item">
+                    <div class="anatomy-highlight keyword">def</div>
+                    <p>A függvény definíció kulcsszava</p>
+                </div>
+                <div class="anatomy-item">
+                    <div class="anatomy-highlight name">koszont</div>
+                    <p>A függvény neve</p>
+                </div>
+                <div class="anatomy-item">
+                    <div class="anatomy-highlight params">()</div>
+                    <p>Paraméter lista (itt üres)</p>
+                </div>
+                <div class="anatomy-item">
+                    <div class="anatomy-highlight body">törzs</div>
+                    <p>A függvény utasításai</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="function-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <input type="text" id="function-name" class="input" placeholder="Add meg a függvény nevét (pl. bemutatkozas)">
+                <input type="text" id="function-message" class="input" placeholder="Mit írjon ki a függvény?">
+                <button class="btn" onclick="createSimpleFunction()">
+                    <i class="fas fa-play"></i> Függvény létrehozása
+                </button>
+            </div>
+            <div id="function-code" class="code-preview"></div>
+            <button class="btn" onclick="runFunction()" style="display: none;">
+                <i class="fas fa-play"></i> Függvény futtatása
+            </button>
+            <div id="function-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: var(--text-secondary);
+        }
+
+        .function-anatomy {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        .anatomy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .anatomy-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .anatomy-highlight {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-family: 'Fira Code', monospace;
+            text-align: center;
+        }
+
+        .anatomy-highlight.keyword {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .anatomy-highlight.name {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+
+        .anatomy-highlight.params {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+
+        .anatomy-highlight.body {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .code-preview {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            .anatomy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        let currentFunction = null;
+
+        function createSimpleFunction() {
+            const name = document.getElementById('function-name').value.trim();
+            const message = document.getElementById('function-message').value.trim();
+            const codePreview = document.getElementById('function-code');
+            const resultDiv = document.getElementById('function-result');
+            const runButton = document.querySelector('.btn[onclick="runFunction()"]');
+
+            if (!name || !message) {
+                resultDiv.textContent = 'Hiba: Mindkét mezőt ki kell tölteni!';
+                resultDiv.style.borderColor = 'var(--error)';
+                resultDiv.classList.remove('show');
+                void resultDiv.offsetWidth;
+                resultDiv.classList.add('show');
+                return;
+            }
+
+            // Ellenőrizzük, hogy érvényes-e a függvénynév
+            if (!/^[a-z_][a-z0-9_]*$/i.test(name)) {
+                resultDiv.textContent = 'Hiba: A függvénynév csak betűket, számokat és alulvonást tartalmazhat, és nem kezdődhet számmal!';
+                resultDiv.style.borderColor = 'var(--error)';
+                resultDiv.classList.remove('show');
+                void resultDiv.offsetWidth;
+                resultDiv.classList.add('show');
+                return;
+            }
+
+            const code = `def ${name}():
+    """Ez egy egyszerű függvény"""
+    print("${message.replace(/"/g, '\\"')}")
+
+# A függvény meghívása
+${name}()`;
+
+            codePreview.innerHTML = `<pre><code class="language-python">${code}</code></pre>`;
+            refreshPrism();
+
+            currentFunction = {
+                name: name,
+                message: message
+            };
+
+            runButton.style.display = 'inline-flex';
+
+            resultDiv.textContent = 'Függvény sikeresen létrehozva! Futtathatod a függvényt.';
+            resultDiv.style.borderColor = 'var(--success)';
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function runFunction() {
+            if (!currentFunction) return;
+
+            const resultDiv = document.getElementById('function-result');
+            resultDiv.textContent = currentFunction.message;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+
+            // Animáció a futtatáshoz
+            anime({
+                targets: '#function-result',
+                scale: [1, 1.02, 1],
+                duration: 300,
+                easing: 'easeInOutQuad'
+            });
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('function-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('function-message').focus();
+        });
+
+        document.getElementById('function-message').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createSimpleFunction();
+        });
+    </script>
+</section>
+
+<!-- Alapok szekció -->
+<section id="alapok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-cube"></i>
+        Függvények Alapjai
+    </h1>
+
+    <div class="card">
+        <h2>A függvények szintaxisa</h2>
+        <p>A Python függvényeket a <code>def</code> kulcsszóval definiáljuk. Nézzük meg a függvények alapvető felépítését:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="function-syntax">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">def függvény_neve(paraméter1, paraméter2):
+    """Dokumentációs string (docstring) - a függvény leírása"""
+    # A függvény törzse
+    # Itt vannak a végrehajtandó utasítások
+    eredmény = paraméter1 + paraméter2
+    return eredmény  # Visszatérési érték</code></pre>
+        </div>
+
+        <div class="syntax-explanation">
+            <h3>A függvény fő részei:</h3>
+            <div class="syntax-grid">
+                <div class="syntax-item">
+                    <div class="syntax-label">def</div>
+                    <p>Kulcsszó, ami jelzi, hogy függvényt definálunk</p>
+                </div>
+                <div class="syntax-item">
+                    <div class="syntax-label">függvény_neve</div>
+                    <p>A függvény egyedi azonosítója, amivel később meghívhatjuk</p>
+                </div>
+                <div class="syntax-item">
+                    <div class="syntax-label">(paraméterek)</div>
+                    <p>A függvénynek átadott értékek, vesszővel elválasztva</p>
+                </div>
+                <div class="syntax-item">
+                    <div class="syntax-label">:</div>
+                    <p>A függvény fejlécének vége</p>
+                </div>
+                <div class="syntax-item">
+                    <div class="syntax-label">docstring</div>
+                    <p>A függvény működésének dokumentációja (opcionális)</p>
+                </div>
+                <div class="syntax-item">
+                    <div class="syntax-label">törzs</div>
+                    <p>A végrehajtandó utasítások (behúzással jelölve)</p>
+                </div>
+                <div class="syntax-item">
+                    <div class="syntax-label">return</div>
+                    <p>A függvény által visszaadott érték (opcionális)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Függvény használata</h2>
+        <p>A függvényeket a nevük és zárójelek segítségével hívhatjuk meg. A zárójelekben adjuk át a szükséges paramétereket.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="function-usage">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Egyszerű függvény definíció
+def osszeadas(a, b):
+    return a + b
+
+# Függvény használata (meghívása)
+eredmeny = osszeadas(5, 3)
+print(f"5 + 3 = {eredmeny}")  # Kiírja: 5 + 3 = 8
+
+# Másik példa: szövegek kezelése
+def koszont(nev):
+    return f"Szia {nev}!"
+
+# Függvény meghívása stringgel
+udvozles = koszont("Anna")
+print(udvozles)  # Kiírja: Szia Anna!</code></pre>
+        </div>
+
+        <div id="function-basics-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="demo-tabs">
+                <button class="tab-btn active" onclick="switchDemo('math')">Matematikai függvény</button>
+                <button class="tab-btn" onclick="switchDemo('text')">Szöveges függvény</button>
+            </div>
+
+            <div id="math-demo" class="demo-content active">
+                <div class="form-group">
+                    <label>Adj meg két számot az összeadáshoz:</label>
+                    <div class="number-inputs">
+                        <input type="number" id="num1" class="input" placeholder="Első szám">
+                        <span class="operator">+</span>
+                        <input type="number" id="num2" class="input" placeholder="Második szám">
+                    </div>
+                    <button class="btn" onclick="calculateSum()">
+                        <i class="fas fa-calculator"></i> Számolás
+                    </button>
+                </div>
+                <div id="math-result" class="result"></div>
+            </div>
+
+            <div id="text-demo" class="demo-content">
+                <div class="form-group">
+                    <label>Írd be a neved az üdvözléshez:</label>
+                    <input type="text" id="name-input" class="input" placeholder="Add meg a neved">
+                    <button class="btn" onclick="greetPerson()">
+                        <i class="fas fa-comment"></i> Üdvözlés
+                    </button>
+                </div>
+                <div id="text-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .syntax-explanation {
+            margin: 2rem 0;
+        }
+
+        .syntax-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .syntax-item {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .syntax-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .syntax-label {
+            color: var(--accent-primary);
+            font-family: 'Fira Code', monospace;
+            padding: 0.5rem;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .demo-content {
+            display: none;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+        }
+
+        .demo-content.active {
+            display: block;
+        }
+
+        .number-inputs {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .operator {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .number-inputs {
+                flex-direction: column;
+            }
+
+            .operator {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+
+    <script>
+        function switchDemo(type) {
+            // Tab gombok kezelése
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.tab-btn[onclick*="${type}"]`).classList.add('active');
+
+            // Demo tartalmak kezelése
+            document.querySelectorAll('.demo-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${type}-demo`).classList.add('active');
+        }
+
+        function calculateSum() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const resultDiv = document.getElementById('math-result');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultDiv.textContent = 'Hiba: Adj meg két érvényes számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const sum = num1 + num2;
+                resultDiv.innerHTML = `
+                    <code>def osszeadas(${num1}, ${num2}):</code><br>
+                    <code>&nbsp;&nbsp;&nbsp;&nbsp;return ${num1} + ${num2}</code><br><br>
+                    Eredmény: ${sum}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function greetPerson() {
+            const name = document.getElementById('name-input').value.trim();
+            const resultDiv = document.getElementById('text-result');
+
+            if (!name) {
+                resultDiv.textContent = 'Hiba: Add meg a neved!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                resultDiv.innerHTML = `
+                    <code>def koszont("${name}"):</code><br>
+                    <code>&nbsp;&nbsp;&nbsp;&nbsp;return f"Szia {name}!"</code><br><br>
+                    Eredmény: Szia ${name}!
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('num1').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('num2').focus();
+        });
+
+        document.getElementById('num2').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') calculateSum();
+        });
+
+        document.getElementById('name-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') greetPerson();
+        });
+    </script>
+</section>
+
+<!-- Függvény definiálás szekció -->
+<section id="definialas" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-code"></i>
+        Függvények Definiálása
+    </h1>
+
+    <div class="card">
+        <h2>Paraméterek használata</h2>
+        <p>A függvények paraméterekkel való definiálása lehetővé teszi, hogy különböző értékekkel használjuk ugyanazt a függvényt:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="def-params">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Egyszerű paraméterek
+def szoroz(a, b):
+    return a * b
+
+# Alapértelmezett értékek
+def hatványoz(alap, kitevo=2):
+    return alap ** kitevo
+
+# Paraméterek név szerint
+def szemely_info(nev, kor, varos="Budapest"):
+    return f"{nev} ({kor} éves) - {varos}"</code></pre>
+        </div>
+
+        <div id="def_params_demo" class="interactive-demo">
+            <h3>Próbáld ki a különböző paraméterezéseket:</h3>
+            <div class="def-demo-tabs">
+                <button class="def-tab-btn active" onclick="defSwitchDemo('mult')">Szorzás</button>
+                <button class="def-tab-btn" onclick="defSwitchDemo('power')">Hatványozás</button>
+                <button class="def-tab-btn" onclick="defSwitchDemo('person')">Személy Info</button>
+            </div>
+
+            <div id="def_mult_demo" class="def-demo-content active">
+                <div class="form-group">
+                    <label>Két szám szorzása:</label>
+                    <div class="def-number-inputs">
+                        <input type="number" id="def_mult_num1" class="input" placeholder="Első szám">
+                        <span class="operator">×</span>
+                        <input type="number" id="def_mult_num2" class="input" placeholder="Második szám">
+                    </div>
+                    <button class="btn" onclick="defCalculateMultiply()">
+                        <i class="fas fa-calculator"></i> Számolás
+                    </button>
+                </div>
+                <div id="def_mult_result" class="result"></div>
+            </div>
+
+            <div id="def_power_demo" class="def-demo-content">
+                <div class="form-group">
+                    <label>Hatványozás:</label>
+                    <div class="def-number-inputs">
+                        <input type="number" id="def_power_base" class="input" placeholder="Alap">
+                        <span class="operator">^</span>
+                        <input type="number" id="def_power_exp" class="input" placeholder="Kitevő (alapért.: 2)">
+                    </div>
+                    <button class="btn" onclick="defCalculatePower()">
+                        <i class="fas fa-calculator"></i> Számolás
+                    </button>
+                </div>
+                <div id="def_power_result" class="result"></div>
+            </div>
+
+            <div id="def_person_demo" class="def-demo-content">
+                <div class="form-group">
+                    <label>Személy adatai:</label>
+                    <div class="def-person-inputs">
+                        <input type="text" id="def_person_name" class="input" placeholder="Név">
+                        <input type="number" id="def_person_age" class="input" placeholder="Kor">
+                        <input type="text" id="def_person_city" class="input" placeholder="Város (alapért.: Budapest)">
+                    </div>
+                    <button class="btn" onclick="defShowPersonInfo()">
+                        <i class="fas fa-user"></i> Adatok megjelenítése
+                    </button>
+                </div>
+                <div id="def_person_result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Függvény dokumentálása</h2>
+        <p>A jól dokumentált függvények könnyebben használhatók és karbantarthatók:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="def-doc">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">def korterfogat(sugar, magassag):
+    """
+    Kiszámolja egy kör alapú henger térfogatát.
+
+    Paraméterek:
+        sugar (float): A kör sugara
+        magassag (float): A henger magassága
+
+    Visszatérési érték:
+        float: A henger térfogata
+    """
+    pi = 3.14159
+    alapterulet = pi * sugar * sugar
+    terfogat = alapterulet * magassag
+    return terfogat</code></pre>
+        </div>
+
+        <div id="def_doc_demo" class="interactive-demo">
+            <h3>Henger térfogat számítása:</h3>
+            <div class="form-group">
+                <div class="def-cylinder-inputs">
+                    <div class="def-input-group">
+                        <label>Sugár (cm):</label>
+                        <input type="number" id="def_cylinder_radius" class="input" placeholder="pl.: 5">
+                    </div>
+                    <div class="def-input-group">
+                        <label>Magasság (cm):</label>
+                        <input type="number" id="def_cylinder_height" class="input" placeholder="pl.: 10">
+                    </div>
+                </div>
+                <button class="btn" onclick="defCalculateVolume()">
+                    <i class="fas fa-cube"></i> Térfogat számítása
+                </button>
+            </div>
+            <div id="def_cylinder_result" class="result"></div>
+            <div id="def_cylinder_visual" class="cylinder-visual"></div>
+        </div>
+    </div>
+
+    <style>
+        .def-demo-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .def-tab-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .def-tab-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .def-demo-content {
+            display: none;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+        }
+
+        .def-demo-content.active {
+            display: block;
+        }
+
+        .def-number-inputs,
+        .def-person-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .def-cylinder-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .def-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .cylinder-visual {
+            margin-top: 1rem;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .def-number-inputs,
+            .def-person-inputs {
+                flex-direction: column;
+            }
+
+            .operator {
+                display: none;
+            }
+        }
+    </style>
+
+    <script>
+        function defSwitchDemo(type) {
+            // Tab gombok kezelése
+            document.querySelectorAll('.def-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.def-tab-btn[onclick*="${type}"]`).classList.add('active');
+
+            // Demo tartalmak kezelése
+            document.querySelectorAll('.def-demo-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`def_${type}_demo`).classList.add('active');
+        }
+
+        function defCalculateMultiply() {
+            const num1 = parseFloat(document.getElementById('def_mult_num1').value);
+            const num2 = parseFloat(document.getElementById('def_mult_num2').value);
+            const resultDiv = document.getElementById('def_mult_result');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultDiv.textContent = 'Hiba: Adj meg két érvényes számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const result = num1 * num2;
+                resultDiv.innerHTML = `
+                    <code>def szoroz(${num1}, ${num2}):</code><br>
+                    <code>&nbsp;&nbsp;&nbsp;&nbsp;return ${num1} * ${num2}</code><br><br>
+                    Eredmény: ${result}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function defCalculatePower() {
+            const base = parseFloat(document.getElementById('def_power_base').value);
+            const exp = document.getElementById('def_power_exp').value;
+            const resultDiv = document.getElementById('def_power_result');
+
+            if (isNaN(base)) {
+                resultDiv.textContent = 'Hiba: Add meg az alapot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const exponent = exp === '' ? 2 : parseFloat(exp);
+            const result = Math.pow(base, exponent);
+
+            resultDiv.innerHTML = `
+                <code>def hatványoz(${base}, kitevo=${exp === '' ? '2' : exponent}):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return ${base} ** ${exponent}</code><br><br>
+                Eredmény: ${result}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function defShowPersonInfo() {
+            const name = document.getElementById('def_person_name').value.trim();
+            const age = document.getElementById('def_person_age').value;
+            const city = document.getElementById('def_person_city').value.trim();
+            const resultDiv = document.getElementById('def_person_result');
+
+            if (!name || !age) {
+                resultDiv.textContent = 'Hiba: A név és kor megadása kötelező!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const usedCity = city || 'Budapest';
+            resultDiv.innerHTML = `
+                <code>def szemely_info("${name}", ${age}, varos="${usedCity}"):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return f"{name} ({age} éves) - {usedCity}"</code><br><br>
+                Eredmény: ${name} (${age} éves) - ${usedCity}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function defCalculateVolume() {
+            const radius = parseFloat(document.getElementById('def_cylinder_radius').value);
+            const height = parseFloat(document.getElementById('def_cylinder_height').value);
+            const resultDiv = document.getElementById('def_cylinder_result');
+            const visualDiv = document.getElementById('def_cylinder_visual');
+
+            if (isNaN(radius) || isNaN(height)) {
+                resultDiv.textContent = 'Hiba: Add meg a sugarat és magasságot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                visualDiv.innerHTML = '';
+                return;
+            }
+
+            const pi = 3.14159;
+            const volume = pi * radius * radius * height;
+
+            resultDiv.innerHTML = `
+                <code>def korterfogat(${radius}, ${height}):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;pi = 3.14159</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;alapterulet = pi * ${radius} * ${radius}</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;terfogat = alapterulet * ${height}</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return terfogat</code><br><br>
+                A henger térfogata: ${volume.toFixed(2)} köbcentiméter
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            // SVG vizualizáció a hengerről
+            const maxSize = 150;
+            const scale = Math.min(maxSize / (2 * radius), maxSize / height);
+            const scaledRadius = radius * scale;
+            const scaledHeight = height * scale;
+
+            visualDiv.innerHTML = `
+                <svg width="${2 * scaledRadius + 40}" height="${scaledHeight + 40}" viewBox="0 0 ${2 * scaledRadius + 40} ${scaledHeight + 40}">
+                    <ellipse cx="${scaledRadius + 20}" cy="${scaledHeight + 20}" rx="${scaledRadius}" ry="${scaledRadius * 0.3}"
+                             fill="none" stroke="var(--accent-primary)" stroke-width="2"/>
+                    <ellipse cx="${scaledRadius + 20}" cy="20" rx="${scaledRadius}" ry="${scaledRadius * 0.3}"
+                             fill="none" stroke="var(--accent-primary)" stroke-width="2"/>
+                    <line x1="${20}" y1="${20}" x2="${20}" y2="${scaledHeight + 20}"
+                          stroke="var(--accent-primary)" stroke-width="2"/>
+                    <line x1="${2 * scaledRadius + 20}" y1="${20}" x2="${2 * scaledRadius + 20}" y2="${scaledHeight + 20}"
+                          stroke="var(--accent-primary)" stroke-width="2"/>
+                </svg>
+            `;
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+       document.querySelectorAll('.def-number-inputs input, .def-person-inputs input').forEach(input => {
+           input.addEventListener('keypress', (e) => {
+               if (e.key === 'Enter') {
+                   const currentId = e.target.id;
+
+                   // Szorzás demo
+                   if (currentId === 'def_mult_num1') {
+                       document.getElementById('def_mult_num2').focus();
+                   } else if (currentId === 'def_mult_num2') {
+                       defCalculateMultiply();
+                   }
+
+                   // Hatványozás demo
+                   else if (currentId === 'def_power_base') {
+                       document.getElementById('def_power_exp').focus();
+                   } else if (currentId === 'def_power_exp') {
+                       defCalculatePower();
+                   }
+
+                   // Személy info demo
+                   else if (currentId === 'def_person_name') {
+                       document.getElementById('def_person_age').focus();
+                   } else if (currentId === 'def_person_age') {
+                       document.getElementById('def_person_city').focus();
+                   } else if (currentId === 'def_person_city') {
+                       defShowPersonInfo();
+                   }
+               }
+           });
+       });
+
+       // Henger számítás Enter kezelése
+       document.getElementById('def_cylinder_radius').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('def_cylinder_height').focus();
+       });
+
+       document.getElementById('def_cylinder_height').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') defCalculateVolume();
+       });
+
+       // Kezdeti állapot beállítása
+       document.addEventListener('DOMContentLoaded', () => {
+           defSwitchDemo('mult');
+       });
+   </script>
+</section>
+
+<!-- Return szekció -->
+<section id="visszateres" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-undo"></i>
+        Visszatérési Értékek
+    </h1>
+
+    <div class="card">
+        <h2>A return utasítás</h2>
+        <p>A return utasítás két fontos célt szolgál:</p>
+        <ul>
+            <li>Értéket ad vissza a függvényből</li>
+            <li>Azonnal kilép a függvényből (akkor is, ha még lenne utána kód)</li>
+        </ul>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="return-basic">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Egyszerű visszatérési érték
+def negyzet(szam):
+    return szam * szam  # Visszaadja a szám négyzetét
+
+# Több lehetséges visszatérési érték
+def oszthato(szam, oszto):
+    if szam % oszto == 0:
+        return True
+    return False
+
+# Korai kilépés return-nel
+def osztas(a, b):
+    if b == 0:
+        return "Nullával nem lehet osztani!"
+    return a / b</code></pre>
+        </div>
+
+        <div id="ret_basics_demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="ret-demo-tabs">
+                <button class="ret-tab-btn active" onclick="retSwitchDemo('square')">Négyzetre emelés</button>
+                <button class="ret-tab-btn" onclick="retSwitchDemo('divisible')">Oszthatóság</button>
+                <button class="ret-tab-btn" onclick="retSwitchDemo('division')">Osztás</button>
+            </div>
+
+            <div id="ret_square_demo" class="ret-demo-content active">
+                <div class="form-group">
+                    <label>Szám négyzetre emelése:</label>
+                    <input type="number" id="ret_square_input" class="input" placeholder="Adj meg egy számot">
+                    <button class="btn" onclick="retCalculateSquare()">
+                        <i class="fas fa-calculator"></i> Számolás
+                    </button>
+                </div>
+                <div id="ret_square_result" class="result"></div>
+            </div>
+
+            <div id="ret_divisible_demo" class="ret-demo-content">
+                <div class="form-group">
+                    <label>Oszthatóság vizsgálata:</label>
+                    <div class="ret-number-inputs">
+                        <input type="number" id="ret_number" class="input" placeholder="Szám">
+                        <span class="operator">÷</span>
+                        <input type="number" id="ret_divisor" class="input" placeholder="Osztó">
+                    </div>
+                    <button class="btn" onclick="retCheckDivisible()">
+                        <i class="fas fa-check"></i> Ellenőrzés
+                    </button>
+                </div>
+                <div id="ret_divisible_result" class="result"></div>
+            </div>
+
+            <div id="ret_division_demo" class="ret-demo-content">
+                <div class="form-group">
+                    <label>Osztás biztonságos vizsgálata:</label>
+                    <div class="ret-number-inputs">
+                        <input type="number" id="ret_dividend" class="input" placeholder="Osztandó">
+                        <span class="operator">÷</span>
+                        <input type="number" id="ret_divider" class="input" placeholder="Osztó">
+                    </div>
+                    <button class="btn" onclick="retDivideNumbers()">
+                        <i class="fas fa-calculator"></i> Osztás
+                    </button>
+                </div>
+                <div id="ret_division_result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Többszörös visszatérési érték</h2>
+        <p>A Python lehetővé teszi több érték egyidejű visszaadását tuple formájában:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="multiple-return">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Több érték visszaadása
+def koordinatak(x, y):
+    tavolsag = (x ** 2 + y ** 2) ** 0.5  # Távolság az origótól
+    szog = math.atan2(y, x)              # Szög az x tengellyel
+    return tavolsag, szog
+
+# Értékek kibontása
+tav, szog = koordinatak(3, 4)
+
+# Lista visszaadása
+def statisztika(szamok):
+    minimum = min(szamok)
+    maximum = max(szamok)
+    atlag = sum(szamok) / len(szamok)
+    return [minimum, maximum, atlag]</code></pre>
+        </div>
+
+        <div id="ret_multi_demo" class="interactive-demo">
+            <h3>Többszörös visszatérés kipróbálása</h3>
+            <div class="ret-demo-tabs">
+                <button class="ret-tab-btn active" onclick="retSwitchMultiDemo('coords')">Koordináták</button>
+                <button class="ret-tab-btn" onclick="retSwitchMultiDemo('stats')">Statisztika</button>
+            </div>
+
+            <div id="ret_coords_demo" class="ret-demo-content active">
+                <div class="form-group">
+                    <label>Pont koordinátái:</label>
+                    <div class="ret-coord-inputs">
+                        <div class="ret-input-group">
+                            <label>X koordináta:</label>
+                            <input type="number" id="ret_coord_x" class="input" placeholder="X">
+                        </div>
+                        <div class="ret-input-group">
+                            <label>Y koordináta:</label>
+                            <input type="number" id="ret_coord_y" class="input" placeholder="Y">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="retCalculateCoords()">
+                        <i class="fas fa-calculator"></i> Számítás
+                    </button>
+                </div>
+                <div id="ret_coords_result" class="result"></div>
+                <div id="ret_coords_visual" class="coords-visual"></div>
+            </div>
+
+            <div id="ret_stats_demo" class="ret-demo-content">
+                <div class="form-group">
+                    <label>Add meg a számokat (vesszővel elválasztva):</label>
+                    <input type="text" id="ret_numbers_input" class="input" placeholder="pl.: 1, 2, 3, 4, 5">
+                    <button class="btn" onclick="retCalculateStats()">
+                        <i class="fas fa-chart-bar"></i> Statisztika számítása
+                    </button>
+                </div>
+                <div id="ret_stats_result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ret-demo-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ret-tab-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ret-tab-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .ret-demo-content {
+            display: none;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+        }
+
+        .ret-demo-content.active {
+            display: block;
+        }
+
+        .ret-number-inputs,
+        .ret-coord-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ret-input-group {
+            flex: 1;
+        }
+
+        .coords-visual {
+            margin-top: 1rem;
+            height: 300px;
+            background: var(--bg-primary);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .ret-number-inputs,
+            .ret-coord-inputs {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        function retSwitchDemo(type) {
+            document.querySelectorAll('.ret-demo-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.ret-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.ret-tab-btn[onclick*="${type}"]`).classList.add('active');
+            document.getElementById(`ret_${type}_demo`).classList.add('active');
+        }
+
+        function retSwitchMultiDemo(type) {
+            document.querySelectorAll('#ret_multi_demo .ret-demo-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('#ret_multi_demo .ret-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#ret_multi_demo .ret-tab-btn[onclick*="${type}"]`).classList.add('active');
+            document.getElementById(`ret_${type}_demo`).classList.add('active');
+        }
+
+        function retCalculateSquare() {
+            const number = parseFloat(document.getElementById('ret_square_input').value);
+            const resultDiv = document.getElementById('ret_square_result');
+
+            if (isNaN(number)) {
+                resultDiv.textContent = 'Hiba: Adj meg egy érvényes számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const square = number * number;
+                resultDiv.innerHTML = `
+                    <code>def negyzet(${number}):</code><br>
+                    <code>&nbsp;&nbsp;&nbsp;&nbsp;return ${number} * ${number}</code><br><br>
+                    A ${number} négyzete: ${square}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function retCheckDivisible() {
+            const number = parseInt(document.getElementById('ret_number').value);
+            const divisor = parseInt(document.getElementById('ret_divisor').value);
+            const resultDiv = document.getElementById('ret_divisible_result');
+
+            if (isNaN(number) || isNaN(divisor)) {
+                resultDiv.textContent = 'Hiba: Adj meg mindkét számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const isDivisible = number % divisor === 0;
+            resultDiv.innerHTML = `
+                <code>def oszthato(${number}, ${divisor}):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;if ${number} % ${divisor} == 0:</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return True</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return False</code><br><br>
+                ${number} ${isDivisible ? '' : 'nem'} osztható ${divisor}-${divisor > 1 ? 'vel' : 'gyel'}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function retDivideNumbers() {
+            const dividend = parseFloat(document.getElementById('ret_dividend').value);
+            const divider = parseFloat(document.getElementById('ret_divider').value);
+            const resultDiv = document.getElementById('ret_division_result');
+
+            if (isNaN(dividend) || isNaN(divider)) {
+                resultDiv.textContent = 'Hiba: Adj meg mindkét számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            let result;
+            if (divider === 0) {
+                result = "Nullával nem lehet osztani!";
+            } else {
+                result = dividend / divider;
+            }
+
+            resultDiv.innerHTML = `
+                <code>def osztas(${dividend}, ${divider}):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;if ${divider} == 0:</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "Nullával nem lehet osztani!"</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return ${dividend} / ${divider}</code><br><br>
+                Eredmény: ${result}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function retCalculateCoords() {
+            const x = parseFloat(document.getElementById('ret_coord_x').value);
+            const y = parseFloat(document.getElementById('ret_coord_y').value);
+            const resultDiv = document.getElementById('ret_coords_result');
+            const visualDiv = document.getElementById('ret_coords_visual');
+
+            if (isNaN(x) || isNaN(y)) {
+                resultDiv.textContent = 'Hiba: Adj meg mindkét koordinátát!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const distance = Math.sqrt(x * x + y * y);
+            const angle = Math.atan2(y, x) * (180 / Math.PI);
+
+            resultDiv.innerHTML = `
+                <code>def koordinatak(${x}, ${y}):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;tavolsag = (${x}² + ${y}²)^0.5</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;szog = math.atan2(${y}, ${x})</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return tavolsag, szog</code><br><br>
+                Távolság az origótól: ${distance.toFixed(2)}<br>
+                Szög az x tengellyel: ${angle.toFixed(2)}°
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            // Koordináta rendszer vizualizáció
+           const size = 250;
+           const center = size / 2;
+           const scale = Math.min(size / 4 / Math.max(Math.abs(x), Math.abs(y)), 20);
+
+           visualDiv.innerHTML = `
+               <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                   <!-- Koordináta tengelyek -->
+                   <line x1="0" y1="${center}" x2="${size}" y2="${center}"
+                         stroke="var(--text-secondary)" stroke-width="1"/>
+                   <line x1="${center}" y1="0" x2="${center}" y2="${size}"
+                         stroke="var(--text-secondary)" stroke-width="1"/>
+
+                   <!-- Origó jelölése -->
+                   <circle cx="${center}" cy="${center}" r="2"
+                           fill="var(--text-secondary)"/>
+
+                   <!-- Pont -->
+                   <circle cx="${center + x * scale}" cy="${center - y * scale}" r="5"
+                           fill="var(--accent-primary)"/>
+
+                   <!-- Távolság vonal -->
+                   <line x1="${center}" y1="${center}"
+                         x2="${center + x * scale}" y2="${center - y * scale}"
+                         stroke="var(--accent-secondary)" stroke-width="2" stroke-dasharray="4"/>
+
+                   <!-- Szög ív -->
+                   <path d="M ${center + 20} ${center}
+                           A 20 20 0 0 ${y < 0 ? 1 : 0}
+                           ${center + 20 * Math.cos(Math.atan2(y, x))}
+                           ${center - 20 * Math.sin(Math.atan2(y, x))}"
+                         stroke="var(--accent-primary)" stroke-width="2" fill="none"/>
+               </svg>
+           `;
+
+           resultDiv.classList.remove('show');
+           void resultDiv.offsetWidth;
+           resultDiv.classList.add('show');
+       }
+
+       function retCalculateStats() {
+           const input = document.getElementById('ret_numbers_input').value;
+           const resultDiv = document.getElementById('ret_stats_result');
+
+           try {
+               const numbers = input.split(',').map(num => parseFloat(num.trim()));
+
+               if (numbers.some(isNaN)) {
+                   throw new Error('Érvénytelen számok!');
+               }
+
+               if (numbers.length === 0) {
+                   throw new Error('Adj meg legalább egy számot!');
+               }
+
+               const min = Math.min(...numbers);
+               const max = Math.max(...numbers);
+               const avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+
+               resultDiv.innerHTML = `
+                   <code>def statisztika([${numbers.join(', ')}]):</code><br>
+                   <code>&nbsp;&nbsp;&nbsp;&nbsp;minimum = min(szamok)</code><br>
+                   <code>&nbsp;&nbsp;&nbsp;&nbsp;maximum = max(szamok)</code><br>
+                   <code>&nbsp;&nbsp;&nbsp;&nbsp;atlag = sum(szamok) / len(szamok)</code><br>
+                   <code>&nbsp;&nbsp;&nbsp;&nbsp;return [minimum, maximum, atlag]</code><br><br>
+                   Minimum: ${min}<br>
+                   Maximum: ${max}<br>
+                   Átlag: ${avg.toFixed(2)}
+               `;
+               resultDiv.style.borderColor = 'var(--success)';
+           } catch (error) {
+               resultDiv.textContent = `Hiba: ${error.message}`;
+               resultDiv.style.borderColor = 'var(--error)';
+           }
+
+           resultDiv.classList.remove('show');
+           void resultDiv.offsetWidth;
+           resultDiv.classList.add('show');
+       }
+
+       // Enter billentyű kezelése
+       document.getElementById('ret_square_input').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') retCalculateSquare();
+       });
+
+       document.getElementById('ret_number').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('ret_divisor').focus();
+       });
+
+       document.getElementById('ret_divisor').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') retCheckDivisible();
+       });
+
+       document.getElementById('ret_dividend').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('ret_divider').focus();
+       });
+
+       document.getElementById('ret_divider').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') retDivideNumbers();
+       });
+
+       document.getElementById('ret_coord_x').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('ret_coord_y').focus();
+       });
+
+       document.getElementById('ret_coord_y').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') retCalculateCoords();
+       });
+
+       document.getElementById('ret_numbers_input').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') retCalculateStats();
+       });
+
+       // Kezdeti állapot beállítása
+       document.addEventListener('DOMContentLoaded', () => {
+           retSwitchDemo('square');
+           retSwitchMultiDemo('coords');
+       });
+   </script>
+</section>
+
+<!-- Lokális és globális változók szekció -->
+<section id="valtozok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-globe"></i>
+        Lokális és Globális Változók
+    </h1>
+
+    <div class="card">
+        <h2>Változók láthatósága</h2>
+        <p>A Python függvényekben használt változók kétfélék lehetnek:</p>
+        <ul>
+            <li><strong>Lokális változók:</strong> Csak a függvényen belül érhetők el</li>
+            <li><strong>Globális változók:</strong> A program bármely részéből elérhetők</li>
+        </ul>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="scope-basic">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Globális változó
+szamlalo = 0
+
+def novel():
+    global szamlalo  # Jelezzük, hogy a globális változót használjuk
+    szamlalo += 1
+    return szamlalo
+
+def lokalis_pelda():
+    # Ez egy lokális változó
+    x = 10
+    return x
+
+# A lokális x itt már nem elérhető
+# print(x)  # Ez hibát okozna!
+
+print(novel())  # 1
+print(novel())  # 2
+print(szamlalo) # 2 - globális változó mindenhol elérhető</code></pre>
+        </div>
+
+        <div id="var_basics_demo" class="interactive-demo">
+            <h3>Számláló példa:</h3>
+            <div class="var-counter-container">
+                <div class="var-counter-value">
+                    <span>Globális számláló értéke:</span>
+                    <span id="var_counter_value" class="counter">0</span>
+                </div>
+                <div class="var-counter-controls">
+                    <button class="btn" onclick="varIncrementCounter()">
+                        <i class="fas fa-plus"></i> Növelés
+                    </button>
+                    <button class="btn btn-secondary" onclick="varResetCounter()">
+                        <i class="fas fa-undo"></i> Visszaállítás
+                    </button>
+                </div>
+            </div>
+            <div id="var_counter_code" class="var-code-preview"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Változók árnyékolása</h2>
+        <p>Ha egy függvényben ugyanolyan nevű változót használunk, mint egy globális változó, akkor az a függvényen belül egy új, lokális változót hoz létre:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="scope-shadow">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Globális változó
+nev = "Globális"
+
+def pelda():
+    nev = "Lokális"  # Új lokális változó, nem módosítja a globálist
+    print(f"Függvényen belül: {nev}")
+
+pelda()  # Kiírja: Függvényen belül: Lokális
+print(f"Függvényen kívül: {nev}")  # Kiírja: Függvényen kívül: Globális</code></pre>
+        </div>
+
+        <div id="var_shadow_demo" class="interactive-demo">
+            <h3>Próbáld ki a változó árnyékolást:</h3>
+            <div class="form-group">
+                <label>Globális változó értéke:</label>
+                <input type="text" id="var_global_input" class="input" placeholder="Globális érték">
+            </div>
+            <div class="form-group">
+                <label>Lokális változó értéke:</label>
+                <input type="text" id="var_local_input" class="input" placeholder="Lokális érték">
+            </div>
+            <button class="btn" onclick="varDemoShadowing()">
+                <i class="fas fa-play"></i> Futtatás
+            </button>
+            <div id="var_shadow_result" class="result"></div>
+            <div id="var_shadow_visual" class="var-scope-visual"></div>
+        </div>
+    </div>
+
+    <style>
+        .var-counter-container {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .var-counter-value {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .counter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            min-width: 3rem;
+            text-align: center;
+        }
+
+        .var-counter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .var-code-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .var-scope-visual {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .scope-level {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .scope-level.global {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: var(--function-name);
+        }
+
+        .scope-level.local {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: var(--function-param);
+            margin-left: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .var-counter-controls {
+                flex-direction: column;
+            }
+
+            .scope-level.local {
+                margin-left: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        let varGlobalCounter = 0;
+
+        function varIncrementCounter() {
+            varGlobalCounter++;
+            varUpdateCounterDisplay();
+            varUpdateCodePreview();
+        }
+
+        function varResetCounter() {
+            varGlobalCounter = 0;
+            varUpdateCounterDisplay();
+            varUpdateCodePreview();
+        }
+
+        function varUpdateCounterDisplay() {
+            document.getElementById('var_counter_value').textContent = varGlobalCounter;
+        }
+
+        function varUpdateCodePreview() {
+            const codePreview = document.getElementById('var_counter_code');
+            codePreview.innerHTML = `
+                <code># Globális változó</code><br>
+                <code>szamlalo = ${varGlobalCounter}</code><br><br>
+                <code>def novel():</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;global szamlalo</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;szamlalo += 1</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return szamlalo</code>
+            `;
+        }
+
+        function varDemoShadowing() {
+            const globalValue = document.getElementById('var_global_input').value.trim();
+            const localValue = document.getElementById('var_local_input').value.trim();
+            const resultDiv = document.getElementById('var_shadow_result');
+            const visualDiv = document.getElementById('var_shadow_visual');
+
+            if (!globalValue || !localValue) {
+                resultDiv.textContent = 'Hiba: Mindkét értéket add meg!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                <code># Globális változó</code><br>
+                <code>nev = "${globalValue}"</code><br><br>
+                <code>def pelda():</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;nev = "${localValue}"</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;print(f"Függvényen belül: {nev}")</code><br><br>
+                <code>pelda()</code><br>
+                <code>print(f"Függvényen kívül: {nev}")</code>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            visualDiv.innerHTML = `
+                <div class="scope-level global">
+                    <strong>Globális hatókör:</strong>
+                    <div>nev = "${globalValue}"</div>
+                </div>
+                <div class="scope-level local">
+                    <strong>Lokális hatókör (pelda függvény):</strong>
+                    <div>nev = "${localValue}"</div>
+                </div>
+            `;
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('var_global_input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('var_local_input').focus();
+        });
+
+        document.getElementById('var_local_input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') varDemoShadowing();
+        });
+
+        // Kezdeti állapot beállítása
+        document.addEventListener('DOMContentLoaded', () => {
+            varUpdateCodePreview();
+        });
+    </script>
+</section>
+
+<!-- Függvények dokumentálása szekció -->
+<section id="dokumentalas" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-file-code"></i>
+        Függvények Dokumentálása
+    </h1>
+
+    <div class="card">
+        <h2>A docstring használata</h2>
+        <p>A docstring (documentation string) egy többsoros szöveges dokumentáció, amely leírja a függvény működését, paramétereit és visszatérési értékét.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="docstring-basic">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">def teglalap_terulet(szelesseg, magassag):
+    """
+    Kiszámolja egy téglalap területét.
+
+    Paraméterek:
+        szelesseg (float): A téglalap szélessége
+        magassag (float): A téglalap magassága
+
+    Visszatérési érték:
+        float: A téglalap területe
+    """
+    return szelesseg * magassag
+
+# A dokumentáció megtekintése
+help(teglalap_terulet)
+# vagy
+print(teglalap_terulet.__doc__)</code></pre>
+        </div>
+
+        <div id="doc_basics_demo" class="interactive-demo">
+            <h3>Dokumentáció generátor:</h3>
+            <div class="form-group">
+                <label>Függvény neve:</label>
+                <input type="text" id="doc_function_name" class="input" placeholder="pl.: osszead">
+            </div>
+            <div id="doc_params_container" class="form-group">
+                <label>Paraméterek:</label>
+                <div class="doc-params-list">
+                    <div class="doc-param-row">
+                        <input type="text" class="input doc-param-name" placeholder="Paraméter neve">
+                        <input type="text" class="input doc-param-type" placeholder="Típus (pl.: int)">
+                        <input type="text" class="input doc-param-desc" placeholder="Leírás">
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="docAddParam()">
+                    <i class="fas fa-plus"></i> Új paraméter
+                </button>
+            </div>
+            <div class="form-group">
+                <label>Visszatérési érték:</label>
+                <div class="doc-return-inputs">
+                    <input type="text" id="doc_return_type" class="input" placeholder="Visszatérési típus (pl.: int)">
+                    <input type="text" id="doc_return_desc" class="input" placeholder="Visszatérési érték leírása">
+                </div>
+            </div>
+            <button class="btn" onclick="docGenerateDocstring()">
+                <i class="fas fa-file-alt"></i> Dokumentáció generálása
+            </button>
+            <div id="doc_result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Dokumentáció példák</h2>
+        <p>Nézzünk néhány gyakori esetet a függvények dokumentálására:</p>
+
+        <div class="doc-examples-container">
+            <div class="doc-example">
+                <h3>1. Egyszerű függvény</h3>
+                <div class="code-container">
+                    <button class="copy-btn" data-code="doc-simple">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def koszont(nev):
+    """Egyszerű üdvözlő üzenet generálása.
+
+    Args:
+        nev (str): A köszöntendő személy neve
+
+    Returns:
+        str: Az üdvözlő üzenet
+    """
+    return f"Szia {nev}!"</code></pre>
+                </div>
+            </div>
+
+            <div class="doc-example">
+                <h3>2. Összetett függvény</h3>
+                <div class="code-container">
+                    <button class="copy-btn" data-code="doc-complex">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def osztalyzat_szamitas(pontszam, max_pont=100):
+    """
+    Kiszámolja az érdemjegyet a pontszám alapján.
+
+    Args:
+        pontszam (int): Elért pontszám
+        max_pont (int, optional): Maximális pontszám. Alapértelmezett: 100
+
+    Returns:
+        int: Érdemjegy (1-5)
+
+    Raises:
+        ValueError: Ha a pontszám negatív vagy nagyobb, mint a maximum
+    """
+    if pontszam < 0 or pontszam > max_pont:
+        raise ValueError("Érvénytelen pontszám!")
+
+    szazalek = (pontszam / max_pont) * 100
+    if szazalek < 50: return 1
+    if szazalek < 60: return 2
+    if szazalek < 70: return 3
+    if szazalek < 85: return 4
+    return 5</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="doc_examples_demo" class="interactive-demo">
+            <h3>Próbáld ki a dokumentált függvényeket:</h3>
+            <div class="doc-demo-tabs">
+                <button class="doc-tab-btn active" onclick="docSwitchDemo('greet')">Köszöntés</button>
+                <button class="doc-tab-btn" onclick="docSwitchDemo('grade')">Osztályzat</button>
+            </div>
+
+            <div id="doc_greet_demo" class="doc-demo-content active">
+                <div class="form-group">
+                    <label>Név:</label>
+                    <input type="text" id="doc_name_input" class="input" placeholder="Add meg a neved">
+                    <button class="btn" onclick="docTestGreeting()">
+                        <i class="fas fa-comment"></i> Köszönés
+                    </button>
+                </div>
+                <div id="doc_greet_result" class="result"></div>
+            </div>
+
+            <div id="doc_grade_demo" class="doc-demo-content">
+                <div class="form-group">
+                    <label>Pontszám és maximum:</label>
+                    <div class="doc-grade-inputs">
+                        <input type="number" id="doc_points" class="input" placeholder="Elért pontszám">
+                        <input type="number" id="doc_max_points" class="input" placeholder="Maximum pontszám (alapért.: 100)">
+                    </div>
+                    <button class="btn" onclick="docCalculateGrade()">
+                        <i class="fas fa-calculator"></i> Jegy számítása
+                    </button>
+                </div>
+                <div id="doc_grade_result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .doc-params-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-param-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 1rem;
+        }
+
+        .doc-return-inputs {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-examples-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .doc-example {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 5px;
+        }
+
+        .doc-example h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .doc-demo-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-tab-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .doc-tab-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .doc-demo-content {
+            display: none;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+        }
+
+        .doc-demo-content.active {
+            display: block;
+        }
+
+        .doc-grade-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .doc-param-row,
+            .doc-return-inputs,
+            .doc-grade-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        function docAddParam() {
+            const container = document.querySelector('.doc-params-list');
+            const paramRow = document.createElement('div');
+            paramRow.className = 'doc-param-row';
+            paramRow.innerHTML = `
+                <input type="text" class="input doc-param-name" placeholder="Paraméter neve">
+                <input type="text" class="input doc-param-type" placeholder="Típus (pl.: int)">
+                <input type="text" class="input doc-param-desc" placeholder="Leírás">
+            `;
+
+            container.appendChild(paramRow);
+
+            anime({
+                targets: paramRow,
+                translateX: [-20, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutCubic'
+            });
+        }
+
+        function docGenerateDocstring() {
+            const functionName = document.getElementById('doc_function_name').value.trim();
+            const params = Array.from(document.querySelectorAll('.doc-param-row')).map(row => ({
+                name: row.querySelector('.doc-param-name').value.trim(),
+                type: row.querySelector('.doc-param-type').value.trim(),
+                desc: row.querySelector('.doc-param-desc').value.trim()
+            })).filter(p => p.name && p.type && p.desc);
+
+            const returnType = document.getElementById('doc_return_type').value.trim();
+            const returnDesc = document.getElementById('doc_return_desc').value.trim();
+            const resultDiv = document.getElementById('doc_result');
+
+            if (!functionName) {
+                resultDiv.textContent = 'Hiba: Add meg a függvény nevét!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            let docstring = `def ${functionName}(${params.map(p => p.name).join(', ')}):\n    """\n`;
+            docstring += `    Függvény dokumentációja.\n\n`;
+
+            if (params.length > 0) {
+                docstring += `    Paraméterek:\n`;
+                params.forEach(p => {
+                    docstring += `        ${p.name} (${p.type}): ${p.desc}\n`;
+                });
+                docstring += '\n';
+            }
+
+            if (returnType && returnDesc) {
+                docstring += `    Visszatérési érték:\n`;
+                docstring += `        ${returnType}: ${returnDesc}\n`;
+            }
+
+            docstring += '    """';
+
+            resultDiv.innerHTML = `<pre><code class="language-python">${docstring}</code></pre>`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            Prism.highlightElement(resultDiv.querySelector('code'));
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function docSwitchDemo(type) {
+            document.querySelectorAll('.doc-demo-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.doc-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.doc-tab-btn[onclick*="${type}"]`).classList.add('active');
+            document.getElementById(`doc_${type}_demo`).classList.add('active');
+        }
+
+        function docTestGreeting() {
+            const name = document.getElementById('doc_name_input').value.trim();
+            const resultDiv = document.getElementById('doc_greet_result');
+
+            if (!name) {
+                resultDiv.textContent = 'Hiba: Add meg a nevedet!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                resultDiv.innerHTML = `
+                    <code>def koszont("${name}"):</code><br>
+                    <code>&nbsp;&nbsp;&nbsp;&nbsp;return f"Szia {name}!"</code><br><br>
+                    Eredmény: Szia ${name}!
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function docCalculateGrade() {
+            const points = parseInt(document.getElementById('doc_points').value);
+            const maxPoints = document.getElementById('doc_max_points').value.trim() ?
+                            parseInt(document.getElementById('doc_max_points').value) : 100;
+            const resultDiv = document.getElementById('doc_grade_result');
+
+            if (isNaN(points)) {
+                resultDiv.textContent = 'Hiba: Add meg a pontszámot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            try {
+                if (points < 0 || points > maxPoints) {
+                    throw new Error("Érvénytelen pontszám!");
+                }
+
+                const percentage = (points / maxPoints) * 100;
+                let grade;
+                if (percentage < 50) grade = 1;
+                else if (percentage < 60) grade = 2;
+                else if (percentage < 70) grade = 3;
+                else if (percentage < 85) grade = 4;
+                else grade = 5;
+
+                resultDiv.innerHTML = `
+                    Pontszám: ${points}/${maxPoints} (${percentage.toFixed(1)}%)<br>
+                    Érdemjegy: ${grade}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+           void resultDiv.offsetWidth;
+           resultDiv.classList.add('show');
+       }
+
+       // Enter billentyű kezelése
+       document.getElementById('doc_name_input').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') docTestGreeting();
+       });
+
+       document.getElementById('doc_points').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('doc_max_points').focus();
+       });
+
+       document.getElementById('doc_max_points').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') docCalculateGrade();
+       });
+
+       // Inicializálás
+       document.addEventListener('DOMContentLoaded', () => {
+           docSwitchDemo('greet');
+           // Első paraméter sor hozzáadása
+           docAddParam();
+       });
+   </script>
+</section>
+
+<!-- Gyakorlatok szekció -->
+<section id="gyakorlatok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-tasks"></i>
+        Gyakorló Feladatok
+    </h1>
+
+    <div class="card">
+        <h2>Tudáspróba</h2>
+        <p>Az alábbi feladatok segítenek a tanult függvénykezelési technikák gyakorlásában. Minden feladathoz tartozik egy leírás és egy interaktív felület a megoldás kipróbálásához.</p>
+
+        <div class="exercises-container">
+            <!-- 1. Feladat -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="exToggleExercise(1)">
+                    <h3>1. Feladat: Egyszerű függvény írása</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="exercise-content" id="exercise-1">
+                    <p class="task-description">
+                        Írj egy függvényt, amely két számot kap paraméterként, és visszaadja a két szám közül a nagyobbat!
+                        Próbáld megoldani elsőként, majd hasonlítsd össze a megoldásoddal.
+                    </p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="exercise-1">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python">def nagyobb(a, b):
+    """
+    Visszaadja két szám közül a nagyobbat.
+
+    Args:
+        a (float): Első szám
+        b (float): Második szám
+
+    Returns:
+        float: A nagyobb szám
+    """
+    return a if a > b else b</code></pre>
+                    </div>
+
+                    <div class="practice-area">
+                        <h4>Próbáld ki!</h4>
+                        <div class="input-group">
+                            <input type="number" id="ex_num1" class="input" placeholder="Első szám">
+                            <input type="number" id="ex_num2" class="input" placeholder="Második szám">
+                        </div>
+                        <button class="btn" onclick="exTestMaxNumber()">
+                            <i class="fas fa-play"></i> Futtatás
+                        </button>
+                        <div id="ex_max_result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Feladat -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="exToggleExercise(2)">
+                    <h3>2. Feladat: Alapértelmezett paraméter használata</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="exercise-content" id="exercise-2">
+                    <p class="task-description">
+                        Készíts egy függvényt, amely kiszámítja egy kör kerületét! A pi értéke legyen alapértelmezetten 3.14.
+                    </p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="exercise-2">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python">def kor_kerulet(sugar, pi=3.14):
+    """
+    Kiszámítja egy kör kerületét.
+
+    Args:
+        sugar (float): A kör sugara
+        pi (float, optional): Pi értéke. Alapértelmezett: 3.14
+
+    Returns:
+        float: A kör kerülete
+    """
+    return 2 * pi * sugar</code></pre>
+                    </div>
+
+                    <div class="practice-area">
+                        <h4>Próbáld ki!</h4>
+                        <div class="form-group">
+                            <input type="number" id="ex_radius" class="input" placeholder="Add meg a kör sugarát">
+                            <input type="number" id="ex_pi" class="input" placeholder="Pi értéke (opcionális, alapért.: 3.14)" step="0.01">
+                        </div>
+                        <button class="btn" onclick="exCalculateCircumference()">
+                            <i class="fas fa-circle"></i> Kerület számítása
+                        </button>
+                        <div id="ex_circle_result" class="result"></div>
+                        <div id="ex_circle_visual" class="circle-visual"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Feladat -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="exToggleExercise(3)">
+                    <h3>3. Feladat: Dokumentált függvény return értékkel</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="exercise-content" id="exercise-3">
+                    <p class="task-description">
+                        Írj egy függvényt, amely megkapja egy számot és visszaadja, hogy a szám prím-e vagy sem! A függvény legyen megfelelően dokumentálva!
+                    </p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="exercise-3">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python">def prim_e(szam):
+    """
+    Ellenőrzi, hogy egy szám prím-e.
+
+    Args:
+        szam (int): A vizsgálandó szám
+
+    Returns:
+        bool: True ha a szám prím, False ha nem
+
+    Raises:
+        ValueError: Ha a szám kisebb mint 2
+    """
+    if szam < 2:
+        raise ValueError("A szám nem lehet kisebb 2-nél!")
+
+    for i in range(2, int(szam ** 0.5) + 1):
+        if szam % i == 0:
+            return False
+    return True</code></pre>
+                    </div>
+
+                    <div class="practice-area">
+                        <h4>Próbáld ki!</h4>
+                        <div class="form-group">
+                            <input type="number" id="ex_prime" class="input" placeholder="Add meg a számot">
+                        </div>
+                        <button class="btn" onclick="exCheckPrime()">
+                            <i class="fas fa-check"></i> Ellenőrzés
+                        </button>
+                        <div id="ex_prime_result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .exercises-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .exercise {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .exercise-header:hover {
+            background: var(--bg-primary);
+        }
+
+        .exercise-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+
+        .exercise-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .exercise-header.active i {
+            transform: rotate(180deg);
+        }
+
+        .exercise-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .exercise-content.active {
+            display: block;
+        }
+
+        .task-description {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--highlight);
+            border-radius: 5px;
+        }
+
+        .circle-visual {
+            margin-top: 1rem;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        function exToggleExercise(num) {
+            const content = document.getElementById(`exercise-${num}`);
+            const header = content.previousElementSibling;
+
+            content.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+
+        function exTestMaxNumber() {
+            const num1 = parseFloat(document.getElementById('ex_num1').value);
+            const num2 = parseFloat(document.getElementById('ex_num2').value);
+            const resultDiv = document.getElementById('ex_max_result');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultDiv.textContent = 'Hiba: Adj meg két érvényes számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const max = Math.max(num1, num2);
+                resultDiv.innerHTML = `
+                    <code>def nagyobb(${num1}, ${num2}):</code><br>
+                    <code>&nbsp;&nbsp;&nbsp;&nbsp;return ${num1} if ${num1} > ${num2} else ${num2}</code><br><br>
+                    A nagyobb szám: ${max}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function exCalculateCircumference() {
+            const radius = parseFloat(document.getElementById('ex_radius').value);
+            const piInput = document.getElementById('ex_pi').value;
+            const pi = piInput ? parseFloat(piInput) : 3.14;
+            const resultDiv = document.getElementById('ex_circle_result');
+            const visualDiv = document.getElementById('ex_circle_visual');
+
+            if (isNaN(radius)) {
+                resultDiv.textContent = 'Hiba: Add meg a kör sugarát!';
+                resultDiv.style.borderColor = 'var(--error)';
+                visualDiv.innerHTML = '';
+                return;
+            }
+
+            const circumference = 2 * pi * radius;
+            resultDiv.innerHTML = `
+                <code>def kor_kerulet(${radius}, pi=${pi}):</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;return 2 * ${pi} * ${radius}</code><br><br>
+                A kör kerülete: ${circumference.toFixed(2)}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            // Kör vizualizáció
+            const size = 150;
+            const scale = size / (2 * radius);
+            visualDiv.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                    <circle cx="${size/2}" cy="${size/2}" r="${radius * scale}"
+                            stroke="var(--accent-primary)" stroke-width="2" fill="none"/>
+                    <line x1="${size/2}" y1="${size/2}" x2="${size/2 + radius * scale}" y2="${size/2}"
+                          stroke="var(--accent-secondary)" stroke-width="1" stroke-dasharray="4"/>
+                </svg>
+            `;
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function exCheckPrime() {
+            const number = parseInt(document.getElementById('ex_prime').value);
+            const resultDiv = document.getElementById('ex_prime_result');
+
+            try {
+                if (isNaN(number)) {
+                    throw new Error('Add meg a számot!');
+                }
+
+                if (number < 2) {
+                    throw new Error('A szám nem lehet kisebb 2-nél!');
+                }
+
+                let isPrime = true;
+                for (let i = 2; i <= Math.sqrt(number); i++) {
+                    if (number % i === 0) {
+                        isPrime = false;
+                        break;
+                    }
+                }
+
+                resultDiv.innerHTML = `
+                    <code>def prim_e(${number}):</code><br>
+                    A ${number} ${isPrime ? 'prímszám' : 'nem prímszám'}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('ex_num1').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('ex_num2').focus();
+        });
+
+        document.getElementById('ex_num2').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') exTestMaxNumber();
+        });
+
+        document.getElementById('ex_radius').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('ex_pi').focus();
+        });
+
+        document.getElementById('ex_pi').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') exCalculateCircumference();
+        });
+
+        document.getElementById('ex_prime').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') exCheckPrime();
+        });
+
+        // Első feladat megnyitása kezdéskor
+        document.addEventListener('DOMContentLoaded', () => {
+            exToggleExercise(1);
+        });
+    </script>
+</section>
+
+</main>
+
+
+<footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h3 class="h5 mb-3">Kapcsolat</h3>
+                    <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Információk</h3>
+                    <p class="mb-2">Utolsó frissítés: 2025.02.02.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Footer stílusok */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .mb-md-0 {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+
+
+
+
+
+
+    <!-- Lezáró script az oldal végén -->
+    <script>
+        // Prism újratöltése amikor új kód jelenik meg
+        function refreshPrism() {
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+        }
+
+        // Oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshPrism();
+
+            // Smooth scroll a navigációs linkekhez
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

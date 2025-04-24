@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python interaktív anyagok</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+
+<nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fab fa-python"></i> Python interaktív anyagok
+            </a>
+        </div>
+    </nav>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="main-title">
+                <i class="fab fa-python"></i>
+                Python interaktív anyagok
+            </h1>
+            <p class="subtitle">Interaktív Python oktatóanyagok kezdőknek</p>
+        </div>
+    </header>
+
+    <style>
+        /* Navigáció stílusa */
+        .nav {
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent-secondary);
+        }
+
+        /* Fejléc stílusa */
+        .header {
+            padding: 4rem 0;
+            text-align: center;
+            background: var(--bg-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <main class="container">
+        <div class="modules-grid">
+            <!-- Modulok Start -->
+            <a href="https://pynteraktiv.infotanar.eu/python-alapok.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fab fa-python"></i>
+                </div>
+                <h2 class="card-title">Python Alapok</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/felteteles-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <h2 class="card-title">Feltételes Utasítások</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/for-while-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h2 class="card-title">Ciklusok (for és while)</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/adatszerkezetek-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h2 class="card-title">Adatszerkezetek</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/random-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-dice"></i>
+                </div>
+                <h2 class="card-title">Random Modul</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/lista-fuggvenyek-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h2 class="card-title">Listakezelő függvények</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/sajat-fuggvenyek-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <h2 class="card-title">Saját Függvények</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/szotarak-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2 class="card-title">Szótárak</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/parameterek-demo-1.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h2 class="card-title">Függvényparaméterek</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/fajlfeldolgozas-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-file-code"></i>
+                </div>
+                <h2 class="card-title">Fájlkezelés</h2>
+            </a>
+
+            <a href="https://pynteraktiv.infotanar.eu/osztalyok-demo.html" class="module-card">
+                <div class="card-icon">
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <h2 class="card-title">Osztályok (OOP)</h2>
+            </a>
+            <!-- Modulok Stop -->
+        </div>
+    </main>
+
+    <style>
+    /* Modulok grid elrendezése */
+    .modules-grid {
+        display: grid;
+        gap: 2rem;
+        padding: 2rem 0;
+    }
+
+    /* Responsive grid beállítások */
+    @media (min-width: 1920px) {
+        .modules-grid {
+            grid-template-columns: repeat(4, 1fr); /* 4 oszlop nagy képernyőn */
+        }
+    }
+
+    @media (min-width: 1200px) and (max-width: 1919px) {
+        .modules-grid {
+            grid-template-columns: repeat(3, 1fr); /* 3 oszlop közepes képernyőn */
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+        .modules-grid {
+            grid-template-columns: repeat(2, 1fr); /* 2 oszlop tableten */
+        }
+    }
+
+    @media (max-width: 767px) {
+        .modules-grid {
+            grid-template-columns: 1fr; /* 1 oszlop mobilon */
+        }
+    }
+
+    /* Kártyák és ikonok stílusa */
+.module-card {
+    width: 100%;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    padding: 2rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 200px;
+    justify-content: center;
+}
+
+.module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-primary);
+}
+
+.card-icon {
+    font-size: 4rem;  /* Nagyobb ikon méret */
+    color: var(--accent-primary);  /* Az eredeti zöld szín visszaállítása */
+    transition: transform 0.3s ease;
+    height: 80px;     /* Fix magasság */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon i {
+    color: var(--accent-primary);  /* Explicit módon beállítjuk az ikon színét */
+}
+
+.module-card:hover .card-icon {
+    transform: scale(1.1);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 0;
+}
+</style>
+
+<footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h3 class="h5 mb-3">Kapcsolat</h3>
+                    <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Információk</h3>
+                    <p class="mb-2">Utolsó frissítés: 2025.02.02.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Footer stílusok */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .mb-md-0 {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+
+    <!-- Záró scriptek -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animáció a kártyák betöltésekor
+            anime({
+                targets: '.module-card',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                delay: anime.stagger(100)
+            });
+        });
+    </script>
+</body>
+</html>

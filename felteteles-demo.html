@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Feltételes Utasítások Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Python specifikus színek */
+            --python-if: #3498db;    /* if utasítások színe */
+            --python-elif: #e74c3c;  /* elif utasítások színe */
+            --python-else: #f1c40f;  /* else utasítások színe */
+            --python-logic: #9b59b6; /* logikai operátorok színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigáció stílusa */
+        .nav {
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fab fa-python"></i> Python Feltételes Utasítások
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link"><i class="fas fa-book-open"></i> Bevezető</a></li>
+                <li><a href="#if" class="nav-link"><i class="fas fa-code-branch"></i> IF</a></li>
+                <li><a href="#elif" class="nav-link"><i class="fas fa-share-alt"></i> ELIF</a></li>
+                <li><a href="#else" class="nav-link"><i class="fas fa-reply-all"></i> ELSE</a></li>
+                <li><a href="#osszetett" class="nav-link"><i class="fas fa-project-diagram"></i> Összetett feltételek</a></li>
+                <li><a href="#gyakorlo" class="nav-link"><i class="fas fa-tasks"></i> Gyakorló feladatok</a></li>
+                <li><a href="#kombinalt" class="nav-link"><i class="fas fa-puzzle-piece"></i> Kombinált példák</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- Bevezető szekció -->
+<section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Feltételes Utasítások a Pythonban
+    </h1>
+
+    <div class="card">
+        <h2>Mi az a feltételes utasítás?</h2>
+        <p>A feltételes utasítások lehetővé teszik, hogy a programunk különböző kódokat hajtson végre attól függően, hogy egy feltétel teljesül-e vagy sem. Olyan, mint egy útkereszteződés a programban: a feltételtől függően más-más irányba haladhatunk tovább.</p>
+
+        <div class="learning-objectives">
+            <div class="objective">
+                <i class="fas fa-check-circle" style="color: var(--python-if);"></i>
+                <span>IF - egyszerű feltételes elágazás</span>
+            </div>
+            <div class="objective">
+                <i class="fas fa-check-circle" style="color: var(--python-elif);"></i>
+                <span>ELIF - több eset kezelése</span>
+            </div>
+            <div class="objective">
+                <i class="fas fa-check-circle" style="color: var(--python-else);"></i>
+                <span>ELSE - alapértelmezett eset</span>
+            </div>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="basic-condition">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Egyszerű feltételes utasítás példa
+kor = 18
+
+if kor >= 18:    # Ha a kor nagyobb vagy egyenlő 18-cal
+    print("Felnőtt")    # Akkor ezt hajtjuk végre
+else:            # Különben
+    print("Kiskorú")    # Ezt hajtjuk végre</code></pre>
+        </div>
+
+        <div id="age-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Add meg az életkort:</label>
+                <div class="input-group">
+                    <input type="number" id="age-input" class="input" placeholder="Pl.: 18" min="0" max="150">
+                    <button class="btn" onclick="checkAge()">
+                        <i class="fas fa-play"></i> Futtatás
+                    </button>
+                </div>
+            </div>
+            <div id="age-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Mikor használjuk?</h2>
+        <div class="use-cases">
+            <div class="use-case">
+                <i class="fas fa-check"></i>
+                <div class="use-case-content">
+                    <h4>Döntések meghozatala</h4>
+                    <p>Amikor különböző kódot kell végrehajtani a feltételektől függően.</p>
+                </div>
+            </div>
+            <div class="use-case">
+                <i class="fas fa-check"></i>
+                <div class="use-case-content">
+                    <h4>Adatok validálása</h4>
+                    <p>Bemeneti adatok ellenőrzése, hibakezelés.</p>
+                </div>
+            </div>
+            <div class="use-case">
+                <i class="fas fa-check"></i>
+                <div class="use-case-content">
+                    <h4>Elágazó programlogika</h4>
+                    <p>Különböző programútvonalak kezelése.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .learning-objectives {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .objective {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--bg-primary);
+        border-radius: 5px;
+        transition: transform 0.3s ease;
+    }
+
+    .objective:hover {
+        transform: translateX(10px);
+    }
+
+    .objective i {
+        font-size: 1.5rem;
+    }
+
+    .use-cases {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .use-case {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--bg-primary);
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .use-case:hover {
+        transform: translateY(-5px);
+    }
+
+    .use-case i {
+        color: var(--accent-primary);
+        font-size: 1.25rem;
+        margin-top: 0.25rem;
+    }
+
+    .use-case-content h4 {
+        margin-bottom: 0.5rem;
+        color: var(--accent-primary);
+    }
+
+    .input-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Gombok alapstílusa */
+.btn {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Input mezők alapstílusa */
+.input {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 5px;
+    width: 100%;
+    margin: 0.5rem 0;
+    transition: border-color 0.3s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.input::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Kód blokkok konténere */
+.code-container {
+    position: relative;
+    margin: 1rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Másolás gomb */
+.copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    z-index: 10;
+}
+
+.copy-btn:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* Form elemek csoportosítása */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+    @media (max-width: 768px) {
+        .input-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    function checkAge() {
+        const ageInput = document.getElementById('age-input');
+        const resultDiv = document.getElementById('age-result');
+        const age = parseInt(ageInput.value);
+
+        if (isNaN(age) || age < 0 || age > 150) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes életkort (0-150)!';
+            resultDiv.style.borderColor = 'var(--error)';
+        } else {
+            let result = '';
+            if (age >= 18) {
+                result = 'Felnőtt';
+            } else {
+                result = 'Kiskorú';
+            }
+            resultDiv.textContent = `Eredmény: ${result}`;
+            resultDiv.style.borderColor = 'var(--success)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth; // Reflow trigger
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.getElementById('age-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkAge();
+    });
+</script>
+
+<!-- IF szekció -->
+<section id="if" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-code-branch"></i>
+        IF utasítás
+    </h1>
+
+    <div class="card">
+        <h2>Az IF utasítás működése</h2>
+        <p>Az IF utasítás egy alapvető vezérlési szerkezet, ami lehetővé teszi, hogy a program csak akkor hajtson végre bizonyos kódrészleteket, ha egy megadott feltétel teljesül.</p>
+
+        <div class="syntax-box">
+            <h3>Szintaxis</h3>
+            <div class="code-container">
+                <button class="copy-btn" data-code="if-syntax">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python">if feltétel:     # A feltétel után kettőspont!
+    # Behúzott kódrészlet
+    # Ez csak akkor fut le, ha a feltétel igaz
+    utasítások...</code></pre>
+            </div>
+        </div>
+
+        <div class="comparison-operators">
+            <h3>Összehasonlító operátorok</h3>
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <div class="operator">&lt;</div>
+                    <div class="description">Kisebb mint</div>
+                    <div class="example">if x < 5:</div>
+                </div>
+                <div class="operator-card">
+                    <div class="operator">&lt;=</div>
+                    <div class="description">Kisebb vagy egyenlő</div>
+                    <div class="example">if x <= 10:</div>
+                </div>
+                <div class="operator-card">
+                    <div class="operator">&gt;</div>
+                    <div class="description">Nagyobb mint</div>
+                    <div class="example">if x > 0:</div>
+                </div>
+                <div class="operator-card">
+                    <div class="operator">&gt;=</div>
+                    <div class="description">Nagyobb vagy egyenlő</div>
+                    <div class="example">if x >= 18:</div>
+                </div>
+                <div class="operator-card">
+                    <div class="operator">==</div>
+                    <div class="description">Egyenlő</div>
+                    <div class="example">if x == 100:</div>
+                </div>
+                <div class="operator-card">
+                    <div class="operator">!=</div>
+                    <div class="description">Nem egyenlő</div>
+                    <div class="example">if x != 0:</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Gyakorlati példa: Páros vagy páratlan?</h2>
+        <p>Nézzünk egy egyszerű példát, ami eldönti egy számról, hogy páros vagy páratlan!</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="even-odd">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Páros vagy páratlan szám vizsgálata
+szam = int(input('Kérem adjon meg egy egész számot: '))
+
+if szam % 2 == 0:  # Osztás maradékát vizsgáljuk
+    print('A szám páros!')
+else:
+    print('A szám páratlan!')</code></pre>
+        </div>
+
+        <div id="even-odd-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Adj meg egy egész számot:</label>
+                <div class="input-group">
+                    <input type="number" id="number-input" class="input" placeholder="Pl.: 42">
+                    <button class="btn" onclick="checkEvenOdd()">
+                        <i class="fas fa-play"></i> Futtatás
+                    </button>
+                </div>
+            </div>
+            <div id="number-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Abszolút érték példa</h2>
+        <p>Az IF utasítás használatával könnyen meghatározhatjuk egy szám abszolút értékét.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="absolute">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Abszolút érték meghatározása
+szam = float(input('Szám= '))
+
+if szam >= 0:
+    print(f'A szám abszolút értéke: {szam}')
+else:
+    print(f'A szám abszolút értéke: {-szam}')</code></pre>
+        </div>
+
+        <div id="absolute-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Adj meg egy számot:</label>
+                <div class="input-group">
+                    <input type="number" id="abs-input" class="input" placeholder="Pl.: -3.14" step="any">
+                    <button class="btn" onclick="calculateAbsolute()">
+                        <i class="fas fa-play"></i> Számítás
+                    </button>
+                </div>
+            </div>
+            <div id="abs-result" class="result"></div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .syntax-box {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .syntax-box h3 {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    .operators-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .operator-card {
+        background: var(--bg-primary);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .operator-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .operator {
+        font-size: 1.5rem;
+        color: var(--python-if);
+        font-family: 'Fira Code', monospace;
+        margin-bottom: 0.5rem;
+    }
+
+    .description {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .example {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        background: rgba(52, 152, 219, 0.1);
+        padding: 0.25rem;
+        border-radius: 4px;
+    }
+</style>
+
+<script>
+    function checkEvenOdd() {
+        const numberInput = document.getElementById('number-input');
+        const resultDiv = document.getElementById('number-result');
+        const number = parseInt(numberInput.value);
+
+        if (isNaN(number)) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes egész számot!';
+            resultDiv.style.borderColor = 'var(--error)';
+        } else {
+            if (number % 2 === 0) {
+                resultDiv.textContent = 'A szám páros!';
+            } else {
+                resultDiv.textContent = 'A szám páratlan!';
+            }
+            resultDiv.style.borderColor = 'var(--success)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    function calculateAbsolute() {
+        const absInput = document.getElementById('abs-input');
+        const resultDiv = document.getElementById('abs-result');
+        const number = parseFloat(absInput.value);
+
+        if (isNaN(number)) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes számot!';
+            resultDiv.style.borderColor = 'var(--error)';
+        } else {
+            const absValue = number >= 0 ? number : -number;
+            resultDiv.textContent = `A szám abszolút értéke: ${absValue}`;
+            resultDiv.style.borderColor = 'var(--success)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.getElementById('number-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkEvenOdd();
+    });
+
+    document.getElementById('abs-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') calculateAbsolute();
+    });
+</script>
+
+<!-- ELSE szekció -->
+<section id="else" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-reply-all"></i>
+        ELSE ág
+    </h1>
+
+    <div class="card">
+        <h2>Az ELSE szerepe</h2>
+        <p>Az ELSE ág akkor fut le, ha sem az IF, sem az esetleges ELIF feltételek nem teljesültek. Ez az alapértelmezett vagy "minden más esetben" ág.</p>
+
+        <div class="syntax-box">
+            <h3>Szintaxis</h3>
+            <div class="code-container">
+                <button class="copy-btn" data-code="else-syntax">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python">if feltétel:
+    # Ez fut, ha a feltétel igaz
+else:
+    # Ez fut, ha a feltétel hamis
+
+# Több feltétel esetén:
+if első_feltétel:
+    # Ez fut, ha az első feltétel igaz
+elif második_feltétel:
+    # Ez fut, ha a második feltétel igaz
+else:
+    # Ez fut, ha egyik feltétel sem igaz</code></pre>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <p>Az ELSE ágat nem kötelező használni. Ha nincs szükség alapértelmezett esetre, elhagyható. Az ELSE mindig az utolsó ág, nem követheti több feltétel!</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Páros-páratlan vizsgálat ELSE-szel</h2>
+        <p>Egy szám vagy páros, vagy páratlan - tökéletes példa az ELSE használatára!</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="even-odd-else">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">print('Páros-páratlan meghatározása\n')
+# Adatbekérés billentyűzetről
+bekert_szam = int(input('Kérem adjon meg egy egész számot: '))
+
+# Kétágú elágazás
+if bekert_szam % 2 == 0:     # Ha osztható 2-vel
+    print('A szám páros!')   # akkor páros
+else:                        # különben
+    print('A szám páratlan!')  # páratlan</code></pre>
+        </div>
+
+        <div class="flowchart">
+            <div class="flowchart-title">Működési folyamat:</div>
+            <div class="flowchart-container">
+                <div class="flowchart-step decision">
+                    <div class="step-content">
+                        Osztható 2-vel?
+                        <div class="decision-paths">
+                            <div class="path">Igen</div>
+                            <div class="path">Nem</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flowchart-branches">
+                    <div class="branch">
+                        <div class="flowchart-step action">Páros</div>
+                    </div>
+                    <div class="branch">
+                        <div class="flowchart-step action">Páratlan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>ELSE használata hibaellenőrzésben</h2>
+        <p>Az ELSE gyakran használt hibaellenőrzésre vagy alapértelmezett értékek beállítására.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="error-handling">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Felhasználói input ellenőrzése
+felhasznalonev = input("Add meg a felhasználóneved: ")
+
+if len(felhasznalonev) >= 3:
+    print(f"Üdvözöllek, {felhasznalonev}!")
+else:
+    print("Hiba: A felhasználónév túl rövid!")</code></pre>
+        </div>
+
+        <div id="username-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Add meg a felhasználóneved:</label>
+                <div class="input-group">
+                    <input type="text" id="username-input" class="input"
+                           placeholder="Pl.: Pista">
+                    <button class="btn" onclick="checkUsername()">
+                        <i class="fas fa-user-check"></i> Ellenőrzés
+                    </button>
+                </div>
+            </div>
+            <div id="username-result" class="result"></div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .flowchart {
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--bg-primary);
+        border-radius: 10px;
+    }
+
+    .flowchart-title {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .flowchart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .flowchart-step {
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        min-width: 200px;
+    }
+
+    .decision {
+        border: 2px solid var(--python-else);
+        position: relative;
+    }
+
+    .decision-paths {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .flowchart-branches {
+        display: flex;
+        gap: 3rem;
+        position: relative;
+    }
+
+    .flowchart-branches::before {
+        content: '';
+        position: absolute;
+        top: -1rem;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--python-else);
+    }
+
+    .branch {
+        position: relative;
+    }
+
+    .branch::before {
+        content: '';
+        position: absolute;
+        top: -1rem;
+        left: 50%;
+        width: 2px;
+        height: 1rem;
+        background: var(--python-else);
+    }
+
+    .action {
+        background: var(--highlight);
+        border: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 600px) {
+        .flowchart-branches {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .flowchart-branches::before {
+            display: none;
+        }
+
+        .branch::before {
+            height: 2rem;
+        }
+    }
+</style>
+
+<script>
+    function checkUsername() {
+        const input = document.getElementById('username-input');
+        const resultDiv = document.getElementById('username-result');
+        const username = input.value.trim();
+
+        if (username.length >= 3) {
+            resultDiv.textContent = `Üdvözöllek, ${username}!`;
+            resultDiv.style.borderColor = 'var(--success)';
+        } else {
+            resultDiv.textContent = 'Hiba: A felhasználónév túl rövid! (minimum 3 karakter)';
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.getElementById('username-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkUsername();
+    });
+</script>
+
+<!-- Összetett feltételek szekció -->
+<section id="osszetett" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-project-diagram"></i>
+        Összetett feltételek
+    </h1>
+
+    <div class="card">
+        <h2>Logikai operátorok</h2>
+        <p>A logikai operátorokkal több feltételt kapcsolhatunk össze egy összetett feltétellé. A Python három alapvető logikai operátort biztosít:</p>
+
+        <div class="logic-operators">
+            <div class="logic-card">
+                <div class="logic-title">
+                    <div class="operator">and</div>
+                    <span class="operator-name">ÉS</span>
+                </div>
+                <div class="logic-description">
+                    Akkor igaz, ha mindkét feltétel igaz
+                </div>
+                <div class="code-container">
+                    <pre><code class="language-python">if kor >= 18 and jogsi_van:
+    print("Vezethet autót")</code></pre>
+                </div>
+            </div>
+
+            <div class="logic-card">
+                <div class="logic-title">
+                    <div class="operator">or</div>
+                    <span class="operator-name">VAGY</span>
+                </div>
+                <div class="logic-description">
+                    Akkor igaz, ha legalább az egyik feltétel igaz
+                </div>
+                <div class="code-container">
+                    <pre><code class="language-python">if fizetes_online or fizetes_kp:
+    print("Sikeres fizetés")</code></pre>
+                </div>
+            </div>
+
+            <div class="logic-card">
+                <div class="logic-title">
+                    <div class="operator">not</div>
+                    <span class="operator-name">TAGADÁS</span>
+                </div>
+                <div class="logic-description">
+                    Megfordítja a feltétel értékét
+                </div>
+                <div class="code-container">
+                    <pre><code class="language-python">if not problema_van:
+    print("Minden rendben!")</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Háromszög szerkeszthetősége</h2>
+        <p>Nézzünk egy példát összetett feltételre! Egy háromszög akkor szerkeszthető, ha bármely két oldalának összege nagyobb a harmadik oldalnál.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="triangle">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">import math  # matematikai függvények használatához
+
+a_oldal = int(input('a= '))
+b_oldal = int(input('b= '))
+c_oldal = int(input('c= '))
+
+# Logikai operátorok használata:
+# and - minden feltételnek teljesülnie kell
+if (a_oldal + b_oldal > c_oldal) and \
+   (a_oldal + c_oldal > b_oldal) and \
+   (b_oldal + c_oldal > a_oldal):
+    kerulet = a_oldal + b_oldal + c_oldal
+    print(f'Kerület: {kerulet}')
+    s = kerulet / 2
+    terulet = math.sqrt(s * (s - a_oldal) * \
+              (s - b_oldal) * (s - c_oldal))
+    print(f'Terület: {terulet:.2f}')
+else:
+    print('NEM szerkeszthető!')</code></pre>
+        </div>
+
+        <div id="triangle-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <div class="triangle-inputs">
+                    <div class="input-group">
+                        <label>a oldal:</label>
+                        <input type="number" id="side-a" class="input" placeholder="Pl.: 3" min="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>b oldal:</label>
+                        <input type="number" id="side-b" class="input" placeholder="Pl.: 4" min="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>c oldal:</label>
+                        <input type="number" id="side-c" class="input" placeholder="Pl.: 5" min="1" step="1">
+                    </div>
+                </div>
+                <button class="btn" onclick="checkTriangle()">
+                    <i class="fas fa-calculator"></i> Számítás
+                </button>
+            </div>
+            <div id="triangle-result" class="result"></div>
+        </div>
+
+        <div class="triangle-visualization">
+            <div class="triangle-info">
+                <div class="info-title">Szerkeszthetőségi feltétel:</div>
+                <div class="conditions">
+                    <div class="condition">a + b > c</div>
+                    <div class="condition">a + c > b</div>
+                    <div class="condition">b + c > a</div>
+                </div>
+            </div>
+            <div class="triangle-animation" id="triangle-animation">
+                <!-- Triangle will be drawn here -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .logic-operators {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .logic-card {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .logic-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .logic-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .operator {
+        font-family: 'Fira Code', monospace;
+        color: var(--python-logic);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .operator-name {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .logic-description {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .triangle-inputs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .triangle-inputs .input-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .triangle-visualization {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--bg-primary);
+        border-radius: 10px;
+    }
+
+    .triangle-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-title {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    .conditions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .condition {
+        background: var(--highlight);
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .triangle-inputs {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    function checkTriangle() {
+        const a = parseFloat(document.getElementById('side-a').value);
+        const b = parseFloat(document.getElementById('side-b').value);
+        const c = parseFloat(document.getElementById('side-c').value);
+        const resultDiv = document.getElementById('triangle-result');
+
+        // Bemenet ellenőrzése
+        if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg érvényes pozitív számokat!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        // Szerkeszthetőség ellenőrzése
+        if ((a + b > c) && (a + c > b) && (b + c > a)) {
+            const kerulet = a + b + c;
+            const s = kerulet / 2;
+            const terulet = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+
+            resultDiv.innerHTML = `
+                <div>A háromszög szerkeszthető!</div>
+                <div>Kerület: ${kerulet}</div>
+                <div>Terület: ${terulet.toFixed(2)}</div>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+        } else {
+            resultDiv.textContent = 'A háromszög NEM szerkeszthető!';
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.querySelectorAll('#side-a, #side-b, #side-c').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const nextId = {
+                    'side-a': 'side-b',
+                    'side-b': 'side-c',
+                    'side-c': null
+                }[input.id];
+
+                if (nextId) {
+                    document.getElementById(nextId).focus();
+                } else {
+                    checkTriangle();
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Gyakorló feladatok szekció -->
+<section id="gyakorlo" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-tasks"></i>
+        Gyakorló feladatok
+    </h1>
+
+    <div class="card">
+        <h2>Feladatok megoldása</h2>
+        <p>Az alábbi feladatok segítenek a feltételes utasítások gyakorlásában. Minden feladatnál megtalálod a leírást, a példakódot, és ki is próbálhatod őket.</p>
+
+        <!-- 1. Feladat -->
+        <div class="exercise">
+            <div class="exercise-header" onclick="toggleExercise(1)">
+                <h3>1. Feladat: Egyszerű számbekérés és összehasonlítás</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="exercise-content" id="exercise-1">
+                <div class="task-description">
+                    <p>Kérj be a felhasználótól két számot, majd hasonlítsd össze őket! Írd ki, hogy az első szám kisebb, egyenlő vagy nagyobb, mint a második szám!</p>
+                </div>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="exercise-1">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Számok bekérése
+elso_szam = float(input("Add meg az első számot: "))
+masodik_szam = float(input("Add meg a második számot: "))
+
+# Összehasonlítás
+if elso_szam < masodik_szam:
+    print("Az első szám kisebb, mint a második")
+elif elso_szam == masodik_szam:
+    print("A két szám egyenlő")
+else:
+    print("Az első szám nagyobb, mint a második")</code></pre>
+                </div>
+
+                <div class="practice-area">
+                    <h4>Próbáld ki!</h4>
+                    <div class="form-group">
+                        <div class="input-pair">
+                            <div class="input-group">
+                                <label>Első szám:</label>
+                                <input type="number" id="ex1-first" class="input" placeholder="Pl.: 5" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label>Második szám:</label>
+                                <input type="number" id="ex1-second" class="input" placeholder="Pl.: 3" step="any">
+                            </div>
+                        </div>
+                        <button class="btn" onclick="compareNumbers()">
+                            <i class="fas fa-not-equal"></i> Összehasonlítás
+                        </button>
+                    </div>
+                    <div id="ex1-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Feladat -->
+        <div class="exercise">
+            <div class="exercise-header" onclick="toggleExercise(2)">
+                <h3>2. Feladat: Kisebb vagy nagyobb?</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="exercise-content" id="exercise-2">
+                <div class="task-description">
+                    <p>Kérj be a felhasználótól három számot, majd írd ki a legkisebbet és a legnagyobbat közülük!</p>
+                </div>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="exercise-2">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Három szám bekérése
+a = float(input("Add meg az első számot: "))
+b = float(input("Add meg a második számot: "))
+c = float(input("Add meg a harmadik számot: "))
+
+# Legnagyobb szám meghatározása
+legnagyobb = a
+if b > legnagyobb:
+    legnagyobb = b
+if c > legnagyobb:
+    legnagyobb = c
+
+# Legkisebb szám meghatározása
+legkisebb = a
+if b < legkisebb:
+    legkisebb = b
+if c < legkisebb:
+    legkisebb = c
+
+print(f"A legkisebb szám: {legkisebb}")
+print(f"A legnagyobb szám: {legnagyobb}")</code></pre>
+                </div>
+
+                <div class="practice-area">
+                    <h4>Próbáld ki!</h4>
+                    <div class="form-group">
+                        <div class="triple-input">
+                            <div class="input-group">
+                                <label>Első szám:</label>
+                                <input type="number" id="ex2-first" class="input" placeholder="Első szám" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label>Második szám:</label>
+                                <input type="number" id="ex2-second" class="input" placeholder="Második szám" step="any">
+                            </div>
+                            <div class="input-group">
+                                <label>Harmadik szám:</label>
+                                <input type="number" id="ex2-third" class="input" placeholder="Harmadik szám" step="any">
+                            </div>
+                        </div>
+                        <button class="btn" onclick="findMinMax()">
+                            <i class="fas fa-sort"></i> Keresés
+                        </button>
+                    </div>
+                    <div id="ex2-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Feladat -->
+        <div class="exercise">
+            <div class="exercise-header" onclick="toggleExercise(3)">
+                <h3>3. Feladat: Belépési feltételek ellenőrzése</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="exercise-content" id="exercise-3">
+                <div class="task-description">
+                    <p>Kérd be a felhasználó életkorát, majd állapítsd meg, hogy beléphet-e egy szórakozóhelyre, ahol a belépési korhatár 18 év!</p>
+                </div>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="exercise-3">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Életkor bekérése
+eletkor = int(input("Add meg az életkorodat: "))
+
+# Korhatár ellenőrzése
+if eletkor >= 18:
+    print("Belépés engedélyezve!")
+else:
+    print("Sajnálom, nem léphetsz be!")</code></pre>
+                </div>
+
+                <div class="practice-area">
+                    <h4>Próbáld ki!</h4>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label>Életkor:</label>
+                            <input type="number" id="ex3-age" class="input" placeholder="Pl.: 20" min="0" max="150">
+                        </div>
+                        <button class="btn" onclick="checkAge()">
+                            <i class="fas fa-door-open"></i> Ellenőrzés
+                        </button>
+                    </div>
+                    <div id="ex3-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<style>
+    .exercise {
+        margin: 2rem 0;
+        background: var(--bg-primary);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .exercise-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: var(--bg-secondary);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .exercise-header:hover {
+        background: var(--highlight);
+    }
+
+    .exercise-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--accent-primary);
+    }
+
+    .exercise-header i {
+        transition: transform 0.3s ease;
+    }
+
+    .exercise-header.active i {
+        transform: rotate(180deg);
+    }
+
+    .exercise-content {
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .exercise-content.active {
+        padding: 1.5rem;
+        max-height: 2000px;
+    }
+
+    .task-description {
+        background: var(--highlight);
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
+    }
+
+    .input-pair, .triple-input {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .input-pair {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .triple-input {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .practice-area {
+        margin-top: 2rem;
+    }
+
+    .practice-area h4 {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .input-pair, .triple-input {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    function toggleExercise(num) {
+        const content = document.getElementById(`exercise-${num}`);
+        const header = content.previousElementSibling;
+
+        content.classList.toggle('active');
+        header.classList.toggle('active');
+    }
+
+    function compareNumbers() {
+        const first = parseFloat(document.getElementById('ex1-first').value);
+        const second = parseFloat(document.getElementById('ex1-second').value);
+        const resultDiv = document.getElementById('ex1-result');
+
+        if (isNaN(first) || isNaN(second)) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg érvényes számokat!';
+            resultDiv.style.borderColor = 'var(--error)';
+        } else {
+            let result;
+            if (first < second) {
+                result = 'Az első szám kisebb, mint a második';
+            } else if (first === second) {
+                result = 'A két szám egyenlő';
+            } else {
+                result = 'Az első szám nagyobb, mint a második';
+            }
+            resultDiv.textContent = result;
+            resultDiv.style.borderColor = 'var(--success)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    function findMinMax() {
+        const a = parseFloat(document.getElementById('ex2-first').value);
+        const b = parseFloat(document.getElementById('ex2-second').value);
+        const c = parseFloat(document.getElementById('ex2-third').value);
+        const resultDiv = document.getElementById('ex2-result');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg minden számot!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        const max = Math.max(a, b, c);
+        const min = Math.min(a, b, c);
+
+        resultDiv.innerHTML = `
+            <div>A legkisebb szám: ${min}</div>
+            <div>A legnagyobb szám: ${max}</div>
+        `;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    function checkAge() {
+        const age = parseInt(document.getElementById('ex3-age').value);
+        const resultDiv = document.getElementById('ex3-result');
+
+        if (isNaN(age) || age < 0 || age > 150) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes életkort!';
+            resultDiv.style.borderColor = 'var(--error)';
+        } else {
+            if (age >= 18) {
+                resultDiv.textContent = 'Belépés engedélyezve! 🎉';
+                resultDiv.style.borderColor = 'var(--success)';
+            } else {
+                resultDiv.textContent = 'Sajnálom, nem léphetsz be! 🚫';
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.querySelectorAll('#ex1-first, #ex1-second').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (input.id === 'ex1-first') {
+                    document.getElementById('ex1-second').focus();
+                } else {
+                    compareNumbers();
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('#ex2-first, #ex2-second, #ex2-third').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const nextInputs = {
+                    'ex2-first': 'ex2-second',
+                    'ex2-second': 'ex2-third',
+                    'ex2-third': null
+                };
+                const nextId = nextInputs[input.id];
+                if (nextId) {
+                    document.getElementById(nextId).focus();
+                } else {
+                    findMinMax();
+                }
+            }
+        });
+    });
+
+    document.getElementById('ex3-age').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkAge();
+    });
+</script>
+
+<!-- 4. Feladat -->
+<div class="exercise">
+    <div class="exercise-header" onclick="toggleExercise(4)">
+        <h3>4. Feladat: Oszthatóság vizsgálata</h3>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="exercise-content" id="exercise-4">
+        <div class="task-description">
+            <p>Kérj be egy egész számot a felhasználótól, majd vizsgáld meg, hogy osztható-e 3-mal vagy 5-tel! Írd ki a megfelelő üzenetet!</p>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="exercise-4">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Szám bekérése
+szam = int(input("Adj meg egy egész számot: "))
+
+# Oszthatóság vizsgálata
+if szam % 3 == 0 and szam % 5 == 0:
+    print("A szám osztható 3-mal és 5-tel is!")
+elif szam % 3 == 0:
+    print("A szám osztható 3-mal!")
+elif szam % 5 == 0:
+    print("A szám osztható 5-tel!")
+else:
+    print("A szám nem osztható sem 3-mal, sem 5-tel!")</code></pre>
+        </div>
+
+        <div class="practice-area">
+            <h4>Próbáld ki!</h4>
+            <div class="form-group">
+                <div class="input-group">
+                    <label>Add meg a számot:</label>
+                    <input type="number" id="ex4-number" class="input" placeholder="Pl.: 15">
+                </div>
+                <button class="btn" onclick="checkDivisibility()">
+                    <i class="fas fa-calculator"></i> Ellenőrzés
+                </button>
+            </div>
+            <div id="ex4-result" class="result"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Feladat -->
+<div class="exercise">
+    <div class="exercise-header" onclick="toggleExercise(5)">
+        <h3>5. Feladat: Évszak meghatározása</h3>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="exercise-content" id="exercise-5">
+        <div class="task-description">
+            <p>Kérj be egy hónapot számként (1-től 12-ig), majd írd ki, hogy melyik évszakhoz tartozik! (Tavasz: 3-5, Nyár: 6-8, Ősz: 9-11, Tél: 12-2)</p>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="exercise-5">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Hónap bekérése
+honap = int(input("Add meg a hónap számát (1-12): "))
+
+# Évszak meghatározása
+if honap in (3, 4, 5):
+    print("Tavasz")
+elif honap in (6, 7, 8):
+    print("Nyár")
+elif honap in (9, 10, 11):
+    print("Ősz")
+elif honap in (12, 1, 2):
+    print("Tél")
+else:
+    print("Érvénytelen hónapszám!")</code></pre>
+        </div>
+
+        <div class="practice-area">
+            <h4>Próbáld ki!</h4>
+            <div class="form-group">
+                <div class="season-selector">
+                    <label>Válaszd ki a hónapot:</label>
+                    <select id="ex5-month" class="input">
+                        <option value="">Válassz...</option>
+                        <option value="1">Január</option>
+                        <option value="2">Február</option>
+                        <option value="3">Március</option>
+                        <option value="4">Április</option>
+                        <option value="5">Május</option>
+                        <option value="6">Június</option>
+                        <option value="7">Július</option>
+                        <option value="8">Augusztus</option>
+                        <option value="9">Szeptember</option>
+                        <option value="10">Október</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="checkSeason()">
+                    <i class="fas fa-sun"></i> Évszak meghatározása
+                </button>
+            </div>
+            <div id="ex5-result" class="result"></div>
+            <div class="season-visualization" id="season-vis"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Feladat -->
+<div class="exercise">
+    <div class="exercise-header" onclick="toggleExercise(6)">
+        <h3>6. Feladat: Egyszerű számológép</h3>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="exercise-content" id="exercise-6">
+        <div class="task-description">
+            <p>Kérj be két számot és egy műveletet (+, -, *, /), majd végezd el a műveletet, és írd ki az eredményt!</p>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="exercise-6">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Adatok bekérése
+szam1 = float(input("Első szám: "))
+szam2 = float(input("Második szám: "))
+művelet = input("Művelet (+, -, *, /): ")
+
+# Művelet végrehajtása
+if művelet == '+':
+    eredmeny = szam1 + szam2
+elif művelet == '-':
+    eredmeny = szam1 - szam2
+elif művelet == '*':
+    eredmeny = szam1 * szam2
+elif művelet == '/':
+    if szam2 != 0:
+        eredmeny = szam1 / szam2
+    else:
+        print("Nullával nem lehet osztani!")
+else:
+    print("Érvénytelen művelet!")</code></pre>
+        </div>
+
+        <div class="practice-area">
+            <h4>Próbáld ki!</h4>
+            <div class="form-group">
+                <div class="calculator-inputs">
+                    <input type="number" id="ex6-num1" class="input" placeholder="Első szám" step="any">
+                    <select id="ex6-operation" class="input">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                        <option value="*">×</option>
+                        <option value="/">÷</option>
+                    </select>
+                    <input type="number" id="ex6-num2" class="input" placeholder="Második szám" step="any">
+                </div>
+                <button class="btn" onclick="calculate()">
+                    <i class="fas fa-equals"></i> Számítás
+                </button>
+            </div>
+            <div id="ex6-result" class="result"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Évszak szekcióhoz tartozó stílusok */
+    .season-selector {
+        margin-bottom: 1rem;
+    }
+
+    .season-visualization {
+        margin-top: 1rem;
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .season-icon {
+        font-size: 2rem;
+        margin: 0 0.5rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+    }
+
+    .season-icon.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Számológép stílusok */
+    .calculator-inputs {
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+    }
+
+    #ex6-operation {
+        text-align: center;
+        font-size: 1.2rem;
+        padding: 0.5rem;
+    }
+
+    /* Reszponzív igazítások */
+    @media (max-width: 768px) {
+        .calculator-inputs {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    // 4. Feladat - Oszthatóság vizsgálata
+    function checkDivisibility() {
+        const number = parseInt(document.getElementById('ex4-number').value);
+        const resultDiv = document.getElementById('ex4-result');
+
+        if (isNaN(number)) {
+            resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes egész számot!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        let message = '';
+        if (number % 3 === 0 && number % 5 === 0) {
+            message = 'A szám osztható 3-mal és 5-tel is!';
+        } else if (number % 3 === 0) {
+            message = 'A szám osztható 3-mal!';
+        } else if (number % 5 === 0) {
+            message = 'A szám osztható 5-tel!';
+        } else {
+            message = 'A szám nem osztható sem 3-mal, sem 5-tel!';
+        }
+
+        resultDiv.textContent = message;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // 5. Feladat - Évszak meghatározása
+    function checkSeason() {
+        const month = parseInt(document.getElementById('ex5-month').value);
+        const resultDiv = document.getElementById('ex5-result');
+        const visDiv = document.getElementById('season-vis');
+
+        if (!month) {
+            resultDiv.textContent = 'Kérlek válassz egy hónapot!';
+            resultDiv.style.borderColor = 'var(--error)';
+            visDiv.innerHTML = '';
+            return;
+        }
+
+        let season = '';
+        let icons = '';
+        let color = '';
+
+        if ([3, 4, 5].includes(month)) {
+            season = 'Tavasz';
+            icons = '🌸 🌱 🌷';
+            color = '#ffb7c5'; // világos rózsaszín
+        } else if ([6, 7, 8].includes(month)) {
+            season = 'Nyár';
+            icons = '☀️ 🌊 🏖️';
+            color = '#ffd700'; // arany
+        } else if ([9, 10, 11].includes(month)) {
+            season = 'Ősz';
+            icons = '🍁 🍂 🌰';
+            color = '#d2691e'; // barna
+        } else {
+            season = 'Tél';
+            icons = '❄️ ⛄ 🎿';
+            color = '#add8e6'; // világoskék
+        }
+
+        resultDiv.textContent = `A ${month}. hónap évszaka: ${season}`;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        visDiv.style.background = `linear-gradient(to right, transparent, ${color}22, transparent)`;
+        visDiv.innerHTML = icons.split(' ').map((icon, i) =>
+            `<span class="season-icon" style="animation-delay: ${i * 100}ms">${icon}</span>`
+        ).join('');
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+
+        // Ikonok animálása
+        visDiv.querySelectorAll('.season-icon').forEach(icon => {
+            icon.classList.add('show');
+        });
+    }
+
+    // 6. Feladat - Számológép
+    function calculate() {
+        const num1 = parseFloat(document.getElementById('ex6-num1').value);
+        const num2 = parseFloat(document.getElementById('ex6-num2').value);
+        const operation = document.getElementById('ex6-operation').value;
+        const resultDiv = document.getElementById('ex6-result');
+
+        if (isNaN(num1) || isNaN(num2)) {
+            resultDiv.textContent = 'Hiba: Kérlek add meg mindkét számot!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        let result;
+        let error = false;
+
+        switch (operation) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*':
+                result = num1 * num2;
+                break;
+            case '/':
+                if (num2 === 0) {
+                    error = true;
+                    result = 'Nullával nem lehet osztani!';
+                } else {
+                    result = num1 / num2;
+                }
+                break;
+        }
+
+        if (error) {
+            resultDiv.textContent = result;
+            resultDiv.style.borderColor = 'var(--error)';
+        } else {
+            resultDiv.textContent = `${num1} ${operation} ${num2} = ${result}`;
+            resultDiv.style.borderColor = 'var(--success)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése a feladatokhoz
+    document.getElementById('ex4-number').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkDivisibility();
+    });
+
+    document.getElementById('ex5-month').addEventListener('change', checkSeason);
+
+    document.querySelectorAll('#ex6-num1, #ex6-num2').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (input.id === 'ex6-num1') {
+                    document.getElementById('ex6-num2').focus();
+                } else {
+                    calculate();
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Kombinált példák szekció -->
+<section id="kombinalt" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-puzzle-piece"></i>
+        Kombinált példák
+    </h1>
+
+    <div class="card">
+        <h2>Komplex bankautomata szimuláció</h2>
+        <p>Ez a példa egy egyszerű bankautomata működését szimulálja, ahol ellenőrizzük a PIN kódot, majd különböző műveleteket végezhetünk az egyenleggel.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="atm">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Bankautomata szimuláció
+PIN = "1234"  # Helyes PIN kód
+egyenleg = 100000  # Kezdő egyenleg
+
+# PIN kód ellenőrzése
+bevitt_pin = input("Kérem adja meg a PIN kódot: ")
+
+if bevitt_pin == PIN:
+    print("\nSikeres bejelentkezés!")
+    print(f"Az Ön egyenlege: {egyenleg} Ft\n")
+
+    print("Válasszon műveletet:")
+    print("1 - Készpénz felvétel")
+    print("2 - Egyenleg lekérdezés")
+    print("3 - Kilépés")
+
+    valasztas = input("Választás: ")
+
+    if valasztas == "1":
+        osszeg = int(input("Kérem adja meg az összeget: "))
+        if osszeg <= egyenleg:
+            egyenleg -= osszeg
+            print(f"Sikeres felvétel! Új egyenleg: {egyenleg} Ft")
+        else:
+            print("Nincs elegendő fedezet!")
+    elif valasztas == "2":
+        print(f"Az Ön egyenlege: {egyenleg} Ft")
+    elif valasztas == "3":
+        print("Viszontlátásra!")
+    else:
+        print("Érvénytelen választás!")
+else:
+    print("Hibás PIN kód!")</code></pre>
+        </div>
+
+        <div class="atm-demo">
+            <div class="atm-screen">
+                <div class="screen-content" id="atm-screen-content">
+                    Kérem adja meg a PIN kódot
+                </div>
+            </div>
+            <div class="atm-keypad">
+                <div class="keypad-section pin-section" id="pin-section">
+                    <div class="input-display">
+                        <input type="password" id="pin-input" class="input" maxlength="4" readonly>
+                    </div>
+                    <div class="numpad">
+                        <button class="numpad-btn" onclick="addPin('1')">1</button>
+                        <button class="numpad-btn" onclick="addPin('2')">2</button>
+                        <button class="numpad-btn" onclick="addPin('3')">3</button>
+                        <button class="numpad-btn" onclick="addPin('4')">4</button>
+                        <button class="numpad-btn" onclick="addPin('5')">5</button>
+                        <button class="numpad-btn" onclick="addPin('6')">6</button>
+                        <button class="numpad-btn" onclick="addPin('7')">7</button>
+                        <button class="numpad-btn" onclick="addPin('8')">8</button>
+                        <button class="numpad-btn" onclick="addPin('9')">9</button>
+                        <button class="numpad-btn delete" onclick="deletePin()">⌫</button>
+                        <button class="numpad-btn" onclick="addPin('0')">0</button>
+                        <button class="numpad-btn enter" onclick="checkPin()">⏎</button>
+                    </div>
+                </div>
+                <div class="keypad-section menu-section" id="menu-section" style="display: none;">
+                    <button class="menu-btn" onclick="selectOperation(1)">
+                        <i class="fas fa-money-bill-wave"></i> Készpénz felvétel
+                    </button>
+                    <button class="menu-btn" onclick="selectOperation(2)">
+                        <i class="fas fa-balance-scale"></i> Egyenleg lekérdezés
+                    </button>
+                    <button class="menu-btn" onclick="selectOperation(3)">
+                        <i class="fas fa-sign-out-alt"></i> Kilépés
+                    </button>
+                </div>
+                <div class="keypad-section withdrawal-section" id="withdrawal-section" style="display: none;">
+                    <div class="quick-amounts">
+                        <button class="amount-btn" onclick="withdraw(10000)">10,000 Ft</button>
+                        <button class="amount-btn" onclick="withdraw(20000)">20,000 Ft</button>
+                        <button class="amount-btn" onclick="withdraw(50000)">50,000 Ft</button>
+                        <button class="amount-btn back" onclick="showMenu()">Vissza</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .atm-demo {
+        background: var(--bg-primary);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .atm-screen {
+        background: #001100;
+        border: 10px solid var(--bg-secondary);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .screen-content {
+        color: #00ff00;
+        font-family: 'Fira Code', monospace;
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    .atm-keypad {
+        background: var(--bg-secondary);
+        padding: 1.5rem;
+        border-radius: 10px;
+    }
+
+    .input-display {
+        margin-bottom: 1rem;
+    }
+
+    .input-display input {
+        width: 100%;
+        padding: 0.5rem;
+        text-align: center;
+        letter-spacing: 0.5rem;
+        font-size: 1.5rem;
+        font-family: 'Fira Code', monospace;
+    }
+
+    .numpad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    .numpad-btn {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 1rem;
+        font-size: 1.2rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .numpad-btn:hover {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+    }
+
+    .numpad-btn.delete {
+        background: var(--error);
+    }
+
+    .numpad-btn.enter {
+        background: var(--success);
+    }
+
+    .menu-btn {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+    }
+
+    .menu-btn:hover {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+    }
+
+    .menu-btn i {
+        margin-right: 0.5rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .quick-amounts {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .amount-btn {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .amount-btn:hover {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+    }
+
+    .amount-btn.back {
+        background: var(--error);
+        grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+        .atm-demo {
+            padding: 1rem;
+        }
+
+        .atm-screen {
+            padding: 1rem;
+            min-height: 120px;
+        }
+
+        .quick-amounts {
+            grid-template-columns: 1fr;
+        }
+
+        .amount-btn.back {
+            grid-column: span 1;
+        }
+    }
+</style>
+
+<script>
+    // ATM szimulációs változók
+    const CORRECT_PIN = "1234";
+    let balance = 100000;
+    let currentPin = "";
+
+    function updateScreen(message) {
+        const screen = document.getElementById('atm-screen-content');
+        screen.innerHTML = message;
+    }
+
+    function addPin(digit) {
+        if (currentPin.length < 4) {
+            currentPin += digit;
+            document.getElementById('pin-input').value = currentPin;
+        }
+    }
+
+    function deletePin() {
+        currentPin = currentPin.slice(0, -1);
+        document.getElementById('pin-input').value = currentPin;
+    }
+
+    function checkPin() {
+        if (currentPin === CORRECT_PIN) {
+            document.getElementById('pin-section').style.display = 'none';
+            document.getElementById('menu-section').style.display = 'block';
+            updateScreen(`Üdvözöljük!\n\nAz Ön egyenlege: ${balance.toLocaleString()} Ft\n\nKérem válasszon műveletet!`);
+        } else {
+            updateScreen('Hibás PIN kód!');
+            currentPin = "";
+            document.getElementById('pin-input').value = "";
+            setTimeout(() => {
+                updateScreen('Kérem adja meg a PIN kódot');
+            }, 2000);
+        }
+    }
+
+    function showMenu() {
+        document.getElementById('withdrawal-section').style.display = 'none';
+        document.getElementById('menu-section').style.display = 'block';
+        updateScreen(`Az Ön egyenlege: ${balance.toLocaleString()} Ft\n\nKérem válasszon műveletet!`);
+    }
+
+    function selectOperation(op) {
+        switch(op) {
+            case 1:
+                document.getElementById('menu-section').style.display = 'none';
+                document.getElementById('withdrawal-section').style.display = 'block';
+                updateScreen('Válasszon összeget:');
+                break;
+            case 2:
+                updateScreen(`Az Ön egyenlege: ${balance.toLocaleString()} Ft`);
+                break;
+            case 3:
+                updateScreen('Köszönjük, hogy szolgáltatásunkat választotta!\n\nViszontlátásra!');
+                setTimeout(() => {
+                    currentPin = "";
+                    document.getElementById('pin-input').value = "";
+                    document.getElementById('menu-section').style.display = 'none';
+                    document.getElementById('pin-section').style.display = 'block';
+                    updateScreen('Kérem adja meg a PIN kódot');
+                }, 3000);
+                break;
+        }
+    }
+
+    function withdraw(amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            updateScreen(`Sikeres készpénzfelvétel!\n\nFelvett összeg: ${amount.toLocaleString()} Ft\nÚj egyenleg: ${balance.toLocaleString()} Ft`);
+        } else {
+            updateScreen('Nincs elegendő fedezet a tranzakcióhoz!');
+        }
+
+        setTimeout(showMenu, 3000);
+    }
+</script>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h3 class="h5 mb-3">Kapcsolat</h3>
+                    <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Információk</h3>
+                    <p class="mb-2">Utolsó frissítés: 2025.01.19.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Footer stílusok */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .mb-md-0 {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+
+</body>
+</html>

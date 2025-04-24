@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Szótárak Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek - ugyanazok, mint az eredeti oldalon */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Szótár specifikus színek */
+            --dict-key: #e74c3c;    /* Kulcsok színe */
+            --dict-value: #3498db;  /* Értékek színe */
+            --dict-nested: #9b59b6; /* Beágyazott szótárak színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigáció stílusa */
+        .nav {
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Szekció címek */
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            font-size: 1.75rem;
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Reszponzív dizájn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-book"></i> Python Szótárak
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link">Bevezető</a></li>
+                <li><a href="#muveletek" class="nav-link">Műveletek</a></li>
+                <li><a href="#beagyazott" class="nav-link">Beágyazott szótárak</a></li>
+                <li><a href="#kombinalt" class="nav-link">Kombinált példák</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+
+    <!-- Bevezető szekció -->
+        <section id="bevezeto" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-book-open"></i>
+                Szótárak a Pythonban
+            </h1>
+
+            <div class="card">
+                <h2>Mi az a szótár (dictionary)?</h2>
+                <p>A szótár egy olyan adatszerkezet a Pythonban, amely kulcs-érték párokat tárol. Minden kulcshoz egy érték tartozik, és a kulcsok egyediek. A szótárak rendkívül hasznosak adatok strukturált tárolására.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="basic-dict">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">szemely = {
+    "nev": "Kiss Anna",
+    "kor": 25,
+    "varos": "Budapest"
+}
+
+# Érték elérése kulcs alapján
+print(szemely["nev"])  # Kiírja: Kiss Anna</code></pre>
+                </div>
+
+                <div class="form-group">
+                    <label for="dict-demo">Próbáld ki:</label>
+                    <div class="dict-demo-container">
+                        <div class="dict-input-group">
+                            <input type="text" id="dict-key" class="input" placeholder="Kulcs (pl. név)">
+                            <input type="text" id="dict-value" class="input" placeholder="Érték">
+                            <button class="btn" onclick="addToDictionary()">
+                                <i class="fas fa-plus"></i> Hozzáadás
+                            </button>
+                        </div>
+                        <div class="dict-visualization">
+                            <div class="dict-box">
+                                <div class="dict-title">Szótár tartalma:</div>
+                                <div id="dict-content" class="dict-pairs"></div>
+                            </div>
+                        </div>
+                        <div id="dict-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Mit fogunk tanulni?</h2>
+                <div class="learning-objectives">
+                    <div class="objective">
+                        <i class="fas fa-check-circle" style="color: var(--dict-key);"></i>
+                        <span>Szótár műveletek (létrehozás, módosítás, törlés)</span>
+                    </div>
+                    <div class="objective">
+                        <i class="fas fa-check-circle" style="color: var(--dict-value);"></i>
+                        <span>Értékek elérése és kezelése</span>
+                    </div>
+                    <div class="objective">
+                        <i class="fas fa-check-circle" style="color: var(--dict-nested);"></i>
+                        <span>Beágyazott szótárak kezelése</span>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .dict-demo-container {
+                    margin-top: 1rem;
+                }
+
+                .dict-input-group {
+                    display: flex;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .dict-visualization {
+                    margin: 1rem 0;
+                }
+
+                .dict-box {
+                    background: var(--bg-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 5px;
+                    padding: 1rem;
+                }
+
+                .dict-title {
+                    color: var(--text-secondary);
+                    margin-bottom: 0.5rem;
+                }
+
+                .dict-pairs {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .dict-pair {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.5rem;
+                    background: var(--highlight);
+                    border-radius: 3px;
+                    animation: slideIn 0.3s ease;
+                }
+
+                .dict-key-text {
+                    color: var(--dict-key);
+                    font-weight: 500;
+                }
+
+                .dict-separator {
+                    color: var(--text-secondary);
+                }
+
+                .dict-value-text {
+                    color: var(--dict-value);
+                }
+
+                .learning-objectives {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    margin-top: 1rem;
+                }
+
+                .objective {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 1rem;
+                    background: var(--bg-primary);
+                    border-radius: 5px;
+                    transition: transform 0.3s ease;
+                }
+
+                .objective:hover {
+                    transform: translateX(10px);
+                }
+
+                .objective i {
+                    font-size: 1.5rem;
+                }
+
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .dict-input-group {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+
+            <script>
+                let dictionary = {};
+
+                function addToDictionary() {
+                    const keyInput = document.getElementById('dict-key');
+                    const valueInput = document.getElementById('dict-value');
+                    const key = keyInput.value.trim();
+                    const value = valueInput.value.trim();
+                    const resultDiv = document.getElementById('dict-result');
+
+                    if (!key || !value) {
+                        resultDiv.textContent = 'Hiba: Mind a kulcsot, mind az értéket meg kell adnod!';
+                        resultDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        dictionary[key] = value;
+                        updateDictVisualization();
+                        keyInput.value = '';
+                        valueInput.value = '';
+
+                        resultDiv.textContent = `A "${key}: ${value}" pár sikeresen hozzáadva a szótárhoz!`;
+                        resultDiv.style.borderColor = 'var(--success)';
+                    }
+
+                    resultDiv.classList.remove('show');
+                    void resultDiv.offsetWidth;
+                    resultDiv.classList.add('show');
+                }
+
+                function updateDictVisualization() {
+                    const container = document.getElementById('dict-content');
+                    container.innerHTML = '';
+
+                    Object.entries(dictionary).forEach(([key, value]) => {
+                        const pairDiv = document.createElement('div');
+                        pairDiv.className = 'dict-pair';
+                        pairDiv.innerHTML = `
+                            <span class="dict-key-text">"${key}"</span>
+                            <span class="dict-separator">:</span>
+                            <span class="dict-value-text">"${value}"</span>
+                        `;
+                        container.appendChild(pairDiv);
+                    });
+                }
+
+                // Enter billentyű kezelése
+                document.getElementById('dict-key').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') document.getElementById('dict-value').focus();
+                });
+
+                document.getElementById('dict-value').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') addToDictionary();
+                });
+            </script>
+
+            <!-- Szótár műveletek szekció -->
+        <section id="muveletek" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-tools"></i>
+                Szótár Műveletek
+            </h1>
+
+            <div class="card">
+                <h2>Alapvető műveletek</h2>
+                <p>A Python szótárakon számos műveletet végezhetünk: hozzáadhatunk új elemeket, módosíthatunk és törölhetünk meglévőket, valamint különböző módon érhetjük el az értékeket.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="dict-ops">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">szotar = {}  # Üres szótár létrehozása
+
+# Elem hozzáadása
+szotar["alma"] = 150  # ár hozzáadása
+szotar["körte"] = 200
+
+# Elem módosítása
+szotar["alma"] = 160  # ár módosítása
+
+# Elem törlése
+del szotar["körte"]
+
+# Érték lekérése get() metódussal (biztonságos)
+ar = szotar.get("alma", 0)  # Ha nincs "alma", 0-át ad vissza</code></pre>
+                </div>
+
+                <div class="operations-demo">
+                    <h3>Próbáld ki a műveleteket:</h3>
+                    <div class="ops-container">
+                        <!-- Műveletek vezérlő panel -->
+                        <div class="ops-control">
+                            <div class="ops-input-group">
+                                <input type="text" id="ops-key" class="input" placeholder="Gyümölcs neve">
+                                <input type="number" id="ops-value" class="input" placeholder="Ár (Ft)">
+                            </div>
+                            <div class="ops-buttons">
+                                <button class="btn btn-add" onclick="dictAdd()">
+                                    <i class="fas fa-plus"></i> Hozzáadás
+                                </button>
+                                <button class="btn btn-modify" onclick="dictModify()">
+                                    <i class="fas fa-edit"></i> Módosítás
+                                </button>
+                                <button class="btn btn-delete" onclick="dictDelete()">
+                                    <i class="fas fa-trash"></i> Törlés
+                                </button>
+                                <button class="btn btn-get" onclick="dictGet()">
+                                    <i class="fas fa-search"></i> Lekérdezés
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Szótár vizualizáció -->
+                        <div class="dict-visualization">
+                            <div class="dict-box">
+                                <div class="dict-title">Gyümölcsök és áraik:</div>
+                                <div id="ops-dict-content" class="dict-pairs"></div>
+                            </div>
+                        </div>
+
+                        <div id="ops-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Speciális műveletek</h2>
+                <p>A Python szótárak számos hasznos beépített metódussal rendelkeznek, amelyekkel komplex műveleteket végezhetünk.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="dict-special">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">termekek = {
+    "laptop": 250000,
+    "telefon": 150000
+}
+
+# update() - Több elem hozzáadása egyszerre
+uj_termekek = {"tablet": 100000, "egér": 5000}
+termekek.update(uj_termekek)
+
+# keys() - Kulcsok lekérése
+kulcsok = list(termekek.keys())
+
+# values() - Értékek lekérése
+ertekek = list(termekek.values())
+
+# items() - Kulcs-érték párok lekérése
+for termek, ar in termekek.items():
+    print(f"{termek}: {ar} Ft")</code></pre>
+                </div>
+
+                <div class="special-ops-demo">
+                    <h3>Termékek kezelése:</h3>
+                    <div class="special-ops-container">
+                        <!-- Update művelet -->
+                        <div class="update-section">
+                            <h4>Tömeges hozzáadás/frissítés:</h4>
+                            <div id="update-pairs" class="update-pairs">
+                                <div class="update-pair">
+                                    <input type="text" class="input update-key" placeholder="Termék neve">
+                                    <input type="number" class="input update-value" placeholder="Ár">
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="addUpdateField()">
+                                <i class="fas fa-plus"></i> Új termék mező
+                            </button>
+                            <button class="btn" onclick="performUpdate()">
+                                <i class="fas fa-sync"></i> Frissítés
+                            </button>
+                        </div>
+
+                        <!-- Lekérdezések -->
+                        <div class="query-section">
+                            <h4>Lekérdezések:</h4>
+                            <div class="query-buttons">
+                                <button class="btn" onclick="showKeys()">
+                                    <i class="fas fa-key"></i> Termékek listája
+                                </button>
+                                <button class="btn" onclick="showValues()">
+                                    <i class="fas fa-tag"></i> Árak listája
+                                </button>
+                                <button class="btn" onclick="showItems()">
+                                    <i class="fas fa-list"></i> Összes adat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Eredmény megjelenítés -->
+                        <div class="special-visualization">
+                            <div class="dict-box">
+                                <div class="dict-title">Termékek adatbázis:</div>
+                                <div id="special-dict-content" class="dict-pairs"></div>
+                            </div>
+                        </div>
+
+                        <div id="special-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                /* Műveletek szekció stílusai */
+                .operations-demo,
+                .special-ops-demo {
+                    margin-top: 2rem;
+                }
+
+                .ops-container,
+                .special-ops-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                }
+
+                .ops-control {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .ops-input-group {
+                    display: flex;
+                    gap: 1rem;
+                }
+
+                .ops-buttons {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                }
+
+                .btn-add { background: var(--success); }
+                .btn-modify { background: var(--warning); }
+                .btn-delete { background: var(--error); }
+                .btn-get { background: var(--info); }
+
+                .btn-add:hover { background: #219a52; }
+                .btn-modify:hover { background: #d68910; }
+                .btn-delete:hover { background: #c0392b; }
+                .btn-get:hover { background: #2980b9; }
+
+                /* Speciális műveletek stílusai */
+                .update-section,
+                .query-section {
+                    background: var(--bg-primary);
+                    padding: 1rem;
+                    border-radius: 5px;
+                    border: 1px solid var(--border-color);
+                }
+
+                .update-pairs {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .update-pair {
+                    display: flex;
+                    gap: 1rem;
+                }
+
+                .query-buttons {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                }
+
+                .special-visualization {
+                    margin-top: 1rem;
+                }
+
+                @media (max-width: 768px) {
+                    .ops-input-group,
+                    .ops-buttons,
+                    .update-pair,
+                    .query-buttons {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+
+            <script>
+                // Szótárak inicializálása
+                let fruitsDict = {};
+                let productsDict = {};
+
+                // Alapműveletek
+                function dictAdd() {
+                    const key = document.getElementById('ops-key').value.trim();
+                    const value = document.getElementById('ops-value').value;
+                    const resultDiv = document.getElementById('ops-result');
+
+                    if (!key || !value) {
+                        showResult('ops-result', 'Hiba: Mindkét mezőt ki kell tölteni!', 'error');
+                        return;
+                    }
+
+                    fruitsDict[key] = parseInt(value);
+                    updateOpsVisualization();
+                    showResult('ops-result', `"${key}: ${value} Ft" sikeresen hozzáadva!`, 'success');
+                    clearInputs();
+                }
+
+                function dictModify() {
+                    const key = document.getElementById('ops-key').value.trim();
+                    const value = document.getElementById('ops-value').value;
+                    const resultDiv = document.getElementById('ops-result');
+
+                    if (!key || !value) {
+                        showResult('ops-result', 'Hiba: Mindkét mezőt ki kell tölteni!', 'error');
+                        return;
+                    }
+
+                    if (!(key in fruitsDict)) {
+                        showResult('ops-result', `Hiba: "${key}" nem található a szótárban!`, 'error');
+                        return;
+                    }
+
+                    fruitsDict[key] = parseInt(value);
+                    updateOpsVisualization();
+                    showResult('ops-result', `"${key}" ára módosítva: ${value} Ft`, 'success');
+                    clearInputs();
+                }
+
+                function dictDelete() {
+                    const key = document.getElementById('ops-key').value.trim();
+
+                    if (!key) {
+                        showResult('ops-result', 'Hiba: Add meg a törlendő gyümölcs nevét!', 'error');
+                        return;
+                    }
+
+                    if (!(key in fruitsDict)) {
+                        showResult('ops-result', `Hiba: "${key}" nem található a szótárban!`, 'error');
+                        return;
+                    }
+
+                    delete fruitsDict[key];
+                    updateOpsVisualization();
+                    showResult('ops-result', `"${key}" sikeresen törölve!`, 'success');
+                    clearInputs();
+                }
+
+                function dictGet() {
+                    const key = document.getElementById('ops-key').value.trim();
+
+                    if (!key) {
+                        showResult('ops-result', 'Hiba: Add meg a keresett gyümölcs nevét!', 'error');
+                        return;
+                    }
+
+                    const value = fruitsDict[key];
+                    if (value === undefined) {
+                        showResult('ops-result', `"${key}" nem található a szótárban.`, 'error');
+                    } else {
+                        showResult('ops-result', `"${key}" ára: ${value} Ft`, 'success');
+                    }
+                }
+
+                // Speciális műveletek
+                function addUpdateField() {
+                    const container = document.getElementById('update-pairs');
+                    const pair = document.createElement('div');
+                    pair.className = 'update-pair';
+                    pair.innerHTML = `
+                        <input type="text" class="input update-key" placeholder="Termék neve">
+                        <input type="number" class="input update-value" placeholder="Ár">
+                    `;
+                    container.appendChild(pair);
+
+                    // Animáció
+                    anime({
+                        targets: pair,
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                }
+
+                function performUpdate() {
+                    const pairs = document.querySelectorAll('.update-pair');
+                    const updates = {};
+                    let hasError = false;
+
+                    pairs.forEach(pair => {
+                        const key = pair.querySelector('.update-key').value.trim();
+                        const value = pair.querySelector('.update-value').value;
+
+                        if (key && value) {
+                            updates[key] = parseInt(value);
+                        } else if (key || value) {
+                            hasError = true;
+                        }
+                    });
+
+                    if (hasError) {
+                        showResult('special-result', 'Hiba: Minden mezőpárt teljesen ki kell tölteni!', 'error');
+                        return;
+                    }
+
+                    if (Object.keys(updates).length === 0) {
+                        showResult('special-result', 'Hiba: Adj meg legalább egy termék-ár párt!', 'error');
+                        return;
+                    }
+
+                    Object.assign(productsDict, updates);
+                    updateSpecialVisualization();
+                    showResult('special-result', 'Termékek sikeresen frissítve!', 'success');
+                    clearUpdateFields();
+                }
+
+                function showKeys() {
+                    const keys = Object.keys(productsDict);
+                    if (keys.length === 0) {
+                        showResult('special-result', 'A termékadatbázis üres.', 'error');
+                    } else {
+                        showResult('special-result', 'Termékek: ' + keys.join(', '), 'success');
+                    }
+                }
+
+                function showValues() {
+                    const values = Object.values(productsDict);
+                    if (values.length === 0) {
+                        showResult('special-result', 'A termékadatbázis üres.', 'error');
+                    } else {
+                        showResult('special-result', 'Árak: ' + values.map(v => v + ' Ft').join(', '), 'success');
+                    }
+                }
+
+                function showItems() {
+                    const items = Object.entries(productsDict);
+                    if (items.length === 0) {
+                        showResult('special-result', 'A termékadatbázis üres.', 'error');
+                    } else {
+                        const itemsStr = items.map(([k, v]) => `${k}: ${v} Ft`).join('\n');
+                        showResult('special-result', itemsStr, 'success');
+                    }
+                }
+
+                // Segédfüggvények
+                function showResult(elementId, message, type) {
+                   const resultDiv = document.getElementById(elementId);
+                   resultDiv.textContent = message;
+                   resultDiv.style.borderColor = type === 'error' ? 'var(--error)' : 'var(--success)';
+
+                   resultDiv.classList.remove('show');
+                   void resultDiv.offsetWidth;
+                   resultDiv.classList.add('show');
+               }
+
+               function clearInputs() {
+                   document.getElementById('ops-key').value = '';
+                   document.getElementById('ops-value').value = '';
+               }
+
+               function clearUpdateFields() {
+                   const container = document.getElementById('update-pairs');
+                   container.innerHTML = '';
+                   addUpdateField(); // Egy üres mező hozzáadása
+               }
+
+               function updateOpsVisualization() {
+                   const container = document.getElementById('ops-dict-content');
+                   container.innerHTML = '';
+
+                   Object.entries(fruitsDict).forEach(([key, value]) => {
+                       const pairDiv = document.createElement('div');
+                       pairDiv.className = 'dict-pair';
+                       pairDiv.innerHTML = `
+                           <span class="dict-key-text">"${key}"</span>
+                           <span class="dict-separator">:</span>
+                           <span class="dict-value-text">${value} Ft</span>
+                       `;
+                       container.appendChild(pairDiv);
+                   });
+               }
+
+               function updateSpecialVisualization() {
+                   const container = document.getElementById('special-dict-content');
+                   container.innerHTML = '';
+
+                   Object.entries(productsDict).forEach(([key, value]) => {
+                       const pairDiv = document.createElement('div');
+                       pairDiv.className = 'dict-pair';
+                       pairDiv.innerHTML = `
+                           <span class="dict-key-text">"${key}"</span>
+                           <span class="dict-separator">:</span>
+                           <span class="dict-value-text">${value} Ft</span>
+                       `;
+                       container.appendChild(pairDiv);
+                   });
+               }
+
+               // Enter billentyű kezelése
+               document.addEventListener('DOMContentLoaded', () => {
+                   // Alap műveletek Enter kezelése
+                   document.getElementById('ops-key').addEventListener('keypress', (e) => {
+                       if (e.key === 'Enter') document.getElementById('ops-value').focus();
+                   });
+
+                   document.getElementById('ops-value').addEventListener('keypress', (e) => {
+                       if (e.key === 'Enter') dictAdd();
+                   });
+
+                   // Egy üres update mező hozzáadása kezdéskor
+                   addUpdateField();
+               });
+           </script>
+
+           <!-- Beágyazott szótárak szekció -->
+        <section id="beagyazott" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-layer-group"></i>
+                Beágyazott Szótárak
+            </h1>
+
+            <div class="card">
+                <h2>Mi az a beágyazott szótár?</h2>
+                <p>A beágyazott szótár olyan szótár, amelynek értékei maguk is szótárak. Ez lehetővé teszi komplex, hierarchikus adatstruktúrák létrehozását.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="nested-dict">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">iskola = {
+    "9.A": {
+        "osztályfőnök": "Nagy János",
+        "létszám": 28,
+        "tanulók": {
+            "Kiss Anna": {
+                "matematika": 5,
+                "magyar": 4
+            },
+            "Tóth Béla": {
+                "matematika": 4,
+                "magyar": 5
+            }
+        }
+    }
+}</code></pre>
+                </div>
+
+                <div class="nested-demo">
+                    <h3>Osztálynapló kezelése:</h3>
+                    <div class="nested-controls">
+                        <!-- Osztály kiválasztása -->
+                        <div class="form-group">
+                            <label>Osztály:</label>
+                            <select id="class-select" class="input" onchange="updateTeacherInfo()">
+                                <option value="9.A">9.A</option>
+                                <option value="9.B">9.B</option>
+                                <option value="9.C">9.C</option>
+                            </select>
+                        </div>
+
+                        <!-- Osztályfőnök beállítása -->
+                        <div class="form-group">
+                            <label>Osztályfőnök:</label>
+                            <input type="text" id="teacher-input" class="input" placeholder="Osztályfőnök neve">
+                            <button class="btn" onclick="updateTeacher()">
+                                <i class="fas fa-user-edit"></i> Osztályfőnök módosítása
+                            </button>
+                        </div>
+
+                        <!-- Tanuló hozzáadása -->
+                        <div class="form-group">
+                            <label>Új tanuló felvétele:</label>
+                            <div class="student-inputs">
+                                <input type="text" id="student-name" class="input" placeholder="Tanuló neve">
+                                <input type="number" id="math-grade" class="input" placeholder="Matematika jegy" min="1" max="5">
+                                <input type="number" id="hungarian-grade" class="input" placeholder="Magyar jegy" min="1" max="5">
+                                <button class="btn" onclick="addStudent()">
+                                    <i class="fas fa-user-plus"></i> Tanuló felvétele
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Beágyazott szótár vizualizáció -->
+                    <div class="nested-visualization">
+                        <div class="nested-box">
+                            <div class="nested-level-1" id="class-info">
+                                <!-- Osztály információk -->
+                            </div>
+                            <div class="nested-level-2" id="students-info">
+                                <!-- Tanulók információi -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="nested-result" class="result"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Beágyazott szótárak kezelése</h2>
+                <p>A beágyazott szótárak értékeit a kulcsok láncolatával érhetjük el. Vigyáznunk kell, hogy elkerüljük a KeyError hibákat.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="nested-ops">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">try:
+    # Érték elérése több szintről
+    anna_matek = iskola["9.A"]["tanulók"]["Kiss Anna"]["matematika"]
+
+    # Biztonságos elérés get() metódussal
+    bela_magyar = iskola.get("9.A", {}).get("tanulók", {}).get("Tóth Béla", {}).get("magyar", "nincs adat")
+except KeyError as e:
+    print(f"Hiba: {e} kulcs nem található!")</code></pre>
+                </div>
+
+                <div class="nested-query-demo">
+                    <h3>Jegyek lekérdezése:</h3>
+                    <div class="query-controls">
+                        <div class="query-inputs">
+                            <select id="query-class" class="input" onchange="updateStudentList()">
+                                <option value="">Válassz osztályt</option>
+                            </select>
+                            <select id="query-student" class="input">
+                                <option value="">Válassz tanulót</option>
+                            </select>
+                            <select id="query-subject" class="input">
+                                <option value="matematika">Matematika</option>
+                                <option value="magyar">Magyar</option>
+                            </select>
+                            <button class="btn" onclick="queryGrade()">
+                                <i class="fas fa-search"></i> Jegy lekérdezése
+                            </button>
+                        </div>
+                    </div>
+                    <div id="query-result" class="result"></div>
+                </div>
+            </div>
+
+            <style>
+                .nested-demo,
+                .nested-query-demo {
+                    margin-top: 2rem;
+                }
+
+                .nested-controls,
+                .query-controls {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    margin-bottom: 2rem;
+                }
+
+                .student-inputs {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                }
+
+                .nested-visualization {
+                    margin-top: 2rem;
+                }
+
+                .nested-box {
+                    background: var(--bg-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 5px;
+                    padding: 1rem;
+                }
+
+                .nested-level-1,
+                .nested-level-2 {
+                    margin: 1rem 0;
+                    padding-left: 1rem;
+                }
+
+                .nested-level-1 {
+                    border-left: 2px solid var(--dict-key);
+                }
+
+                .nested-level-2 {
+                    border-left: 2px solid var(--dict-nested);
+                    margin-left: 2rem;
+                }
+
+                .query-inputs {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                }
+
+                .student-card {
+                    background: var(--highlight);
+                    border-radius: 5px;
+                    padding: 1rem;
+                    margin: 0.5rem 0;
+                    animation: slideIn 0.3s ease;
+                }
+
+                .grade-info {
+                    display: flex;
+                    gap: 1rem;
+                    margin-top: 0.5rem;
+                    font-family: 'Fira Code', monospace;
+                }
+
+                .grade-subject {
+                    color: var(--dict-key);
+                }
+
+                .grade-value {
+                    color: var(--dict-value);
+                }
+
+                @media (max-width: 768px) {
+                    .student-inputs,
+                    .query-inputs {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
+
+            <script>
+                // Iskola adatbázis inicializálása
+                let schoolDb = {
+                    "9.A": {
+                        "osztályfőnök": "Nagy János",
+                        "létszám": 0,
+                        "tanulók": {}
+                    },
+                    "9.B": {
+                        "osztályfőnök": "Kiss Mária",
+                        "létszám": 0,
+                        "tanulók": {}
+                    },
+                    "9.C": {
+                        "osztályfőnök": "Szabó Péter",
+                        "létszám": 0,
+                        "tanulók": {}
+                    }
+                };
+
+                // Osztályfőnök módosítása
+                function updateTeacher() {
+                    const selectedClass = document.getElementById('class-select').value;
+                    const newTeacher = document.getElementById('teacher-input').value.trim();
+
+                    if (!newTeacher) {
+                        showResult('nested-result', 'Hiba: Add meg az új osztályfőnök nevét!', 'error');
+                        return;
+                    }
+
+                    schoolDb[selectedClass]['osztályfőnök'] = newTeacher;
+                    updateVisualization();
+                    showResult('nested-result', `${selectedClass} új osztályfőnöke: ${newTeacher}`, 'success');
+                }
+
+                // Tanuló hozzáadása
+                function addStudent() {
+                    const selectedClass = document.getElementById('class-select').value;
+                    const name = document.getElementById('student-name').value.trim();
+                    const mathGrade = document.getElementById('math-grade').value;
+                    const hungarianGrade = document.getElementById('hungarian-grade').value;
+
+                    if (!name || !mathGrade || !hungarianGrade) {
+                        showResult('nested-result', 'Hiba: Minden mezőt ki kell tölteni!', 'error');
+                        return;
+                    }
+
+                    schoolDb[selectedClass]['tanulók'][name] = {
+                        'matematika': parseInt(mathGrade),
+                        'magyar': parseInt(hungarianGrade)
+                    };
+                    schoolDb[selectedClass]['létszám'] = Object.keys(schoolDb[selectedClass]['tanulók']).length;
+
+                    updateVisualization();
+                    clearStudentInputs();
+                    showResult('nested-result', `${name} sikeresen felvéve a ${selectedClass} osztályba!`, 'success');
+                }
+
+                // Jegy lekérdezése
+                function queryGrade() {
+                    const className = document.getElementById('query-class').value;
+                    const studentName = document.getElementById('query-student').value;
+                    const subject = document.getElementById('query-subject').value;
+
+                    if (!className || !studentName) {
+                        showResult('query-result', 'Hiba: Válaszd ki az osztályt és a tanulót!', 'error');
+                        return;
+                    }
+
+                    try {
+                        const grade = schoolDb[className]['tanulók'][studentName][subject];
+                        showResult('query-result',
+                            `${studentName} ${subject} jegye: ${grade}`,
+                            'success'
+                        );
+                    } catch (error) {
+                        showResult('query-result', 'Hiba: Az adat nem található!', 'error');
+                    }
+                }
+
+                // Tanulók listájának frissítése a lekérdezésnél
+                function updateStudentList() {
+                    const className = document.getElementById('query-class').value;
+                    const studentSelect = document.getElementById('query-student');
+                    studentSelect.innerHTML = '<option value="">Válassz tanulót</option>';
+
+                    if (className && schoolDb[className]['tanulók']) {
+                        Object.keys(schoolDb[className]['tanulók']).forEach(student => {
+                            const option = document.createElement('option');
+                            option.value = student;
+                            option.textContent = student;
+                            studentSelect.appendChild(option);
+                        });
+                    }
+                }
+
+                // Vizualizáció frissítése
+                function updateVisualization() {
+                    const selectedClass = document.getElementById('class-select').value;
+                    const classInfo = schoolDb[selectedClass];
+
+                    // Osztály információk megjelenítése
+                    const classInfoDiv = document.getElementById('class-info');
+                    classInfoDiv.innerHTML = `
+                        <h4>${selectedClass} osztály</h4>
+                        <div class="class-details">
+                            <p>Osztályfőnök: ${classInfo['osztályfőnök']}</p>
+                            <p>Létszám: ${classInfo['létszám']} fő</p>
+                        </div>
+                    `;
+
+                    // Tanulók megjelenítése
+                    const studentsDiv = document.getElementById('students-info');
+                    studentsDiv.innerHTML = '<h4>Tanulók:</h4>';
+
+                    Object.entries(classInfo['tanulók']).forEach(([name, grades]) => {
+                        const studentCard = document.createElement('div');
+                        studentCard.className = 'student-card';
+                        studentCard.innerHTML = `
+                            <div class="student-name">${name}</div>
+                            <div class="grade-info">
+                                <span class="grade-subject">matematika:</span>
+                                <span class="grade-value">${grades['matematika']}</span>
+                            </div>
+                            <div class="grade-info">
+                                <span class="grade-subject">magyar:</span>
+                                <span class="grade-value">${grades['magyar']}</span>
+                            </div>
+                        `;
+                        studentsDiv.appendChild(studentCard);
+                    });
+                }
+
+                // Segédfüggvények
+                function clearStudentInputs() {
+                    document.getElementById('student-name').value = '';
+                    document.getElementById('math-grade').value = '';
+                    document.getElementById('hungarian-grade').value = '';
+                }
+
+                // Inicializálás
+                document.addEventListener('DOMContentLoaded', () => {
+                    updateVisualization();
+
+                    // Osztályok hozzáadása a lekérdező űrlaphoz
+                    const queryClassSelect = document.getElementById('query-class');
+                    Object.keys(schoolDb).forEach(className => {
+                        const option = document.createElement('option');
+                        option.value = className;
+                        option.textContent = className;
+                        queryClassSelect.appendChild(option);
+                    });
+                });
+            </script>
+        </section>
+
+        <!-- Kombinált példák szekció -->
+        <section id="kombinalt" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-code-branch"></i>
+                Kombinált Példák és Gyakorlatok
+            </h1>
+
+            <div class="card">
+                <h2>Webshop készletkezelés</h2>
+                <p>Ebben a példában egy webshop készletét és árait kezeljük beágyazott szótárak és különböző műveletek kombinálásával.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="combined">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">webshop = {
+    "elektronika": {
+        "laptop": {
+            "készlet": 5,
+            "ár": 250000,
+            "jellemzők": {
+                "processzor": "i5",
+                "ram": "8GB"
+            }
+        }
+    },
+    "ruházat": {
+        "póló": {
+            "készlet": 100,
+            "ár": 3000,
+            "jellemzők": {
+                "méret": ["S", "M", "L"],
+                "szín": ["fehér", "fekete"]
+            }
+        }
+    }
+}
+
+# Komplex műveletek
+def termék_kezelés(webshop, kategória, termék, művelet, **adatok):
+    if művelet == "készlet_módosítás":
+        webshop[kategória][termék]["készlet"] += adatok["mennyiség"]
+    elif művelet == "ár_módosítás":
+        webshop[kategória][termék]["ár"] = adatok["új_ár"]</code></pre>
+                </div>
+
+                <div class="combined-demo">
+                    <h3>Webshop kezelőfelület:</h3>
+                    <!-- Kategória és termék kezelése -->
+                    <div class="shop-controls">
+                        <div class="form-group">
+                            <label>Kategória:</label>
+                            <select id="category-select" class="input" onchange="updateProductList()">
+                                <option value="elektronika">Elektronika</option>
+                                <option value="ruházat">Ruházat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Termék:</label>
+                            <select id="product-select" class="input" onchange="updateProductDetails()">
+                                <!-- Termékek dinamikusan betöltve -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Műveletek -->
+                    <div class="operations-panel">
+                        <div class="stock-management">
+                            <h4>Készletkezelés:</h4>
+                            <div class="stock-inputs">
+                                <input type="number" id="stock-change" class="input" placeholder="Mennyiség (+ vagy -)">
+                                <button class="btn" onclick="modifyStock()">
+                                    <i class="fas fa-box"></i> Készlet módosítása
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="price-management">
+                            <h4>Árkezelés:</h4>
+                            <div class="price-inputs">
+                                <input type="number" id="new-price" class="input" placeholder="Új ár">
+                                <button class="btn" onclick="modifyPrice()">
+                                    <i class="fas fa-tag"></i> Ár módosítása
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="feature-management">
+                            <h4>Termék jellemzők:</h4>
+                            <div id="feature-display" class="feature-display">
+                                <!-- Jellemzők dinamikusan betöltve -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Termék vizualizáció -->
+                    <div class="product-visualization">
+                        <div class="product-box">
+                            <div id="product-info" class="product-info">
+                                <!-- Termék információk dinamikusan betöltve -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="shop-result" class="result"></div>
+                </div>
+            </div>
+
+            <style>
+                .combined-demo {
+                    margin-top: 2rem;
+                }
+
+                .shop-controls {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-bottom: 2rem;
+                }
+
+                .operations-panel {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 2rem;
+                    margin-bottom: 2rem;
+                    background: var(--bg-primary);
+                    padding: 1.5rem;
+                    border-radius: 5px;
+                }
+
+                .stock-inputs,
+                .price-inputs {
+                    display: flex;
+                    gap: 1rem;
+                    margin-top: 1rem;
+                }
+
+                .feature-display {
+                    margin-top: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .feature-item {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 0.5rem;
+                    background: var(--highlight);
+                    border-radius: 3px;
+                }
+
+                .feature-key {
+                    color: var(--dict-key);
+                    font-weight: 500;
+                }
+
+                .feature-value {
+                    color: var(--dict-value);
+                    font-family: 'Fira Code', monospace;
+                }
+
+                .product-visualization {
+                    margin-top: 2rem;
+                }
+
+                .product-box {
+                    background: var(--bg-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 5px;
+                    padding: 1rem;
+                }
+
+                .product-info {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                }
+
+                .info-card {
+                    background: var(--highlight);
+                    padding: 1rem;
+                    border-radius: 5px;
+                    animation: slideIn 0.3s ease;
+                }
+
+                .info-title {
+                    color: var(--dict-key);
+                    font-weight: 500;
+                    margin-bottom: 0.5rem;
+                }
+
+                .info-value {
+                    color: var(--dict-value);
+                    font-family: 'Fira Code', monospace;
+                    font-size: 1.2rem;
+                }
+
+                @media (max-width: 768px) {
+                    .operations-panel {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .stock-inputs,
+                    .price-inputs {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+
+            <script>
+                // Webshop adatbázis
+                let webshopDb = {
+                    "elektronika": {
+                        "laptop": {
+                            "készlet": 5,
+                            "ár": 250000,
+                            "jellemzők": {
+                                "processzor": "i5",
+                                "ram": "8GB"
+                            }
+                        },
+                        "telefon": {
+                            "készlet": 15,
+                            "ár": 150000,
+                            "jellemzők": {
+                                "kijelző": "6.1\"",
+                                "tárhely": "128GB"
+                            }
+                        }
+                    },
+                    "ruházat": {
+                        "póló": {
+                            "készlet": 100,
+                            "ár": 3000,
+                            "jellemzők": {
+                                "méret": ["S", "M", "L"],
+                                "szín": ["fehér", "fekete"]
+                            }
+                        },
+                        "nadrág": {
+                            "készlet": 50,
+                            "ár": 8000,
+                            "jellemzők": {
+                                "méret": ["M", "L", "XL"],
+                                "anyag": "farmer"
+                            }
+                        }
+                    }
+                };
+
+                // Terméklista frissítése kategória választáskor
+                function updateProductList() {
+                    const category = document.getElementById('category-select').value;
+                    const productSelect = document.getElementById('product-select');
+                    productSelect.innerHTML = '';
+
+                    Object.keys(webshopDb[category]).forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product;
+                        option.textContent = product;
+                        productSelect.appendChild(option);
+                    });
+
+                    updateProductDetails();
+                }
+
+                // Termék részletek frissítése
+                function updateProductDetails() {
+                    const category = document.getElementById('category-select').value;
+                    const product = document.getElementById('product-select').value;
+
+                    if (!product) return;
+
+                    const productData = webshopDb[category][product];
+
+                    // Termék információk megjelenítése
+                    const productInfo = document.getElementById('product-info');
+                    productInfo.innerHTML = `
+                        <div class="info-card">
+                            <div class="info-title">Készlet</div>
+                            <div class="info-value">${productData.készlet} db</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-title">Ár</div>
+                            <div class="info-value">${productData.ár.toLocaleString()} Ft</div>
+                        </div>
+                    `;
+
+                    // Jellemzők megjelenítése
+                    const featureDisplay = document.getElementById('feature-display');
+                    featureDisplay.innerHTML = '';
+
+                    Object.entries(productData.jellemzők).forEach(([key, value]) => {
+                        const featureDiv = document.createElement('div');
+                        featureDiv.className = 'feature-item';
+                        featureDiv.innerHTML = `
+                            <span class="feature-key">${key}:</span>
+                            <span class="feature-value">${Array.isArray(value) ? value.join(', ') : value}</span>
+                        `;
+                        featureDisplay.appendChild(featureDiv);
+                    });
+                }
+
+                // Készlet módosítása
+                function modifyStock() {
+                    const category = document.getElementById('category-select').value;
+                    const product = document.getElementById('product-select').value;
+                    const change = parseInt(document.getElementById('stock-change').value);
+
+                    if (isNaN(change)) {
+                        showResult('shop-result', 'Hiba: Érvényes számot adj meg!', 'error');
+                        return;
+                    }
+
+                    const currentStock = webshopDb[category][product].készlet;
+                    const newStock = currentStock + change;
+
+                    if (newStock < 0) {
+                        showResult('shop-result', 'Hiba: A készlet nem lehet negatív!', 'error');
+                        return;
+                    }
+
+                    webshopDb[category][product].készlet = newStock;
+                    updateProductDetails();
+
+                    document.getElementById('stock-change').value = '';
+                    showResult('shop-result', `Készlet sikeresen módosítva! Új készlet: ${newStock} db`, 'success');
+                }
+
+                // Ár módosítása
+                function modifyPrice() {
+                    const category = document.getElementById('category-select').value;
+                    const product = document.getElementById('product-select').value;
+                    const newPrice = parseInt(document.getElementById('new-price').value);
+
+                    if (isNaN(newPrice) || newPrice <= 0) {
+                        showResult('shop-result', 'Hiba: Érvényes árat adj meg!', 'error');
+                        return;
+                    }
+
+                    webshopDb[category][product].ár = newPrice;
+                    updateProductDetails();
+
+                    document.getElementById('new-price').value = '';
+                    showResult('shop-result', `Ár sikeresen módosítva! Új ár: ${newPrice.toLocaleString()} Ft`, 'success');
+                }
+
+                // Inicializálás
+                document.addEventListener('DOMContentLoaded', () => {
+                    updateProductList();
+                });
+            </script>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <h3 class="h5 mb-3">Kapcsolat</h3>
+                        <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h5 mb-3">Információk</h3>
+                        <p class="mb-2">Utolsó frissítés: 2025.01.18.</p>
+                        <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <style>
+            /* Footer stílusok */
+            footer {
+                background: var(--bg-secondary);
+                padding: 2rem 0;
+                margin-top: 4rem;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .footer-link {
+                color: var(--accent-primary);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+            .footer-link:hover {
+                color: var(--accent-secondary);
+                text-decoration: underline;
+            }
+
+            .row {
+                display: flex;
+                flex-wrap: wrap;
+                margin-right: -15px;
+                margin-left: -15px;
+            }
+
+            .col-md-6 {
+                position: relative;
+                width: 100%;
+                padding-right: 15px;
+                padding-left: 15px;
+            }
+
+            .mb-4 {
+                margin-bottom: 1.5rem;
+            }
+
+            .mb-3 {
+                margin-bottom: 1rem;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.5rem;
+            }
+
+            .h5 {
+                font-size: 1.25rem;
+                color: var(--text-primary);
+            }
+
+            @media (min-width: 768px) {
+                .col-md-6 {
+                    flex: 0 0 50%;
+                    max-width: 50%;
+                }
+                .mb-md-0 {
+                    margin-bottom: 0;
+                }
+            }
+        </style>
+    </main>
+
+    <!-- Lezáró script az oldal végén -->
+        <script>
+            // Prism újratöltése amikor új kód jelenik meg
+            function refreshPrism() {
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                }
+            }
+
+            // Oldal betöltésekor
+            document.addEventListener('DOMContentLoaded', () => {
+                refreshPrism();
+
+                // Smooth scroll a navigációs linkekhez
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

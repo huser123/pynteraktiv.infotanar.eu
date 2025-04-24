@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Random Modul Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Kiemelő színek */
+            --random-primary: #3498db;
+            --random-secondary: #e74c3c;
+            --random-tertiary: #f1c40f;
+            --random-quaternary: #9b59b6;
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 2rem;
+            padding: 4rem 1rem 2rem;
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+        /* Navigáció stílusa */
+        .nav {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+    width: 100%;  /* Változás: 75vw helyett 100% */
+    max-width: 1200px;  /* Hozzáadva */
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Szekció címek */
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            font-size: 1.75rem;
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-random"></i> Python Random Modul
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link"><i class="fas fa-book-open"></i> Bevezető</a></li>
+                <li><a href="#alapok" class="nav-link"><i class="fas fa-dice"></i> Alap függvények</a></li>
+                <li><a href="#gyakorlat" class="nav-link"><i class="fas fa-gamepad"></i> Gyakorlati példák</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+
+    <!-- Bevezető szekció -->
+<section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Bevezetés a Random Modulba
+    </h1>
+
+    <div class="card">
+        <h2>Mi az a Random modul?</h2>
+        <p>A Random modul a Python egyik beépített könyvtára, amely lehetővé teszi véletlenszerű számok generálását és véletlenszerű választások meghozatalát. Ez a modul nélkülözhetetlen olyan alkalmazásokban, ahol véletlenszerűségre van szükség, például játékokban, szimulációkban vagy adatok véletlenszerű mintavételezésében.</p>
+
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-dice"></i>
+                <h3>Véletlenszám generálás</h3>
+                <p>Különböző típusú véletlen számok előállítása</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-random"></i>
+                <h3>Véletlenszerű választás</h3>
+                <p>Elemek véletlenszerű kiválasztása listákból</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shuffle"></i>
+                <h3>Lista keverés</h3>
+                <p>Listák elemeinek véletlenszerű átrendezése</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>A Random modul importálása</h2>
+        <p>A random modul használatához először importálnunk kell azt a Python programunkba:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="import-random">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># A random modul importálása
+import random
+
+# Most már használhatjuk a random modul függvényeit
+veletlenszam = random.random()  # 0 és 1 közötti lebegőpontos szám
+print(veletlenszam)</code></pre>
+        </div>
+
+        <div id="random-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <button class="btn" onclick="generateRandomNumber()">
+                    <i class="fas fa-dice"></i> Véletlenszám generálása
+                </button>
+            </div>
+            <div id="random-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>A véletlenszámok tulajdonságai</h2>
+        <p>Nézzük meg, milyen tulajdonságai vannak a generált véletlenszámoknak:</p>
+
+        <div id="random-visualization">
+        <div class="code-container">
+    <button class="copy-btn" data-code="random-properties">
+        <i class="fas fa-copy"></i>
+    </button>
+    <pre><code class="language-python"># Generáljunk 10 véletlenszámot és vizsgáljuk meg őket
+import random
+
+# Lista a számok tárolásához
+szamok = []
+
+# 10 véletlenszám generálása
+for _ in range(10):
+    szam = random.random()
+    szamok.append(szam)
+    print(f"Generált szám: {szam:.4f}")
+
+# Statisztikák kiszámítása
+atlag = sum(szamok) / len(szamok)
+minimum = min(szamok)
+maximum = max(szamok)
+
+print(f"\nStatisztikák:")
+print(f"Átlag: {atlag:.4f}")
+print(f"Minimum: {minimum:.4f}")
+print(f"Maximum: {maximum:.4f}")</code></pre>
+</div>
+            <div class="distribution-demo">
+                <h3>Generált számok eloszlása</h3>
+                <div class="number-grid" id="number-grid">
+                    <!-- Számok itt jelennek meg -->
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="generateMultipleNumbers()">
+                        <i class="fas fa-play"></i> Generálás (10 szám)
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearGrid()">
+                        <i class="fas fa-trash"></i> Törlés
+                    </button>
+                </div>
+                <div id="distribution-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: var(--text-secondary);
+        }
+
+        .interactive-demo {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .distribution-demo {
+            margin-top: 2rem;
+        }
+
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 0.5rem;
+            margin: 1rem 0;
+            min-height: 100px;
+        }
+
+        .number-cell {
+            background: var(--bg-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        function generateRandomNumber() {
+            const resultDiv = document.getElementById('random-result');
+            const randomNum = Math.random();
+            resultDiv.textContent = `Generált véletlenszám: ${randomNum}`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function generateMultipleNumbers() {
+            const grid = document.getElementById('number-grid');
+            const resultDiv = document.getElementById('distribution-result');
+            const numbers = Array.from({length: 10}, () => Math.random());
+
+            numbers.forEach(num => {
+                const cell = document.createElement('div');
+                cell.className = 'number-cell';
+                cell.textContent = num.toFixed(4);
+                grid.appendChild(cell);
+            });
+
+            // Statisztika számítása
+            const avg = numbers.reduce((a, b) => a + b) / numbers.length;
+            resultDiv.innerHTML = `Átlag: ${avg.toFixed(4)}<br>Minimum: ${Math.min(...numbers).toFixed(4)}<br>Maximum: ${Math.max(...numbers).toFixed(4)}`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function clearGrid() {
+            const grid = document.getElementById('number-grid');
+            const resultDiv = document.getElementById('distribution-result');
+            grid.innerHTML = '';
+            resultDiv.innerHTML = '';
+            resultDiv.classList.remove('show');
+        }
+
+        // Másolás gomb funkcionalitás
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const codeBlock = button.nextElementSibling;
+                const code = codeBlock.textContent;
+
+                try {
+                    await navigator.clipboard.writeText(code);
+
+                    const originalContent = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i>';
+                    button.style.color = 'var(--success)';
+
+                    setTimeout(() => {
+                        button.innerHTML = originalContent;
+                        button.style.color = '';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Sikertelen másolás:', err);
+                }
+            });
+        });
+    </script>
+</section>
+
+<!-- Alap függvények szekció -->
+<section id="alapok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-dice"></i>
+        Alap Függvények
+    </h1>
+
+    <div class="card">
+        <h2>random() - Lebegőpontos véletlenszám</h2>
+        <p>A <code>random()</code> függvény 0.0 és 1.0 közötti lebegőpontos véletlenszámot generál (1.0 már nincs benne a tartományban).</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="random-float">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># 0.0 és 1.0 közötti véletlenszámok generálása
+import random
+
+# Alap véletlenszám
+szam = random.random()
+print(f"Véletlenszám: {szam}")
+
+# Példa: Véletlenszám skálázása más tartományra (pl. 1-10 között)
+skalazott = 1 + (random.random() * 9)  # 1 és 10 közötti lebegőpontos szám
+print(f"Skálázott véletlenszám: {skalazott}")</code></pre>
+        </div>
+
+        <div id="random-float-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Véletlenszám tartomány:</label>
+                <div class="range-inputs">
+                    <input type="number" id="min-value" class="input" value="0" step="any" placeholder="Minimum">
+                    <input type="number" id="max-value" class="input" value="1" step="any" placeholder="Maximum">
+                </div>
+                <button class="btn" onclick="generateScaledRandom()">
+                    <i class="fas fa-random"></i> Generálás
+                </button>
+            </div>
+            <div id="random-float-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>randint() - Egész véletlenszám</h2>
+        <p>A <code>randint(a, b)</code> függvény két szám közötti véletlenszerű egész számot generál, ahol mindkét határérték beletartozik a lehetséges értékek közé.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="random-int">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Egész szám generálása megadott határok között
+import random
+
+# Dobókocka szimulálása (1-6 közötti szám)
+dobas = random.randint(1, 6)
+print(f"A dobókocka eredménye: {dobas}")
+
+# Nagyobb tartomány (pl. 1-100)
+szam = random.randint(1, 100)
+print(f"Véletlenszám 1 és 100 között: {szam}")</code></pre>
+        </div>
+
+        <div id="dice-demo" class="interactive-demo">
+            <h3>Dobókocka szimuláció</h3>
+            <div class="dice-container">
+                <div id="dice" class="dice">1</div>
+            </div>
+            <button class="btn" onclick="rollDice()">
+                <i class="fas fa-dice"></i> Dobás
+            </button>
+            <div id="dice-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>choice() - Véletlenszerű elem kiválasztása</h2>
+        <p>A <code>choice()</code> függvény egy véletlenszerű elemet választ ki egy listából vagy más sorozatból.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="random-choice">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Véletlenszerű elem kiválasztása listából
+import random
+
+szinek = ['piros', 'kék', 'zöld', 'sárga', 'fehér']
+valasztott_szin = random.choice(szinek)
+print(f"Véletlenszerűen választott szín: {valasztott_szin}")
+
+gyumolcsok = ['alma', 'körte', 'banán', 'narancs']
+valasztott_gyumolcs = random.choice(gyumolcsok)
+print(f"Véletlenszerűen választott gyümölcs: {valasztott_gyumolcs}")</code></pre>
+        </div>
+
+        <div id="choice-demo" class="interactive-demo">
+            <h3>Lista elem választó</h3>
+            <div class="form-group">
+                <div class="list-container">
+                    <div class="list-items" id="list-items">
+                        <input type="text" class="input item-input" placeholder="Írd be az elemet">
+                    </div>
+                    <button class="btn btn-secondary" onclick="addListItem()">
+                        <i class="fas fa-plus"></i> Új elem
+                    </button>
+                </div>
+                <button class="btn" onclick="chooseRandomItem()">
+                    <i class="fas fa-random"></i> Véletlenszerű választás
+                </button>
+            </div>
+            <div id="choice-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .range-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .dice {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--bg-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .dice.rolling {
+            animation: roll 0.5s ease;
+        }
+
+        @keyframes roll {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .item-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .item-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--error);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .remove-item:hover {
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .range-inputs {
+                flex-direction: column;
+            }
+
+            .item-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+
+    <script>
+        function generateScaledRandom() {
+            const min = parseFloat(document.getElementById('min-value').value);
+            const max = parseFloat(document.getElementById('max-value').value);
+            const resultDiv = document.getElementById('random-float-result');
+
+            if (isNaN(min) || isNaN(max)) {
+                resultDiv.textContent = 'Hiba: Adj meg érvényes számokat!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else if (min >= max) {
+                resultDiv.textContent = 'Hiba: A maximum értéknek nagyobbnak kell lennie a minimumnál!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const randomNum = min + (Math.random() * (max - min));
+                resultDiv.textContent = `Generált szám: ${randomNum.toFixed(4)}`;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function rollDice() {
+            const dice = document.getElementById('dice');
+            const resultDiv = document.getElementById('dice-result');
+
+            dice.classList.add('rolling');
+
+            setTimeout(() => {
+                const roll = Math.floor(Math.random() * 6) + 1;
+                dice.textContent = roll;
+                dice.classList.remove('rolling');
+
+                resultDiv.textContent = `A dobás eredménye: ${roll}`;
+                resultDiv.style.borderColor = 'var(--success)';
+                resultDiv.classList.remove('show');
+                void resultDiv.offsetWidth;
+                resultDiv.classList.add('show');
+            }, 500);
+        }
+
+        function addListItem() {
+            const container = document.getElementById('list-items');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <input type="text" class="input" placeholder="Írd be az elemet">
+                <button class="remove-item" onclick="removeListItem(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(row);
+
+            anime({
+                targets: row,
+                translateX: [-20, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutCubic'
+            });
+        }
+
+        function removeListItem(button) {
+            const row = button.parentElement;
+
+            anime({
+                targets: row,
+                translateX: [0, 20],
+                opacity: [1, 0],
+                duration: 300,
+                easing: 'easeInCubic',
+                complete: () => {
+                    row.remove();
+                }
+            });
+        }
+
+        function chooseRandomItem() {
+            const inputs = document.querySelectorAll('.list-items .input');
+            const resultDiv = document.getElementById('choice-result');
+            const items = Array.from(inputs)
+                .map(input => input.value.trim())
+                .filter(value => value.length > 0);
+
+            if (items.length === 0) {
+                resultDiv.textContent = 'Hiba: Add meg legalább egy elemet!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                resultDiv.textContent = `Választott elem: ${randomItem}`;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (e.target.classList.contains('item-input')) {
+                    addListItem();
+                }
+            }
+        });
+    </script>
+</section>
+
+<!-- Gyakorlati példák szekció -->
+<section id="gyakorlat" class="section">
+   <h1 class="section-title">
+       <i class="fas fa-gamepad"></i>
+       Gyakorlati Példák
+   </h1>
+
+   <div class="card">
+       <h2>Kő-Papír-Olló Játék</h2>
+       <p>Egy egyszerű kő-papír-olló játék megvalósítása a random modul használatával:</p>
+
+       <div class="code-container">
+           <button class="copy-btn" data-code="rock-paper-scissors">
+               <i class="fas fa-copy"></i>
+           </button>
+           <pre><code class="language-python"># Kő-Papír-Olló játék
+import random
+
+lehetoseg = ["kő","papír","olló"]
+gep = random.choice(lehetoseg)
+
+felhasznalo = input("Mit választasz? Kő, papír vagy olló? ")
+
+if gep == felhasznalo:
+   print(f"A gép választása: {gep}, a te választásod: {felhasznalo}. Döntetlen!")
+elif gep == "kő":
+   if felhasznalo == "papír":
+       print(f"A gép választása: {gep}. Nyertél!")
+   else:
+       print(f"A gép választása: {gep}. Vesztettél")
+elif gep == "papír":
+   if felhasznalo == "olló":
+       print(f"A gép választása: {gep}. Nyertél!")
+   else:
+       print(f"A gép választása: {gep}. Vesztettél")
+elif gep == "olló":
+   if felhasznalo == "kő":
+       print(f"A gép választása: {gep}. Nyertél!")
+   else:
+       print(f"A gép választása: {gep}. Vesztettél")
+else:
+   print("Hibás adatot adtál meg!")</code></pre>
+       </div>
+
+       <div id="rps-game" class="interactive-demo">
+           <h3>Játssz a számítógép ellen!</h3>
+           <div class="game-container">
+               <div class="choices">
+                   <button class="choice-btn" onclick="playRPS('kő')">
+                       <i class="fas fa-hand-rock"></i>
+                       <span>Kő</span>
+                   </button>
+                   <button class="choice-btn" onclick="playRPS('papír')">
+                       <i class="fas fa-hand-paper"></i>
+                       <span>Papír</span>
+                   </button>
+                   <button class="choice-btn" onclick="playRPS('olló')">
+                       <i class="fas fa-hand-scissors"></i>
+                       <span>Olló</span>
+                   </button>
+               </div>
+               <div id="rps-result" class="result"></div>
+           </div>
+       </div>
+   </div>
+
+   <div class="card">
+       <h2>Kincskereső Játék</h2>
+       <p>Találd meg a kincset egy 5x5-ös területen! A program jelzi, hogy merre kell továbbmenni:</p>
+
+       <div class="code-container">
+           <button class="copy-btn" data-code="treasure-hunt">
+               <i class="fas fa-copy"></i>
+           </button>
+           <pre><code class="language-python"># Kincskereső játék
+import random
+
+# Véletlenszerű kincs helye (X, Y)
+kincs_x = random.randint(1, 5)
+kincs_y = random.randint(1, 5)
+
+print("Találd meg a kincset egy 5x5-ös rácson!")
+
+tipp_x = -1
+tipp_y = -1
+probalkozasok = 0
+
+# Addig próbálkozik, amíg meg nem találja a kincset
+while tipp_x != kincs_x or tipp_y != kincs_y:
+   tipp_x = int(input("Add meg az X koordinátát (1-5): "))
+   tipp_y = int(input("Add meg az Y koordinátát (1-5): "))
+   probalkozasok += 1
+
+   if tipp_x < kincs_x:
+       print("A kincs jobbra van.")
+   elif tipp_x > kincs_x:
+       print("A kincs balra van.")
+
+   if tipp_y < kincs_y:
+       print("A kincs feljebb van.")
+   elif tipp_y > kincs_y:
+       print("A kincs lejjebb van.")
+
+print(f"Gratulálok! Megtaláltad a kincset {probalkozasok} próbálkozás után!")</code></pre>
+       </div>
+
+       <div id="treasure-game" class="interactive-demo">
+           <h3>Keresd meg a kincset!</h3>
+           <div class="treasure-grid">
+               <!-- A rács mezői JavaScript-tel lesznek generálva -->
+           </div>
+           <div class="game-info">
+               <p>Próbálkozások száma: <span id="attempts">0</span></p>
+               <button class="btn" onclick="resetTreasureGame()">
+                   <i class="fas fa-redo"></i> Új játék
+               </button>
+           </div>
+           <div id="treasure-result" class="result"></div>
+       </div>
+   </div>
+
+   <style>
+       .game-container {
+           margin-top: 2rem;
+       }
+
+       .choices {
+           display: flex;
+           gap: 1rem;
+           justify-content: center;
+           margin-bottom: 2rem;
+       }
+
+       .choice-btn {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           gap: 0.5rem;
+           padding: 1rem;
+           background: var(--bg-primary);
+           border: 1px solid var(--border-color);
+           border-radius: 10px;
+           color: var(--text-primary);
+           cursor: pointer;
+           transition: all 0.3s ease;
+       }
+
+       .choice-btn:hover {
+           background: var(--accent-primary);
+           color: var(--bg-primary);
+       }
+
+       .choice-btn i {
+           font-size: 2rem;
+       }
+
+       .treasure-grid {
+           display: grid;
+           grid-template-columns: repeat(5, 1fr);
+           gap: 0.5rem;
+           margin: 2rem 0;
+           max-width: 400px;
+           margin: 0 auto;
+       }
+
+       .grid-cell {
+           aspect-ratio: 1;
+           background: var(--bg-primary);
+           border: 1px solid var(--border-color);
+           border-radius: 5px;
+           cursor: pointer;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           font-size: 1.5rem;
+           transition: all 0.3s ease;
+       }
+
+       .grid-cell:hover {
+           background: var(--highlight);
+       }
+
+       .grid-cell.revealed {
+           background: var(--accent-primary);
+           color: var(--bg-primary);
+           cursor: not-allowed;
+       }
+
+       .grid-cell.treasure {
+           background: var(--success);
+       }
+
+       .game-info {
+           display: flex;
+           align-items: center;
+           justify-content: space-between;
+           margin: 1rem 0;
+           padding: 1rem;
+           background: var(--bg-primary);
+           border-radius: 5px;
+       }
+
+       @media (max-width: 768px) {
+           .choices {
+               flex-direction: column;
+               align-items: center;
+           }
+
+           .choice-btn {
+               width: 100%;
+               max-width: 200px;
+           }
+
+           .treasure-grid {
+               gap: 0.25rem;
+           }
+
+           .game-info {
+               flex-direction: column;
+               gap: 1rem;
+               text-align: center;
+           }
+       }
+   </style>
+
+   <script>
+       // Kő-Papír-Olló játék logika
+       function playRPS(playerChoice) {
+           const choices = ['kő', 'papír', 'olló'];
+           const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+           const resultDiv = document.getElementById('rps-result');
+
+           let result;
+           if (playerChoice === computerChoice) {
+               result = `Döntetlen! Mindketten ${playerChoice}-t választottatok.`;
+           } else if (
+               (playerChoice === 'kő' && computerChoice === 'olló') ||
+               (playerChoice === 'papír' && computerChoice === 'kő') ||
+               (playerChoice === 'olló' && computerChoice === 'papír')
+           ) {
+               result = `Nyertél! Te: ${playerChoice}, Gép: ${computerChoice}`;
+           } else {
+               result = `Vesztettél! Te: ${playerChoice}, Gép: ${computerChoice}`;
+           }
+
+           resultDiv.textContent = result;
+           resultDiv.style.borderColor = result.includes('Nyertél') ? 'var(--success)' :
+                                       result.includes('Döntetlen') ? 'var(--warning)' : 'var(--error)';
+
+           resultDiv.classList.remove('show');
+           void resultDiv.offsetWidth;
+           resultDiv.classList.add('show');
+       }
+
+       // Kincskereső játék logika
+       let treasureX, treasureY;
+       let attempts = 0;
+       let gameOver = false;
+
+       function initTreasureGame() {
+           const grid = document.querySelector('.treasure-grid');
+           grid.innerHTML = '';
+           treasureX = Math.floor(Math.random() * 5);
+           treasureY = Math.floor(Math.random() * 5);
+           attempts = 0;
+           gameOver = false;
+           document.getElementById('attempts').textContent = attempts;
+
+           for (let y = 0; y < 5; y++) {
+               for (let x = 0; x < 5; x++) {
+                   const cell = document.createElement('div');
+                   cell.className = 'grid-cell';
+                   cell.dataset.x = x;
+                   cell.dataset.y = y;
+                   cell.addEventListener('click', () => checkCell(x, y));
+                   grid.appendChild(cell);
+               }
+           }
+       }
+
+       function checkCell(x, y) {
+           if (gameOver) return;
+
+           attempts++;
+           document.getElementById('attempts').textContent = attempts;
+           const resultDiv = document.getElementById('treasure-result');
+
+           if (x === treasureX && y === treasureY) {
+               gameOver = true;
+               document.querySelector(`[data-x="${x}"][data-y="${y}"]`).classList.add('treasure');
+               resultDiv.textContent = `Gratulálok! Megtaláltad a kincset ${attempts} próbálkozás után!`;
+               resultDiv.style.borderColor = 'var(--success)';
+           } else {
+               const cell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+               cell.classList.add('revealed');
+               let hint = '';
+
+               if (x < treasureX) hint += 'A kincs jobbra van. ';
+               else if (x > treasureX) hint += 'A kincs balra van. ';
+
+               if (y < treasureY) hint += 'A kincs lejjebb van.';
+               else if (y > treasureY) hint += 'A kincs feljebb van.';
+
+               resultDiv.textContent = hint;
+               resultDiv.style.borderColor = 'var(--info)';
+           }
+
+           resultDiv.classList.remove('show');
+           void resultDiv.offsetWidth;
+           resultDiv.classList.add('show');
+       }
+
+       function resetTreasureGame() {
+           initTreasureGame();
+           const resultDiv = document.getElementById('treasure-result');
+           resultDiv.textContent = '';
+           resultDiv.classList.remove('show');
+       }
+
+       // Játékok inicializálása
+       document.addEventListener('DOMContentLoaded', () => {
+           initTreasureGame();
+       });
+   </script>
+</section>
+
+<style>
+    /* Footer stílusok */
+    footer {
+        background: var(--bg-secondary);
+        padding: 2rem 0;
+        margin-top: 4rem;
+        border-top: 1px solid var(--border-color);
+        width: 100%; /* Hozzáadva a teljes szélesség */
+    }
+
+    .footer-link {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--accent-secondary);
+        text-decoration: underline;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-md-6 {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .h5 {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+    }
+
+    @media (min-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .mb-md-0 {
+            margin-bottom: 0;
+        }
+    }
+</style>
+
+</main>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h3 class="h5 mb-3">Kapcsolat</h3>
+                <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+            </div>
+            <div class="col-md-6">
+                <h3 class="h5 mb-3">Információk</h3>
+                <p class="mb-2">Utolsó frissítés: 2025.01.18.</p>
+                <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</main>
+
+<!-- Lezáró script -->
+<script>
+   document.addEventListener('DOMContentLoaded', () => {
+       refreshPrism();
+
+       // Smooth scroll a navigációs linkekhez
+       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+           anchor.addEventListener('click', function (e) {
+               e.preventDefault();
+               const targetId = this.getAttribute('href');
+               const targetElement = document.querySelector(targetId);
+
+               if (targetElement) {
+                   targetElement.scrollIntoView({
+                       behavior: 'smooth',
+                       block: 'start'
+                   });
+               }
+           });
+       });
+   });
+</script>
+</body>
+</html>

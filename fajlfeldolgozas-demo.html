@@ -1,0 +1,2541 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Fájlkezelés Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Python specifikus színek */
+            --file-read: #3498db;    /* Olvasás műveletek színe */
+            --file-write: #e74c3c;   /* Írás műveletek színe */
+            --file-manage: #f1c40f;  /* Fájlkezelés színe */
+            --python-comment: #95a5a6; /* Kommentek színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+		
+		/* Section címek stílusa */
+.section-title {
+    color: var(--accent-primary);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--accent-primary);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-title i {
+    font-size: 1.75rem;
+}
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fab fa-python"></i> Python Fájlkezelés
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link">
+                    <i class="fas fa-book-open"></i> Bevezető
+                </a></li>
+                <li><a href="#fajlkezeles" class="nav-link">
+                    <i class="fas fa-file-alt"></i> Fájlok kezelése
+                </a></li>
+                <li><a href="#txt" class="nav-link">
+                    <i class="fas fa-file-text"></i> TXT fájlok
+                </a></li>
+                <li><a href="#csv" class="nav-link">
+                    <i class="fas fa-file-csv"></i> CSV fájlok
+                </a></li>
+                <li><a href="#json" class="nav-link">
+                    <i class="fas fa-file-code"></i> JSON kezelés
+                </a></li>
+                <li><a href="#binaris" class="nav-link">
+                    <i class="fas fa-file-image"></i> Bináris fájlok
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <style>
+        /* Navigáció stílusa */
+        .nav {
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+            background: var(--highlight);
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                justify-content: center;
+                padding: 0.5rem 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <main class="container">
+        <!-- Itt kezdődnek a szekciók -->
+    
+		<!-- Bevezető szekció -->
+			<section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Fájlkezelés a Pythonban
+    </h1>
+
+    <div class="card">
+        <h2>Mi az a fájlkezelés?</h2>
+        <p>A fájlkezelés lehetővé teszi, hogy programunk adatokat olvasson és írjon különböző típusú fájlokba. A Python beépített függvényei és moduljai segítségével egyszerűen kezelhetünk szöveges és bináris fájlokat egyaránt.</p>
+
+        <div class="file-types">
+            <div class="file-type">
+                <i class="fas fa-file-alt"></i>
+                <h3>Szöveges fájlok</h3>
+                <p>Egyszerű szöveges adatok tárolására (TXT, CSV, JSON, stb.)</p>
+                <div class="code-container">
+                    
+                    <pre><code class="language-python"># Szöveges fájl olvasása
+with open('pelda.txt', 'r', encoding='utf-8') as f:
+    tartalom = f.read()
+    print(tartalom)</code></pre>
+                </div>
+            </div>
+
+            <div class="file-type">
+                <i class="fas fa-file-image"></i>
+                <h3>Bináris fájlok</h3>
+                <p>Képek, hangok és egyéb nem szöveges adatok tárolására</p>
+                
+                    <pre><code class="language-python"># Bináris fájl olvasása
+with open('kep.jpg', 'rb') as f:
+    tartalom = f.read()
+    # További feldolgozás...</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>A fájlkezelés alapjai</h3>
+            <div class="modes-grid">
+                <div class="mode-card read">
+                    <div class="mode-header">
+                        <i class="fas fa-book-reader"></i>
+                        <span>'r' - Olvasás</span>
+                    </div>
+                    <p>A fájl tartalmának beolvasása</p>
+                </div>
+                <div class="mode-card write">
+                    <div class="mode-header">
+                        <i class="fas fa-pencil-alt"></i>
+                        <span>'w' - Írás</span>
+                    </div>
+                    <p>Új fájl létrehozása vagy meglévő felülírása</p>
+                </div>
+                <div class="mode-card append">
+                    <div class="mode-header">
+                        <i class="fas fa-plus"></i>
+                        <span>'a' - Hozzáfűzés</span>
+                    </div>
+                    <p>Tartalom hozzáadása a fájl végéhez</p>
+                </div>
+                <div class="mode-card readplus">
+                    <div class="mode-header">
+                        <i class="fas fa-edit"></i>
+                        <span>'r+' - Olvasás és írás</span>
+                    </div>
+                    <p>Olvasás és írás egy időben</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="intro-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Írj egy rövid szöveget, amit fájlba mentünk:</label>
+                <div class="input-group">
+                    <textarea id="text-input" class="input" rows="3" placeholder="Ide írd a szöveget..."></textarea>
+                </div>
+                <div class="button-group">
+                    <button class="btn" onclick="saveToFile()">
+                        <i class="fas fa-save"></i> Mentés fájlba
+                    </button>
+                    <button class="btn btn-secondary" onclick="readFromFile()">
+                        <i class="fas fa-file-alt"></i> Fájl olvasása
+                    </button>
+                </div>
+            </div>
+            <div id="file-result" class="result"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .file-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .file-type {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .file-type:hover {
+        transform: translateY(-5px);
+    }
+
+    .file-type i {
+        font-size: 2rem;
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    .info-box {
+        margin: 2rem 0;
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+    }
+
+    .modes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .mode-card {
+        background: var(--highlight);
+        padding: 1rem;
+        border-radius: 5px;
+        border-left: 3px solid var(--accent-primary);
+    }
+
+    .mode-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--accent-primary);
+        font-family: 'Fira Code', monospace;
+    }
+
+    .mode-card.read { border-color: var(--file-read); }
+    .mode-card.write { border-color: var(--file-write); }
+    .mode-card.append { border-color: var(--file-manage); }
+    .mode-card.readplus { border-color: var(--info); }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .btn-secondary {
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+    }
+
+    .btn-secondary:hover {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+    }
+
+    @media (max-width: 768px) {
+        .button-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    let currentFileContent = '';
+
+    function saveToFile() {
+        const text = document.getElementById('text-input').value;
+        const resultDiv = document.getElementById('file-result');
+
+        if (!text.trim()) {
+            resultDiv.textContent = 'Hiba: A szöveg nem lehet üres!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        currentFileContent = text;
+        resultDiv.innerHTML = `
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                A szöveg sikeresen mentve!
+            </div>
+            <div class="file-info">
+                <strong>Mentett tartalom:</strong><br>
+                <pre>${text}</pre>
+            </div>
+        `;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    function readFromFile() {
+        const resultDiv = document.getElementById('file-result');
+
+        if (!currentFileContent) {
+            resultDiv.textContent = 'A fájl üres vagy még nem lett létrehozva!';
+            resultDiv.style.borderColor = 'var(--warning)';
+        } else {
+            resultDiv.innerHTML = `
+                <div class="file-content">
+                    <strong>Fájl tartalma:</strong><br>
+                    <pre>${currentFileContent}</pre>
+                </div>
+            `;
+            resultDiv.style.borderColor = 'var(--info)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése a szövegmezőben
+    document.getElementById('text-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            saveToFile();
+        }
+    });
+
+    // Másolás gomb funkcionalitás
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+
+            try {
+                await navigator.clipboard.writeText(code);
+                
+                // Visszajelzés
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.color = 'var(--success)';
+
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.style.color = '';
+                }, 2000);
+            } catch (err) {
+                console.error('Sikertelen másolás:', err);
+            }
+        });
+    });
+</script>
+</section>
+
+<!-- Fájlkezelés alapjai szekció -->
+<section id="fajlkezeles" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-file-alt"></i>
+        Fájlok kezelése
+    </h1>
+
+    <div class="card">
+        <h2>A with utasítás</h2>
+        <p>A Python with utasítása garantálja, hogy a fájl megfelelően bezáródik használat után, még hiba esetén is. Ez az ajánlott módja a fájlok kezelésének.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="with-statement">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># With használata fájl olvasásához
+with open('pelda.txt', 'r', encoding='utf-8') as f:
+    tartalom = f.read()
+
+# A fájl automatikusan bezáródik a with blokkból kilépve</code></pre>
+        </div>
+
+        <div class="methods-grid">
+            <div class="method-card">
+                <h3><i class="fas fa-book-reader"></i> Olvasási módszerek</h3>
+                <div class="code-container">
+                    <button class="copy-btn" data-code="read-methods">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Teljes fájl olvasása
+tartalom = f.read()
+
+# Soronkénti olvasás
+sorok = f.readlines()
+
+# Egy sor olvasása
+elso_sor = f.readline()</code></pre>
+                </div>
+            </div>
+
+            <div class="method-card">
+                <h3><i class="fas fa-pencil-alt"></i> Írási módszerek</h3>
+                <div class="code-container">
+                    <button class="copy-btn" data-code="write-methods">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Szöveg írása
+f.write("Új sor")
+
+# Több sor írása
+sorok = ["Első sor\n", "Második sor\n"]
+f.writelines(sorok)</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="file-operations">
+            <h3>Gyakori fájlműveletek</h3>
+            <div class="operations-demo">
+                <div class="operation-controls">
+                    <select id="operation-type" class="input">
+                        <option value="read">Olvasás (read)</option>
+                        <option value="readlines">Soronkénti olvasás (readlines)</option>
+                        <option value="write">Írás (write)</option>
+                        <option value="append">Hozzáfűzés (append)</option>
+                    </select>
+                    <textarea id="operation-input" class="input" rows="3" 
+                        placeholder="Írj szöveget a művelethez..."></textarea>
+                    <button class="btn" onclick="performOperation()">
+                        <i class="fas fa-play"></i> Művelet végrehajtása
+                    </button>
+                </div>
+                <div id="operation-result" class="result"></div>
+            </div>
+        </div>
+
+        <div class="common-errors">
+            <h3>Gyakori hibák és kezelésük</h3>
+            <div class="error-cards">
+                <div class="error-card">
+                    <div class="error-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>FileNotFoundError</h4>
+                    </div>
+                    <p>A megadott fájl nem található</p>
+                    <div class="error-solution">
+                        <strong>Megoldás:</strong> Ellenőrizd a fájl nevét és elérési útját
+                    </div>
+                </div>
+
+                <div class="error-card">
+                    <div class="error-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>PermissionError</h4>
+                    </div>
+                    <p>Nincs jogosultság a fájl eléréséhez</p>
+                    <div class="error-solution">
+                        <strong>Megoldás:</strong> Ellenőrizd a fájl jogosultságokat
+                    </div>
+                </div>
+
+                <div class="error-card">
+                    <div class="error-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>UnicodeDecodeError</h4>
+                    </div>
+                    <p>Karakterkódolási hiba</p>
+                    <div class="error-solution">
+                        <strong>Megoldás:</strong> Használj megfelelő encoding paramétert (pl. utf-8)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .method-card {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .method-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .method-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .operations-demo {
+            margin: 2rem 0;
+        }
+
+        .operation-controls {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .error-card {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1.25rem;
+            border-left: 3px solid var(--error);
+        }
+
+        .error-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--error);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-solution {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .operation-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        let fileContent = '';
+
+        function performOperation() {
+            const operation = document.getElementById('operation-type').value;
+            const input = document.getElementById('operation-input').value;
+            const resultDiv = document.getElementById('operation-result');
+
+            try {
+                switch(operation) {
+                    case 'read':
+                        if (!fileContent) {
+                            throw new Error('A fájl üres! Először írj bele valamit.');
+                        }
+                        resultDiv.innerHTML = `
+                            <div class="file-content">
+                                <strong>Fájl tartalma:</strong><br>
+                                <pre>${fileContent}</pre>
+                            </div>
+                        `;
+                        break;
+
+                    case 'readlines':
+                        if (!fileContent) {
+                            throw new Error('A fájl üres! Először írj bele valamit.');
+                        }
+                        const lines = fileContent.split('\n');
+                        resultDiv.innerHTML = `
+                            <div class="file-content">
+                                <strong>Sorok:</strong><br>
+                                ${lines.map((line, index) => 
+                                    `<div class="line">
+                                        <span class="line-number">${index + 1}.</span> 
+                                        <pre>${line}</pre>
+                                    </div>`
+                                ).join('')}
+                            </div>
+                        `;
+                        break;
+
+                    case 'write':
+                        if (!input.trim()) {
+                            throw new Error('Írj be szöveget a fájlba íráshoz!');
+                        }
+                        fileContent = input;
+                        resultDiv.innerHTML = `
+                            <div class="success-message">
+                                <i class="fas fa-check-circle"></i>
+                                Szöveg sikeresen kiírva a fájlba!
+                            </div>
+                        `;
+                        break;
+
+                    case 'append':
+                        if (!input.trim()) {
+                            throw new Error('Írj be szöveget a hozzáfűzéshez!');
+                        }
+                        fileContent = fileContent ? 
+                            fileContent + '\n' + input : input;
+                        resultDiv.innerHTML = `
+                            <div class="success-message">
+                                <i class="fas fa-check-circle"></i>
+                                Szöveg sikeresen hozzáfűzve a fájlhoz!
+                            </div>
+                        `;
+                        break;
+                }
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Művelet típus változásának kezelése
+        document.getElementById('operation-type').addEventListener('change', (e) => {
+            const input = document.getElementById('operation-input');
+            input.value = '';
+            
+            if (e.target.value === 'read' || e.target.value === 'readlines') {
+                input.style.display = 'none';
+            } else {
+                input.style.display = 'block';
+            }
+        });
+
+        // Enter billentyű kezelése
+        document.getElementById('operation-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                performOperation();
+            }
+        });
+    </script>
+</section>
+	
+<!-- TXT fájlok kezelése szekció -->
+<!-- TXT fájlok kezelése szekció -->
+<section id="txt" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-file-text"></i>
+        TXT Fájlok Kezelése
+    </h1>
+
+    <div class="card">
+        <div class="file-operations">
+            <!-- Fájl feltöltés -->
+            <div class="upload-section">
+                <input type="file" id="inputFile" accept=".txt" class="file-input">
+                <label for="inputFile" class="btn">
+                    <i class="fas fa-upload"></i> TXT fájl feltöltése
+                </label>
+                <div id="fileName" class="file-name"></div>
+            </div>
+
+            <!-- Fájl tartalom -->
+            <div id="fileContent" class="file-viewer"></div>
+
+            <!-- Műveletek -->
+            <div class="operations-section">
+                <button class="btn" onclick="txtShowStatistics()">
+                    <i class="fas fa-chart-bar"></i> Statisztikák
+                </button>
+                <button class="btn" onclick="txtReverseContent()">
+                    <i class="fas fa-exchange-alt"></i> Tartalom megfordítása
+                </button>
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="input" placeholder="Keresendő szöveg...">
+                    <button class="btn" onclick="txtSearchText()">
+                        <i class="fas fa-search"></i> Keresés
+                    </button>
+                </div>
+            </div>
+
+            <!-- Eredmények -->
+            <div id="results" class="results-section">
+                <!-- Itt jelennek meg a műveletek eredményei -->
+            </div>
+
+            <!-- Python kód megjelenítés -->
+            <div id="pythonCode" class="python-code-section">
+                <!-- Itt jelenik meg a Python kód -->
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .file-operations {
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+
+        .upload-section {
+            text-align: center;
+            padding: 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .file-viewer {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin: 1rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Fira Code', monospace;
+            display: none;
+        }
+
+        .operations-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .results-section {
+            margin-top: 1rem;
+        }
+
+        .result-block {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .result-header {
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-content {
+            white-space: pre-wrap;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .python-code-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .highlight {
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+    </style>
+
+<script>
+    // Egyedi előtaggal ellátott változónevek a txt szekció számára
+    let txtFileContent = '';
+    let txtFileName = '';
+
+    // Fájl feltöltés kezelése
+    document.getElementById('inputFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            txtFileName = file.name;
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                try {
+                    txtFileContent = event.target.result;
+                    
+                    // Fájlnév megjelenítése
+                    document.getElementById('fileName').textContent = txtFileName;
+                    
+                    // Tartalom megjelenítése
+                    const viewer = document.getElementById('fileContent');
+                    viewer.textContent = txtFileContent;
+                    viewer.style.display = 'block';
+                    
+                    // Statisztikák automatikus megjelenítése
+                    txtShowStatistics();
+                } catch (error) {
+                    console.error('Hiba a fájl feldolgozásakor:', error);
+                    alert('Hiba történt a fájl feldolgozása közben!');
+                }
+            };
+
+            reader.onerror = function() {
+                console.error('Fájl olvasási hiba!');
+                alert('Hiba történt a fájl olvasása közben!');
+            };
+
+            reader.readAsText(file);
+        }
+    });
+
+    // Statisztikák megjelenítése
+    function txtShowStatistics() {
+        if (!txtFileContent) return;
+
+        const lines = txtFileContent.split('\n');
+        const words = txtFileContent.split(/\s+/).filter(word => word.length > 0);
+        const chars = txtFileContent.length;
+        
+        // Eredmény megjelenítése
+        txtShowResult('Statisztikák', `
+            Sorok száma: ${lines.length}
+            Szavak száma: ${words.length}
+            Karakterek száma: ${chars}
+            Karakterek száma (szóköz nélkül): ${txtFileContent.replace(/\s/g, '').length}
+        `);
+
+        // Python kód megjelenítése
+        txtShowPythonCode(`
+# Fájl statisztikák
+with open('${txtFileName}', 'r', encoding='utf-8') as f:
+    tartalom = f.read()
+    sorok = tartalom.split('\\n')
+    szavak = tartalom.split()
+    
+    print(f'Sorok száma: {len(sorok)}')
+    print(f'Szavak száma: {len(szavak)}')
+    print(f'Karakterek száma: {len(tartalom)}')
+    print(f'Karakterek száma (szóköz nélkül): {len(tartalom.replace(" ", ""))}')
+        `);
+    }
+
+    // Tartalom megfordítása
+    function txtReverseContent() {
+        if (!txtFileContent) return;
+
+        const reversedContent = txtFileContent
+            .split('\n')
+            .reverse()
+            .join('\n');
+
+        txtShowResult('Megfordított tartalom', reversedContent);
+
+        txtShowPythonCode(`
+# Fájl tartalmának megfordítása
+with open('${txtFileName}', 'r', encoding='utf-8') as f:
+    sorok = f.readlines()
+    for sor in reversed(sorok):
+        print(sor.strip())
+        `);
+    }
+
+    // Szöveg keresése
+    function txtSearchText() {
+        if (!txtFileContent) return;
+
+        const searchTerm = document.getElementById('searchInput').value;
+        if (!searchTerm) return;
+
+        const matches = txtFileContent.match(new RegExp(searchTerm, 'g'));
+        const count = matches ? matches.length : 0;
+
+        // Keresés eredménye HTML-ben kiemelve
+        const highlightedContent = txtFileContent.replace(
+            new RegExp(searchTerm, 'g'),
+            `<span class="highlight">${searchTerm}</span>`
+        );
+
+        txtShowResult(
+            `Keresés: "${searchTerm}"`,
+            `Találatok száma: ${count}\n\nTalálatok a szövegben:\n${highlightedContent}`
+        );
+
+        txtShowPythonCode(`
+# Szó keresése szövegben
+keresett_szo = '${searchTerm}'
+with open('${txtFileName}', 'r', encoding='utf-8') as f:
+    tartalom = f.read()
+    talalatok = tartalom.count(keresett_szo)
+    print(f'A "{keresett_szo}" kifejezés {talalatok} alkalommal fordul elő.')
+        `);
+    }
+
+    // Eredmény megjelenítése
+    function txtShowResult(title, content) {
+        const resultsDiv = document.getElementById('results');
+        const resultBlock = document.createElement('div');
+        resultBlock.className = 'result-block';
+        resultBlock.innerHTML = `
+            <div class="result-header">
+                <i class="fas fa-chevron-right"></i>
+                ${title}
+            </div>
+            <div class="result-content">${content}</div>
+        `;
+        
+        // Az új eredményt felülre tesszük
+        resultsDiv.insertBefore(resultBlock, resultsDiv.firstChild);
+    }
+
+    // Python kód megjelenítése
+    function txtShowPythonCode(code) {
+        const pythonDiv = document.getElementById('pythonCode');
+        pythonDiv.style.display = 'block';
+        pythonDiv.innerHTML = `
+            <div class="code-container">
+                <button class="copy-btn" onclick="txtCopyCode()">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python">${code}</code></pre>
+            </div>
+        `;
+        Prism.highlightElement(pythonDiv.querySelector('code'));
+    }
+
+    // Python kód másolása
+    function txtCopyCode() {
+        const codeElement = document.querySelector('#pythonCode code');
+        if (codeElement) {
+            navigator.clipboard.writeText(codeElement.textContent)
+                .then(() => alert('Kód vágólapra másolva!'))
+                .catch(err => console.error('Másolási hiba:', err));
+        }
+    }
+
+    // Enter billentyű kezelése a keresőmezőnél
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            txtSearchText();
+        }
+    });
+</script>
+</section>
+
+<!-- CSV fájlok kezelése szekció -->
+<section id="csv" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-file-csv"></i>
+        CSV Fájlok Kezelése
+    </h1>
+
+    <div class="card">
+        <div class="csv-operations">
+            <!-- Fájl feltöltés -->
+            <div class="upload-section">
+                <input type="file" id="csvInputFile" accept=".csv" class="file-input">
+                <label for="csvInputFile" class="btn">
+                    <i class="fas fa-upload"></i> CSV fájl feltöltése
+                </label>
+                <div id="csvFileName" class="file-name"></div>
+            </div>
+
+            <!-- Táblázat megjelenítés -->
+            <div id="csvTableView" class="table-viewer" style="display: none;">
+                <h3>CSV Tartalom:</h3>
+                <div class="table-container">
+                    <table id="csvTable" class="data-table"></table>
+                </div>
+            </div>
+
+            <!-- Műveletek -->
+            <div class="operations-section">
+                <button class="btn" onclick="csvShowStats()">
+                    <i class="fas fa-chart-bar"></i> Statisztikák
+                </button>
+                <button class="btn" onclick="csvFilterData()">
+                    <i class="fas fa-filter"></i> Szűrés
+                </button>
+                <div class="search-box">
+                    <input type="text" id="csvSearchInput" class="input" placeholder="Keresés az adatokban...">
+                    <button class="btn" onclick="csvSearchData()">
+                        <i class="fas fa-search"></i> Keresés
+                    </button>
+                </div>
+            </div>
+
+            <!-- Eredmények -->
+            <div id="csvResults" class="results-section">
+                <!-- Itt jelennek meg a műveletek eredményei -->
+            </div>
+
+            <!-- Python kód megjelenítés -->
+            <div id="csvPythonCode" class="python-code-section">
+                <!-- Itt jelenik meg a Python kód -->
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .csv-operations {
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+
+        .table-viewer {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: var(--bg-primary);
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: var(--bg-primary);
+        }
+
+        .data-table tr:hover {
+            background: var(--highlight);
+        }
+
+        #csvResults .result-block {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        #csvResults .result-block table {
+            margin-top: 0.5rem;
+        }
+    </style>
+
+    <script>
+        let csvFileContent = '';
+        let csvFileName = '';
+        let csvData = [];
+        let csvHeaders = [];
+
+        // CSV fájl feltöltés kezelése
+        document.getElementById('csvInputFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                csvFileName = file.name;
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        csvFileContent = event.target.result;
+                        
+                        // CSV parsing Papa Parse használatával
+                        Papa.parse(csvFileContent, {
+                            header: true,
+                            dynamicTyping: true,
+                            complete: function(results) {
+                                csvData = results.data;
+                                csvHeaders = results.meta.fields;
+                                
+                                // Fájlnév megjelenítése
+                                document.getElementById('csvFileName').textContent = csvFileName;
+                                
+                                // Táblázat megjelenítése
+                                displayCsvTable();
+                                
+                                // Statisztikák automatikus megjelenítése
+                                csvShowStats();
+                            },
+                            error: function(error) {
+                                console.error('CSV parsing hiba:', error);
+                                alert('Hiba történt a CSV fájl feldolgozása közben!');
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Fájl feldolgozási hiba:', error);
+                        alert('Hiba történt a fájl feldolgozása közben!');
+                    }
+                };
+
+                reader.onerror = function() {
+                    console.error('Fájl olvasási hiba!');
+                    alert('Hiba történt a fájl olvasása közben!');
+                };
+
+                reader.readAsText(file);
+            }
+        });
+
+        // CSV táblázat megjelenítése
+        function displayCsvTable() {
+            const tableDiv = document.getElementById('csvTable');
+            const tableView = document.getElementById('csvTableView');
+            
+            if (csvData.length === 0) return;
+
+            // Táblázat létrehozása
+            let html = '<thead><tr>';
+            csvHeaders.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            csvData.forEach(row => {
+                html += '<tr>';
+                csvHeaders.forEach(header => {
+                    html += `<td>${row[header] || ''}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+
+            tableDiv.innerHTML = html;
+            tableView.style.display = 'block';
+        }
+
+        // CSV statisztikák megjelenítése
+        function csvShowStats() {
+            if (csvData.length === 0) return;
+
+            const stats = {
+                rows: csvData.length,
+                columns: csvHeaders.length,
+                numeric_columns: csvHeaders.filter(header => 
+                    typeof csvData[0][header] === 'number'
+                ).length
+            };
+
+            csvShowResult('CSV Statisztikák', `
+                Sorok száma: ${stats.rows}
+                Oszlopok száma: ${stats.columns}
+                Numerikus oszlopok: ${stats.numeric_columns}
+            `);
+
+            csvShowPythonCode(`
+# CSV statisztikák
+import csv
+
+with open('${csvFileName}', 'r', encoding='utf-8') as f:
+    reader = csv.DictReader(f)
+    
+    # Adatok beolvasása
+    data = list(reader)
+    
+    # Statisztikák számolása
+    sorok_szama = len(data)
+    oszlopok_szama = len(reader.fieldnames)
+    
+    # Numerikus oszlopok számolása
+    numerikus_oszlopok = 0
+    for oszlop in reader.fieldnames:
+        try:
+            float(data[0][oszlop])
+            numerikus_oszlopok += 1
+        except ValueError:
+            continue
+            
+    print(f'Sorok száma: {sorok_szama}')
+    print(f'Oszlopok száma: {oszlopok_szama}')
+    print(f'Numerikus oszlopok: {numerikus_oszlopok}')
+            `);
+        }
+
+        // CSV adatok szűrése
+        function csvFilterData() {
+            if (csvData.length === 0) return;
+
+            // Csak a numerikus oszlopokra szűrünk
+            const numericColumns = csvHeaders.filter(header => 
+                typeof csvData[0][header] === 'number'
+            );
+
+            if (numericColumns.length === 0) {
+                csvShowResult('Szűrés', 'Nincsenek numerikus oszlopok a táblázatban.');
+                return;
+            }
+
+            // Átlag számítása minden numerikus oszlopra
+            const stats = numericColumns.map(col => {
+                const values = csvData.map(row => row[col]).filter(val => val !== null);
+                const sum = values.reduce((a, b) => a + b, 0);
+                const avg = sum / values.length;
+                return { column: col, average: avg };
+            });
+
+            // Eredmény táblázat készítése
+            let resultHtml = '<table class="data-table">';
+            resultHtml += '<tr><th>Oszlop</th><th>Átlag</th></tr>';
+            stats.forEach(stat => {
+                resultHtml += `
+                    <tr>
+                        <td>${stat.column}</td>
+                        <td>${stat.average.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            resultHtml += '</table>';
+
+            csvShowResult('Numerikus oszlopok átlaga', resultHtml);
+
+            csvShowPythonCode(`
+# CSV adatok szűrése és átlagszámítás
+import csv
+from statistics import mean
+
+with open('${csvFileName}', 'r', encoding='utf-8') as f:
+    reader = csv.DictReader(f)
+    data = list(reader)
+    
+    # Numerikus oszlopok keresése és átlagszámítás
+    for oszlop in reader.fieldnames:
+        try:
+            ertekek = [float(row[oszlop]) for row in data]
+            atlag = mean(ertekek)
+            print(f'{oszlop} átlaga: {atlag:.2f}')
+        except ValueError:
+            continue
+            `);
+        }
+
+        // CSV adatokban keresés
+        function csvSearchData() {
+            const searchTerm = document.getElementById('csvSearchInput').value.toLowerCase();
+            if (!searchTerm || csvData.length === 0) return;
+
+            // Keresés minden oszlopban
+            const matches = csvData.filter(row => 
+                Object.values(row).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                )
+            );
+
+            if (matches.length === 0) {
+                csvShowResult('Keresés eredménye', 'Nincs találat.');
+                return;
+            }
+
+            // Találatok megjelenítése táblázatban
+            let resultHtml = '<table class="data-table">';
+            resultHtml += '<tr>';
+            csvHeaders.forEach(header => {
+                resultHtml += `<th>${header}</th>`;
+            });
+            resultHtml += '</tr>';
+
+            matches.forEach(row => {
+                resultHtml += '<tr>';
+                csvHeaders.forEach(header => {
+                    let cellValue = row[header] || '';
+                    // Találat kiemelése
+                    if (String(cellValue).toLowerCase().includes(searchTerm)) {
+                        cellValue = String(cellValue).replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="highlight">${match}</span>`
+                        );
+                    }
+                    resultHtml += `<td>${cellValue}</td>`;
+                });
+                resultHtml += '</tr>';
+            });
+            resultHtml += '</table>';
+
+            csvShowResult(
+                `Keresés eredménye: "${searchTerm}" (${matches.length} találat)`, 
+                resultHtml
+            );
+
+            csvShowPythonCode(`
+# Keresés CSV adatokban
+import csv
+
+keresett_szo = '${searchTerm}'
+
+with open('${csvFileName}', 'r', encoding='utf-8') as f:
+    reader = csv.DictReader(f)
+    talalatok = []
+    
+    for sor in reader:
+        # Keresés minden oszlopban
+        for ertek in sor.values():
+            if keresett_szo.lower() in str(ertek).lower():
+                talalatok.append(sor)
+                break
+    
+    print(f'Találatok száma: {len(talalatok)}')
+    for sor in talalatok:
+        print(sor)
+            `);
+        }
+
+        // Eredmények megjelenítése
+        function csvShowResult(title, content) {
+            const resultsDiv = document.getElementById('csvResults');
+            const resultBlock = document.createElement('div');
+            resultBlock.className = 'result-block';
+            resultBlock.innerHTML = `
+                <div class="result-header">
+                    <i class="fas fa-chevron-right"></i>
+                    ${title}
+                </div>
+                <div class="result-content">${content}</div>
+            `;
+            
+            resultsDiv.insertBefore(resultBlock, resultsDiv.firstChild);
+        }
+
+        // Python kód megjelenítése
+        function csvShowPythonCode(code) {
+            const pythonDiv = document.getElementById('csvPythonCode');
+            pythonDiv.style.display = 'block';
+            pythonDiv.innerHTML = `
+                <div class="code-container">
+                    <button class="copy-btn" onclick="csvCopyCode()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">${code}</code></pre>
+                </div>
+            `;
+            Prism.highlightElement(pythonDiv.querySelector('code'));
+        }
+
+        // Python kód másolása
+        function csvCopyCode() {
+            const codeElement = document.querySelector('#csvPythonCode code');
+            if (codeElement) {
+                navigator.clipboard.writeText(codeElement.textContent)
+                    .then(() => alert('Kód vágólapra másolva!'))
+                    .catch(err => console.error('Másolási hiba:', err));
+            }
+        }
+
+        // Enter billentyű kezelése a keresőmezőnél
+        document.getElementById('csvSearchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                csvSearchData();
+            }
+        });
+    </script>
+</section>
+
+<!-- JSON fájlok kezelése szekció -->
+<section id="json" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-file-code"></i>
+        JSON Fájlok Kezelése
+    </h1>
+
+    <div class="card">
+        <div class="json-operations">
+            <!-- Fájl feltöltés -->
+            <div class="upload-section">
+                <input type="file" id="jsonInputFile" accept=".json" class="file-input">
+                <label for="jsonInputFile" class="btn">
+                    <i class="fas fa-upload"></i> JSON fájl feltöltése
+                </label>
+                <div id="jsonFileName" class="file-name"></div>
+            </div>
+
+            <!-- JSON megjelenítés -->
+            <div id="jsonViewer" class="json-viewer" style="display: none;">
+                <h3>JSON Tartalom:</h3>
+                <div class="tree-viewer">
+                    <pre id="jsonTree" class="json-tree"></pre>
+                </div>
+            </div>
+
+            <!-- Műveletek -->
+            <div class="operations-section">
+                <button class="btn" onclick="jsonAnalyze()">
+                    <i class="fas fa-chart-bar"></i> Struktúra elemzése
+                </button>
+                <button class="btn" onclick="jsonValidate()">
+                    <i class="fas fa-check-circle"></i> JSON validálás
+                </button>
+                <button class="btn" onclick="jsonFormat()">
+                    <i class="fas fa-align-left"></i> Formázás
+                </button>
+                <div class="search-box">
+                    <input type="text" id="jsonSearchInput" class="input" placeholder="Keresés a JSON-ban...">
+                    <button class="btn" onclick="jsonSearch()">
+                        <i class="fas fa-search"></i> Keresés
+                    </button>
+                </div>
+            </div>
+
+            <!-- Eredmények -->
+            <div id="jsonResults" class="results-section">
+                <!-- Itt jelennek meg a műveletek eredményei -->
+            </div>
+
+            <!-- Python kód megjelenítés -->
+            <div id="jsonPythonCode" class="python-code-section">
+                <!-- Itt jelenik meg a Python kód -->
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .json-operations {
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+
+        .json-viewer {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .tree-viewer {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .json-tree {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            margin: 0;
+        }
+
+        .json-tree .key {
+            color: var(--accent-primary);
+        }
+
+        .json-tree .string {
+            color: #e9c062;
+        }
+
+        .json-tree .number {
+            color: #7fb347;
+        }
+
+        .json-tree .boolean {
+            color: #ff8c00;
+        }
+
+        .json-tree .null {
+            color: #808080;
+        }
+    </style>
+
+    <script>
+        let jsonFileContent = '';
+        let jsonFileName = '';
+        let jsonData = null;
+
+        // JSON fájl feltöltés kezelése
+        document.getElementById('jsonInputFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                jsonFileName = file.name;
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        // JSON parse tesztelés
+                        jsonFileContent = event.target.result;
+                        jsonData = JSON.parse(jsonFileContent);
+                        
+                        // Fájlnév megjelenítése
+                        document.getElementById('jsonFileName').textContent = jsonFileName;
+                        
+                        // JSON megjelenítése
+                        displayFormattedJson();
+                        
+                        // Validálás és elemzés
+                        jsonValidate();
+                        jsonAnalyze();
+                    } catch (error) {
+                        console.error('JSON feldolgozási hiba:', error);
+                        alert('Hiba történt a JSON fájl feldolgozása közben! Ellenőrizd, hogy érvényes-e a JSON formátum.');
+                    }
+                };
+
+                reader.onerror = function() {
+                    console.error('Fájl olvasási hiba!');
+                    alert('Hiba történt a fájl olvasása közben!');
+                };
+
+                reader.readAsText(file);
+            }
+        });
+
+        // JSON megjelenítése színezéssel
+        function displayFormattedJson() {
+            if (!jsonData) return;
+
+            const jsonViewer = document.getElementById('jsonViewer');
+            const jsonTree = document.getElementById('jsonTree');
+            
+            // JSON formázása és színezése
+            const formattedJson = JSON.stringify(jsonData, null, 2)
+                .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+                .replace(/"([^"]+)"/g, '<span class="string">"$1"</span>')
+                .replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
+                .replace(/\b(true|false)\b/g, '<span class="boolean">$1</span>')
+                .replace(/\bnull\b/g, '<span class="null">null</span>');
+
+            jsonTree.innerHTML = formattedJson;
+            jsonViewer.style.display = 'block';
+        }
+
+        // JSON struktúra elemzése
+        function jsonAnalyze() {
+            if (!jsonData) return;
+
+            const analysis = {
+                depth: 0,
+                objects: 0,
+                arrays: 0,
+                strings: 0,
+                numbers: 0,
+                booleans: 0,
+                nulls: 0
+            };
+
+            function analyzeValue(value, depth = 0) {
+                analysis.depth = Math.max(analysis.depth, depth);
+
+                if (Array.isArray(value)) {
+                    analysis.arrays++;
+                    value.forEach(item => analyzeValue(item, depth + 1));
+                }
+                else if (typeof value === 'object' && value !== null) {
+                    analysis.objects++;
+                    Object.values(value).forEach(item => analyzeValue(item, depth + 1));
+                }
+                else if (typeof value === 'string') analysis.strings++;
+                else if (typeof value === 'number') analysis.numbers++;
+                else if (typeof value === 'boolean') analysis.booleans++;
+                else if (value === null) analysis.nulls++;
+            }
+
+            analyzeValue(jsonData);
+
+            jsonShowResult('JSON Struktúra Elemzés', `
+                Maximális mélység: ${analysis.depth}
+                Objektumok száma: ${analysis.objects}
+                Tömbök száma: ${analysis.arrays}
+                Szövegek száma: ${analysis.strings}
+                Számok száma: ${analysis.numbers}
+                Logikai értékek száma: ${analysis.booleans}
+                Null értékek száma: ${analysis.nulls}
+            `);
+
+            jsonShowPythonCode(`
+# JSON struktúra elemzése
+import json
+
+def analyze_json(data, depth=0):
+    analysis = {
+        'depth': depth,
+        'objects': 0,
+        'arrays': 0,
+        'strings': 0,
+        'numbers': 0,
+        'booleans': 0,
+        'nulls': 0
+    }
+    
+    if isinstance(data, dict):
+        analysis['objects'] += 1
+        for value in data.values():
+            sub_analysis = analyze_json(value, depth + 1)
+            for key, count in sub_analysis.items():
+                if key != 'depth':
+                    analysis[key] += count
+            analysis['depth'] = max(analysis['depth'], sub_analysis['depth'])
+    
+    elif isinstance(data, list):
+        analysis['arrays'] += 1
+        for item in data:
+            sub_analysis = analyze_json(item, depth + 1)
+            for key, count in sub_analysis.items():
+                if key != 'depth':
+                    analysis[key] += count
+            analysis['depth'] = max(analysis['depth'], sub_analysis['depth'])
+    
+    elif isinstance(data, str):
+        analysis['strings'] += 1
+    elif isinstance(data, (int, float)):
+        analysis['numbers'] += 1
+    elif isinstance(data, bool):
+        analysis['booleans'] += 1
+    elif data is None:
+        analysis['nulls'] += 1
+    
+    return analysis
+
+with open('${jsonFileName}', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    analysis = analyze_json(data)
+    
+    print(f"Maximális mélység: {analysis['depth']}")
+    print(f"Objektumok száma: {analysis['objects']}")
+    print(f"Tömbök száma: {analysis['arrays']}")
+    print(f"Szövegek száma: {analysis['strings']}")
+    print(f"Számok száma: {analysis['numbers']}")
+    print(f"Logikai értékek száma: {analysis['booleans']}")
+    print(f"Null értékek száma: {analysis['nulls']}")
+            `);
+        }
+
+        // JSON validálás
+        function jsonValidate() {
+            if (!jsonFileContent) return;
+
+            try {
+                // Újra parse-olás a biztonság kedvéért
+                JSON.parse(jsonFileContent);
+                
+                jsonShowResult('JSON Validálás', 'A JSON formátum érvényes!');
+                
+                jsonShowPythonCode(`
+# JSON validálás
+import json
+
+try:
+    with open('${jsonFileName}', 'r', encoding='utf-8') as f:
+        json.load(f)
+    print('A JSON formátum érvényes!')
+except json.JSONDecodeError as e:
+    print(f'JSON hiba: {str(e)}')
+                `);
+            } catch (error) {
+                jsonShowResult('JSON Validálás', `Hiba: ${error.message}`);
+            }
+        }
+
+        // JSON formázás
+        function jsonFormat() {
+            if (!jsonData) return;
+
+            const formatted = JSON.stringify(jsonData, null, 2);
+            
+            jsonShowResult('Formázott JSON', `<pre><code class="language-json">${formatted}</code></pre>`);
+            
+            jsonShowPythonCode(`
+# JSON formázás
+import json
+
+with open('${jsonFileName}', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    # Formázott kiírás
+    formatted_json = json.dumps(data, indent=2, ensure_ascii=False)
+    print(formatted_json)
+            `);
+
+            // Syntax highlighting
+            Prism.highlightElement(document.querySelector('#jsonResults pre code'));
+        }
+
+        // JSON keresés
+        function jsonSearch() {
+            if (!jsonData) return;
+
+            const searchTerm = document.getElementById('jsonSearchInput').value.toLowerCase();
+            if (!searchTerm) return;
+
+            const results = [];
+
+            function searchInValue(value, path = []) {
+                if (Array.isArray(value)) {
+                    value.forEach((item, index) => {
+                        searchInValue(item, [...path, index]);
+                    });
+                }
+                else if (typeof value === 'object' && value !== null) {
+                    Object.entries(value).forEach(([key, val]) => {
+                        if (key.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                path: [...path, key].join('.'),
+                                key: key,
+                                value: val
+                            });
+                        }
+                        searchInValue(val, [...path, key]);
+                    });
+                }
+                else if (String(value).toLowerCase().includes(searchTerm)) {
+                    results.push({
+                        path: path.join('.'),
+                        value: value
+                    });
+                }
+            }
+
+            searchInValue(jsonData);
+
+            if (results.length === 0) {
+                jsonShowResult('Keresés', 'Nincs találat.');
+                return;
+            }
+
+            let resultHtml = '<div class="search-results">';
+            results.forEach(result => {
+                resultHtml += `
+                    <div class="search-result">
+                        <div class="result-path">${result.path}</div>
+                        <div class="result-value">
+                            ${result.key ? `<span class="key">${result.key}</span>: ` : ''}
+                            ${JSON.stringify(result.value)}
+                        </div>
+                    </div>
+                `;
+            });
+            resultHtml += '</div>';
+
+            jsonShowResult(`Keresés: "${searchTerm}" (${results.length} találat)`, resultHtml);
+
+            jsonShowPythonCode(`
+# JSON keresés
+import json
+
+def search_in_json(data, search_term, path=None):
+    if path is None:
+        path = []
+    results = []
+    
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if search_term in key.lower():
+                results.append({
+                    'path': '.'.join(path + [key]),
+                    'key': key,
+                    'value': value
+                })
+            results.extend(search_in_json(value, search_term, path + [key]))
+    
+    elif isinstance(data, list):
+        for i, item in enumerate(data):
+            results.extend(search_in_json(item, search_term, path + [str(i)]))
+    
+    elif isinstance(data, (str, int, float, bool)):
+        if search_term in str(data).lower():
+            results.append({
+                'path': '.'.join(path),
+                'value': data
+            })
+    
+    return results
+
+with open('${jsonFileName}', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    results = search_in_json(data, '${searchTerm}')
+    
+    print(f'Találatok száma: {len(results)}')
+    for result in results:
+        print(f"Útvonal: {result['path']}")
+        if 'key' in result:
+            print(f"Kulcs: {result['key']}")
+        print(f"Érték: {result['value']}")
+        print()
+            `);
+        }
+
+        // Eredmények megjelenítése
+        function jsonShowResult(title, content) {
+            const resultsDiv = document.getElementById('jsonResults');
+            const resultBlock = document.createElement('div');
+            resultBlock.className = 'result-block';
+            resultBlock.innerHTML = `
+                <div class="result-header">
+                    <i class="fas fa-chevron-right"></i>
+                    ${title}
+                </div>
+                <div class="result-content">${content}</div>
+            `;
+            
+            resultsDiv.insertBefore(resultBlock, resultsDiv.firstChild);
+        }
+
+        // Python kód megjelenítése
+        // Python kód megjelenítése
+       function jsonShowPythonCode(code) {
+           const pythonDiv = document.getElementById('jsonPythonCode');
+           pythonDiv.style.display = 'block';
+           pythonDiv.innerHTML = `
+               <div class="code-container">
+                   <button class="copy-btn" onclick="jsonCopyCode()">
+                       <i class="fas fa-copy"></i>
+                   </button>
+                   <pre><code class="language-python">${code}</code></pre>
+               </div>
+           `;
+           Prism.highlightElement(pythonDiv.querySelector('code'));
+       }
+
+       // Python kód másolása
+       function jsonCopyCode() {
+           const codeElement = document.querySelector('#jsonPythonCode code');
+           if (codeElement) {
+               navigator.clipboard.writeText(codeElement.textContent)
+                   .then(() => alert('Kód vágólapra másolva!'))
+                   .catch(err => console.error('Másolási hiba:', err));
+           }
+       }
+
+       // Enter billentyű kezelése a keresőmezőnél
+       document.getElementById('jsonSearchInput').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') {
+               jsonSearch();
+           }
+       });
+   </script>
+</section>
+
+<!-- Bináris fájlok kezelése szekció -->
+<section id="binaris" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-file-image"></i>
+        Bináris Fájlok Kezelése
+    </h1>
+ 
+    <div class="card">
+        <div class="binary-operations">
+            <!-- Fájl feltöltés -->
+            <div class="upload-section">
+                <input type="file" id="binaryInputFile" accept="image/*" class="file-input">
+                <label for="binaryInputFile" class="btn">
+                    <i class="fas fa-upload"></i> Kép fájl feltöltése
+                </label>
+                <div id="binaryFileName" class="file-name"></div>
+            </div>
+ 
+            <!-- Kép megjelenítés -->
+            <div id="imageViewer" class="image-viewer" style="display: none;">
+                <h3>Betöltött kép:</h3>
+                <div class="image-container">
+                    <img id="uploadedImage" class="preview-image">
+                </div>
+            </div>
+ 
+            <!-- Képinformációk -->
+            <div id="imageInfo" class="image-info" style="display: none;">
+                <h3>Kép információk:</h3>
+                <div id="imageDetails" class="info-grid"></div>
+            </div>
+ 
+            <!-- Műveletek -->
+            <div class="operations-section">
+                <button class="btn" onclick="binaryShowInfo()">
+                    <i class="fas fa-info-circle"></i> Fájl információk
+                </button>
+                <button class="btn" onclick="binaryShowHeaders()">
+                    <i class="fas fa-file-code"></i> Fájl fejléc
+                </button>
+            </div>
+ 
+            <!-- Eredmények -->
+            <div id="binaryResults" class="results-section">
+                <!-- Itt jelennek meg a műveletek eredményei -->
+            </div>
+ 
+            <!-- Python kód megjelenítés -->
+            <div id="binaryPythonCode" class="python-code-section">
+                <!-- Itt jelenik meg a Python kód -->
+            </div>
+        </div>
+    </div>
+ 
+    <style>
+        .binary-operations {
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+ 
+        .image-viewer {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+ 
+        .image-container {
+            margin-top: 1rem;
+            text-align: center;
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 5px;
+        }
+ 
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 5px;
+        }
+ 
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+ 
+        .info-item {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+ 
+        .info-label {
+            color: var(--accent-primary);
+            font-size: 0.9rem;
+        }
+ 
+        .info-value {
+            font-family: 'Fira Code', monospace;
+            word-break: break-all;
+        }
+ 
+        .hex-view {
+            font-family: 'Fira Code', monospace;
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow: auto;
+        }
+ 
+        .hex-byte {
+            color: var(--accent-primary);
+            margin-right: 0.5rem;
+        }
+ 
+        .hex-ascii {
+            color: var(--text-secondary);
+            margin-left: 1rem;
+        }
+    </style>
+ 
+    <script>
+        let binaryFileContent = null;
+        let binaryFileName = '';
+ 
+        // Bináris fájl feltöltés kezelése
+        document.getElementById('binaryInputFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                binaryFileName = file.name;
+                
+                // Fájlnév megjelenítése
+                document.getElementById('binaryFileName').textContent = binaryFileName;
+                
+                // Kép előnézet megjelenítése
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = event.target.result;
+                    document.getElementById('imageViewer').style.display = 'block';
+                    
+                    // Kép betöltés után információk megjelenítése
+                    img.onload = function() {
+                        document.getElementById('imageInfo').style.display = 'block';
+                        binaryShowInfo();
+                    };
+                };
+                reader.readAsDataURL(file);
+ 
+                // Bináris tartalom olvasása
+                const binaryReader = new FileReader();
+                binaryReader.onload = function(event) {
+                    binaryFileContent = new Uint8Array(event.target.result);
+                };
+                binaryReader.readAsArrayBuffer(file);
+            }
+        });
+ 
+        // Kép információk megjelenítése
+        function binaryShowInfo() {
+            const img = document.getElementById('uploadedImage');
+            const file = document.getElementById('binaryInputFile').files[0];
+ 
+            if (!file || !img.complete) return;
+ 
+            const info = {
+                'Fájlnév': file.name,
+                'Fájlméret': formatFileSize(file.size),
+                'MIME típus': file.type,
+                'Kép szélessége': `${img.naturalWidth}px`,
+                'Kép magassága': `${img.naturalHeight}px`,
+                'Utolsó módosítás': new Date(file.lastModified).toLocaleString()
+            };
+ 
+            const infoHtml = Object.entries(info).map(([key, value]) => `
+                <div class="info-item">
+                    <div class="info-label">${key}</div>
+                    <div class="info-value">${value}</div>
+                </div>
+            `).join('');
+ 
+            document.getElementById('imageDetails').innerHTML = infoHtml;
+ 
+            binaryShowResult('Fájl információk', Object.entries(info).map(
+                ([key, value]) => `${key}: ${value}`
+            ).join('\n'));
+ 
+            binaryShowPythonCode(`
+ # Képfájl információk
+ from PIL import Image
+ import os
+ 
+ def get_image_info(file_path):
+    # Fájl információk
+    file_stats = os.stat(file_path)
+    
+    # Kép megnyitása
+    with Image.open(file_path) as img:
+        info = {
+            'Fájlnév': os.path.basename(file_path),
+            'Fájlméret': file_stats.st_size,
+            'Képformátum': img.format,
+            'Szélesség': img.width,
+            'Magasság': img.height,
+            'Színmód': img.mode,
+            'DPI': img.info.get('dpi', 'Nem elérhető')
+        }
+        
+        for key, value in info.items():
+            print(f"{key}: {value}")
+ 
+ # Használat
+ get_image_info('${binaryFileName}')
+            `);
+        }
+ 
+        // Fájl fejléc megjelenítése
+        function binaryShowHeaders() {
+            if (!binaryFileContent) return;
+ 
+            // Első 64 bájt megjelenítése hexadecimális formátumban
+            const headerSize = Math.min(64, binaryFileContent.length);
+            let hexView = '';
+            let asciiView = '';
+            
+            for (let i = 0; i < headerSize; i++) {
+                // Új sor minden 16 bájt után
+                if (i > 0 && i % 16 === 0) {
+                    hexView += `  ${asciiView}\n`;
+                    asciiView = '';
+                }
+                
+                const byte = binaryFileContent[i];
+                // Hex érték
+                hexView += byte.toString(16).padStart(2, '0') + ' ';
+                // ASCII karakter (ha megjeleníthető)
+                asciiView += byte >= 32 && byte <= 126 ? String.fromCharCode(byte) : '.';
+            }
+            
+            // Utolsó sor kiegészítése
+            if (asciiView) {
+                const padding = ' '.repeat((16 - (headerSize % 16)) * 3);
+                hexView += padding + '  ' + asciiView;
+            }
+ 
+            binaryShowResult('Fájl fejléc', `<div class="hex-view">${hexView}</div>`);
+ 
+            binaryShowPythonCode(`
+ # Bináris fájl fejléc olvasása
+ def read_file_header(file_path, bytes_to_read=64):
+    with open(file_path, 'rb') as f:
+        header = f.read(bytes_to_read)
+        
+        # Hex dump formázása
+        hex_dump = []
+        ascii_chars = []
+        
+        for i, byte in enumerate(header):
+            if i > 0 and i % 16 == 0:
+                hex_dump.append('  ' + ''.join(ascii_chars))
+                ascii_chars = []
+                hex_dump.append('\\n')
+            
+            hex_dump.append(f'{byte:02x} ')
+            ascii_chars.append(chr(byte) if 32 <= byte <= 126 else '.')
+        
+        # Utolsó sor kiegészítése
+        if ascii_chars:
+            padding = ' ' * (3 * (16 - len(ascii_chars)))
+            hex_dump.append(padding + '  ' + ''.join(ascii_chars))
+        
+        print(''.join(hex_dump))
+ 
+ # Használat
+ read_file_header('${binaryFileName}')
+            `);
+        }
+ 
+        // Fájlméret formázása
+        function formatFileSize(bytes) {
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let size = bytes;
+            let unitIndex = 0;
+            
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            
+            return `${size.toFixed(2)} ${units[unitIndex]}`;
+        }
+ 
+        // Eredmények megjelenítése
+        function binaryShowResult(title, content) {
+            const resultsDiv = document.getElementById('binaryResults');
+            const resultBlock = document.createElement('div');
+            resultBlock.className = 'result-block';
+            resultBlock.innerHTML = `
+                <div class="result-header">
+                    <i class="fas fa-chevron-right"></i>
+                    ${title}
+                </div>
+                <div class="result-content">${content}</div>
+            `;
+            
+            resultsDiv.insertBefore(resultBlock, resultsDiv.firstChild);
+        }
+ 
+        // Python kód megjelenítése
+        function binaryShowPythonCode(code) {
+            const pythonDiv = document.getElementById('binaryPythonCode');
+            pythonDiv.style.display = 'block';
+            pythonDiv.innerHTML = `
+                <div class="code-container">
+                    <button class="copy-btn" onclick="binaryCopyCode()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">${code}</code></pre>
+                </div>
+            `;
+            Prism.highlightElement(pythonDiv.querySelector('code'));
+        }
+ 
+        // Python kód másolása
+        function binaryCopyCode() {
+            const codeElement = document.querySelector('#binaryPythonCode code');
+            if (codeElement) {
+                navigator.clipboard.writeText(codeElement.textContent)
+                    .then(() => alert('Kód vágólapra másolva!'))
+                    .catch(err => console.error('Másolási hiba:', err));
+            }
+        }
+    </script>
+ </section>
+
+
+
+    <!-- Itt végződnek a szekciók -->
+	</main>
+
+    <!-- Lábléc -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h3 class="h5 mb-3">Kapcsolat</h3>
+                    <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Információk</h3>
+                    <p class="mb-2">Utolsó frissítés: 2025.01.28.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Footer stílusok */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .mb-md-0 {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+
+    <!-- Lezáró script az oldal végén -->
+    <script>
+        // Prism újratöltése amikor új kód jelenik meg
+        function refreshPrism() {
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+        }
+
+        // Oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshPrism();
+
+            // Smooth scroll a navigációs linkekhez
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Listakezelő Függvények Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Kiemelő színek különböző függvény típusokhoz */
+            --func-number: #3498db;     /* Szám függvények színe */
+            --func-string: #e74c3c;     /* String függvények színe */
+            --func-other: #9b59b6;      /* Egyéb függvények színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin-top: 60px;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 6rem;
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Szekció címek */
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            font-size: 1.75rem;
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Tooltip stílus */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Reszponzív dizájn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <nav class="nav">
+    <div class="nav-container">
+        <a href="#" class="nav-logo">
+            <i class="fas fa-code"></i> Python Listakezelés
+        </a>
+        <ul class="nav-links">
+            <li><a href="#bevezeto" class="nav-link">
+                <i class="fas fa-book-open"></i> Bevezető
+            </a></li>
+            <li><a href="#szamok" class="nav-link">
+                <i class="fas fa-hashtag"></i> Számok
+            </a></li>
+            <li><a href="#stringek" class="nav-link">
+                <i class="fas fa-font"></i> Stringek
+            </a></li>
+            <li><a href="#egyeb" class="nav-link">
+                <i class="fas fa-plus"></i> Egyéb
+            </a></li>
+            <li><a href="#gyakorlat" class="nav-link">
+                <i class="fas fa-tasks"></i> Gyakorlatok
+            </a></li>
+        </ul>
+    </div>
+</nav>
+
+<style>
+    .nav {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        background: var(--bg-secondary);
+        padding: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-logo {
+        font-size: 1.5rem;
+        color: var(--accent-primary);
+        text-decoration: none;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+    }
+
+    .nav-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-link:hover {
+        color: var(--accent-primary);
+    }
+
+    @media (max-width: 768px) {
+        .nav-container {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+    }
+</style>
+
+<!-- Bevezető szekció -->
+<section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Listakezelő Függvények Pythonban
+    </h1>
+
+    <div class="card">
+        <h2>Mik a listakezelő függvények?</h2>
+        <p>A Python számos beépített függvényt kínál a listák (tömbök) egyszerű és hatékony kezelésére. Ezek a függvények segítenek a lista elemeinek rendezésében, számításokban és a lista módosításában.</p>
+
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-list-ol"></i>
+                <h3>Egyszerű használat</h3>
+                <p>Könnyen meghívható beépített függvények</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-sync"></i>
+                <h3>Rugalmas</h3>
+                <p>Számok és szövegek listáira is használható</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <h3>Hatékony</h3>
+                <p>Optimalizált műveletek nagy adathalmazokra</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Egyszerű lista műveletek</h2>
+        <p>Nézzünk egy egyszerű példát a lista műveletek használatára:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="lista-pelda">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Lista létrehozása
+szamok = [5, 2, 8, 1, 9]
+
+# Lista elemeinek összege
+print(f"A lista elemeinek összege: {sum(szamok)}")
+
+# Lista rendezése növekvő sorrendbe
+print(f"Rendezett lista: {sorted(szamok)}")
+
+# Legnagyobb és legkisebb elem
+print(f"Legnagyobb elem: {max(szamok)}")
+print(f"Legkisebb elem: {min(szamok)}")
+</code></pre>
+        </div>
+
+        <div id="lista-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Add meg a számokat vesszővel elválasztva:</label>
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="lista-input" class="input" placeholder="Pl.: 5,2,8,1,9">
+                    <button class="btn" onclick="listaDemo()">
+                        <i class="fas fa-play"></i> Futtatás
+                    </button>
+                </div>
+            </div>
+            <div id="lista-eredmeny" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: var(--text-secondary);
+        }
+
+        .interactive-demo {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+
+    <script>
+        function listaDemo() {
+            const input = document.getElementById('lista-input').value;
+            const resultDiv = document.getElementById('lista-eredmeny');
+
+            try {
+                // Számok beolvasása és konvertálása
+                const szamok = input.split(',').map(num => parseFloat(num.trim()));
+
+                // Ellenőrzés, hogy minden elem szám-e
+                if (szamok.some(isNaN)) {
+                    throw new Error('Csak számokat adj meg!');
+                }
+
+                // Eredmények kiszámítása
+                const osszeg = szamok.reduce((a, b) => a + b, 0);
+                const rendezett = [...szamok].sort((a, b) => a - b);
+                const legnagyobb = Math.max(...szamok);
+                const legkisebb = Math.min(...szamok);
+
+                // Eredmények megjelenítése
+                resultDiv.innerHTML = `
+                    Eredeti lista: [${szamok.join(', ')}]<br>
+                    Összeg: ${osszeg}<br>
+                    Rendezett lista: [${rendezett.join(', ')}]<br>
+                    Legnagyobb elem: ${legnagyobb}<br>
+                    Legkisebb elem: ${legkisebb}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth; // Reflow
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('lista-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') listaDemo();
+        });
+
+        // Másolás gomb funkcionalitás
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const codeBlock = button.nextElementSibling;
+                const code = codeBlock.textContent;
+
+                try {
+                    await navigator.clipboard.writeText(code);
+
+                    // Visszajelzés
+                    const originalContent = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i>';
+                    button.style.color = 'var(--success)';
+
+                    setTimeout(() => {
+                        button.innerHTML = originalContent;
+                        button.style.color = '';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Sikertelen másolás:', err);
+                }
+            });
+        });
+    </script>
+</section>
+
+<section id="szamok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-hashtag"></i>
+        Számok Listáinak Függvényei
+    </h1>
+
+    <div class="card">
+        <h2>sum() - Lista elemeinek összegzése</h2>
+        <p>A <code>sum()</code> függvény összeadja a lista összes számszerű elemét.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="sum-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Lista számainak összegzése
+szamok = [10, 20, 30, 40, 50]
+osszeg = sum(szamok)
+print(f"A lista elemeinek összege: {osszeg}")  # Eredmény: 150
+
+# Működik tizedes törtekkel is
+tizedes_szamok = [1.5, 2.7, 3.2]
+print(f"Tizedes számok összege: {sum(tizedes_szamok)}")  # Eredmény: 7.4</code></pre>
+        </div>
+
+        <div class="sum-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="form-group">
+                <div class="number-inputs" id="sum-inputs">
+                    <input type="number" class="input sum-number" placeholder="Szám" step="any">
+                    <input type="number" class="input sum-number" placeholder="Szám" step="any">
+                    <input type="number" class="input sum-number" placeholder="Szám" step="any">
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="addSumInput()">
+                        <i class="fas fa-plus"></i> Új szám
+                    </button>
+                    <button class="btn" onclick="calculateSum()">
+                        <i class="fas fa-equals"></i> Összegzés
+                    </button>
+                </div>
+            </div>
+            <div id="sum-result" class="result"></div>
+
+            <!-- Vizualizáció -->
+            <div class="sum-visualization">
+                <h4>Hogyan működik?</h4>
+                <div class="sum-flow">
+                    <div class="sum-numbers">
+                        <!-- Dinamikusan feltöltődik -->
+                    </div>
+                    <div class="sum-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="sum-total">
+                        <span class="total-label">Összeg:</span>
+                        <span class="total-value">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>min() és max() - Minimum és maximum értékek</h2>
+        <p>A <code>min()</code> és <code>max()</code> függvények megkeresik a lista legkisebb és legnagyobb elemét.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="minmax-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Minimum és maximum keresése
+szamok = [42, 15, 67, 23, 10]
+
+legkisebb = min(szamok)
+legnagyobb = max(szamok)
+
+print(f"A legkisebb szám: {legkisebb}")   # Eredmény: 10
+print(f"A legnagyobb szám: {legnagyobb}")  # Eredmény: 67</code></pre>
+        </div>
+
+        <div class="minmax-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="form-group">
+                <div class="number-inputs" id="minmax-inputs">
+                    <input type="number" class="input minmax-number" placeholder="Szám" step="any">
+                    <input type="number" class="input minmax-number" placeholder="Szám" step="any">
+                    <input type="number" class="input minmax-number" placeholder="Szám" step="any">
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="addMinMaxInput()">
+                        <i class="fas fa-plus"></i> Új szám
+                    </button>
+                    <button class="btn" onclick="findMinMax()">
+                        <i class="fas fa-search"></i> Keresés
+                    </button>
+                </div>
+            </div>
+            <div id="minmax-result" class="result"></div>
+
+            <!-- Vizualizáció -->
+            <div class="minmax-visualization">
+                <div class="number-line">
+                    <div class="number-marker min-marker">Min</div>
+                    <div class="number-scale"></div>
+                    <div class="number-marker max-marker">Max</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .number-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .sum-visualization,
+        .minmax-visualization {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sum-flow {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        .sum-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .sum-number {
+            padding: 0.5rem 1rem;
+            background: var(--func-number);
+            color: var(--bg-primary);
+            border-radius: 5px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        .sum-arrow {
+            color: var(--accent-primary);
+            font-size: 1.5rem;
+        }
+
+        .sum-total {
+            padding: 1rem;
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid var(--func-number);
+            border-radius: 5px;
+        }
+
+        .total-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-value {
+            font-family: 'Fira Code', monospace;
+            color: var(--func-number);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .number-line {
+            position: relative;
+            height: 60px;
+            margin: 2rem 0;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .number-scale {
+            position: relative;
+            height: 2px;
+            background: var(--border-color);
+            margin: 20px 40px;
+        }
+
+        .number-marker {
+            position: absolute;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+
+        .min-marker {
+            background: var(--error);
+            color: white;
+            left: 0;
+        }
+
+        .max-marker {
+            background: var(--success);
+            color: white;
+            right: 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .sum-flow {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        // Sum demo funkciók
+        function addSumInput() {
+            const container = document.getElementById('sum-inputs');
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'input sum-number';
+            input.placeholder = 'Szám';
+            input.step = 'any';
+
+            anime({
+                targets: input,
+                translateX: [-20, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutCubic'
+            });
+
+            container.appendChild(input);
+        }
+
+        function calculateSum() {
+            const inputs = document.querySelectorAll('.sum-number');
+            const numbers = Array.from(inputs)
+                .map(input => parseFloat(input.value))
+                .filter(num => !isNaN(num));
+
+            const resultDiv = document.getElementById('sum-result');
+
+            if (numbers.length === 0) {
+                resultDiv.textContent = 'Hiba: Adj meg legalább egy számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const sum = numbers.reduce((a, b) => a + b, 0);
+                resultDiv.textContent = `A számok összege: ${sum}`;
+                resultDiv.style.borderColor = 'var(--success)';
+
+                // Vizualizáció frissítése
+                updateSumVisualization(numbers, sum);
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function updateSumVisualization(numbers, total) {
+            const container = document.querySelector('.sum-numbers');
+            const totalValue = document.querySelector('.total-value');
+
+            container.innerHTML = '';
+            numbers.forEach((num, index) => {
+                const numDiv = document.createElement('div');
+                numDiv.className = 'sum-number';
+                numDiv.textContent = num;
+                numDiv.style.animationDelay = `${index * 0.1}s`;
+                container.appendChild(numDiv);
+            });
+
+            anime({
+                targets: '.total-value',
+                innerHTML: [0, total],
+                round: 100,
+                easing: 'easeInOutExpo',
+                duration: 1000
+            });
+        }
+
+        // MinMax demo funkciók
+        function addMinMaxInput() {
+            const container = document.getElementById('minmax-inputs');
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'input minmax-number';
+            input.placeholder = 'Szám';
+            input.step = 'any';
+
+            anime({
+                targets: input,
+                translateX: [-20, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutCubic'
+            });
+
+            container.appendChild(input);
+        }
+
+        function findMinMax() {
+            const inputs = document.querySelectorAll('.minmax-number');
+            const numbers = Array.from(inputs)
+                .map(input => parseFloat(input.value))
+                .filter(num => !isNaN(num));
+
+            const resultDiv = document.getElementById('minmax-result');
+
+            if (numbers.length === 0) {
+                resultDiv.textContent = 'Hiba: Adj meg legalább egy számot!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const min = Math.min(...numbers);
+                const max = Math.max(...numbers);
+                resultDiv.innerHTML = `
+                    Legkisebb szám: ${min}<br>
+                    Legnagyobb szám: ${max}
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+
+                // Vizualizáció frissítése
+                updateMinMaxVisualization(min, max, numbers);
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function updateMinMaxVisualization(min, max, numbers) {
+            const minMarker = document.querySelector('.min-marker');
+            const maxMarker = document.querySelector('.max-marker');
+
+            const range = max - min;
+            const padding = range * 0.1;
+            const scale = document.querySelector('.number-scale').offsetWidth;
+
+            // Animáld a markereket
+            anime({
+                targets: '.min-marker',
+                left: `${(min - padding) / (max - min + 2 * padding) * 100}%`,
+                duration: 1000,
+                easing: 'easeOutElastic'
+            });
+
+            anime({
+                targets: '.max-marker',
+                right: `${(1 - (max + padding) / (max - min + 2 * padding)) * 100}%`,
+                duration: 1000,
+                easing: 'easeOutElastic'
+            });
+
+            minMarker.textContent = `Min: ${min}`;
+            maxMarker.textContent = `Max: ${max}`;
+        }
+
+        // Enter billentyű kezelése
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (e.target.classList.contains('sum-number')) {
+                    calculateSum();
+                } else if (e.target.classList.contains('minmax-number')) {
+                    findMinMax();
+                }
+            }
+        });
+    </script>
+</section>
+
+<section id="stringek" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-font"></i>
+        Stringek Listáinak Függvényei
+    </h1>
+
+    <div class="card">
+        <h2>join() - Lista elemeinek összefűzése</h2>
+        <p>A <code>join()</code> függvény segítségével a lista string elemeit egyetlen stringgé fűzhetjük össze egy választott elválasztó karakterrel.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="join-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Lista elemeinek összefűzése
+gyumolcsok = ["alma", "körte", "szilva"]
+
+# Összefűzés szóközzel
+szokozzel = " ".join(gyumolcsok)
+print(szokozzel)  # Eredmény: alma körte szilva
+
+# Összefűzés vesszővel
+vesszovel = ", ".join(gyumolcsok)
+print(vesszovel)  # Eredmény: alma, körte, szilva
+
+# Összefűzés egyéb karakterrel
+alahuzassal = "_".join(gyumolcsok)
+print(alahuzassal)  # Eredmény: alma_körte_szilva</code></pre>
+        </div>
+
+        <div class="join-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="form-group">
+                <div class="string-inputs" id="join-inputs">
+                    <input type="text" class="input join-string" placeholder="Szöveg">
+                    <input type="text" class="input join-string" placeholder="Szöveg">
+                    <input type="text" class="input join-string" placeholder="Szöveg">
+                </div>
+                <div class="separator-input">
+                    <label>Elválasztó karakter:</label>
+                    <select id="separator-select" class="input">
+                        <option value=" ">Szóköz ( )</option>
+                        <option value=", ">Vessző (, )</option>
+                        <option value="_">Aláhúzás (_)</option>
+                        <option value="|">Függőleges vonal (|)</option>
+                        <option value="custom">Egyéni...</option>
+                    </select>
+                    <input type="text" id="custom-separator" class="input" placeholder="Egyéni elválasztó"
+                           style="display: none;">
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="addJoinInput()">
+                        <i class="fas fa-plus"></i> Új szöveg
+                    </button>
+                    <button class="btn" onclick="demonstrateJoin()">
+                        <i class="fas fa-link"></i> Összefűzés
+                    </button>
+                </div>
+            </div>
+            <div id="join-result" class="result"></div>
+
+            <!-- Vizualizáció -->
+            <div class="join-visualization">
+                <h4>Hogyan működik?</h4>
+                <div class="join-flow">
+                    <div class="strings-container">
+                        <!-- Dinamikusan feltöltődik -->
+                    </div>
+                    <div class="join-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="joined-result">
+                        <span class="result-label">Összefűzött szöveg:</span>
+                        <span class="result-value"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>split() - String szétbontása listává</h2>
+        <p>A <code>split()</code> függvény egy stringet bont listává egy megadott elválasztó karakter mentén.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="split-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># String szétbontása listává
+mondat = "A kertben terem alma is, körte is és szilva is."
+
+# Szétbontás szóköz mentén
+szavak = mondat.split()
+print(szavak)  # ['A', 'kertben', 'terem', 'alma', 'is,', ...]
+
+# Szétbontás vessző mentén
+vesszo_menten = mondat.split(',')
+print(vesszo_menten)  # ['A kertben terem alma is', ' körte is és szilva is.']
+
+# Szétbontás adott karakter mentén
+mondatresz = "alma;körte;szilva"
+gyumolcsok = mondatresz.split(';')
+print(gyumolcsok)  # ['alma', 'körte', 'szilva']</code></pre>
+        </div>
+
+        <div class="split-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="form-group">
+                <textarea id="split-input" class="input" rows="3"
+                    placeholder="Írd be a szöveget, amit szét szeretnél bontani..."></textarea>
+                <div class="separator-input">
+                    <label>Szétbontás karaktere:</label>
+                    <select id="split-separator" class="input">
+                        <option value=" ">Szóköz ( )</option>
+                        <option value=",">Vessző (,)</option>
+                        <option value=";">Pontosvessző (;)</option>
+                        <option value="|">Függőleges vonal (|)</option>
+                        <option value="custom">Egyéni...</option>
+                    </select>
+                    <input type="text" id="custom-split-separator" class="input"
+                           placeholder="Egyéni elválasztó" style="display: none;">
+                </div>
+                <button class="btn" onclick="demonstrateSplit()">
+                    <i class="fas fa-cut"></i> Szétbontás
+                </button>
+            </div>
+            <div id="split-result" class="result"></div>
+
+            <!-- Vizualizáció -->
+            <div class="split-visualization">
+                <div class="split-flow">
+                    <div class="original-text">
+                        <!-- Eredeti szöveg -->
+                    </div>
+                    <div class="split-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="split-result">
+                        <!-- Szétbontott elemek -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .string-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .separator-input {
+            margin: 1rem 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .join-visualization,
+        .split-visualization {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .join-flow,
+        .split-flow {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        .strings-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .string-item {
+            padding: 0.5rem 1rem;
+            background: var(--func-string);
+            color: white;
+            border-radius: 5px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        .join-arrow,
+        .split-arrow {
+            color: var(--accent-primary);
+            font-size: 1.5rem;
+        }
+
+        .joined-result,
+        .split-result {
+            padding: 1rem;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--func-string);
+            border-radius: 5px;
+            flex-grow: 1;
+        }
+
+        .result-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-family: 'Fira Code', monospace;
+            color: var(--func-string);
+            font-size: 1.2rem;
+            word-break: break-all;
+        }
+
+        .split-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .split-item {
+            padding: 0.5rem 1rem;
+            background: var(--func-string);
+            color: white;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .join-flow,
+            .split-flow {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        // Join demo funkciók
+        function addJoinInput() {
+            const container = document.getElementById('join-inputs');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input join-string';
+            input.placeholder = 'Szöveg';
+
+            anime({
+                targets: input,
+                translateX: [-20, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutCubic'
+            });
+
+            container.appendChild(input);
+        }
+
+        function demonstrateJoin() {
+            const inputs = document.querySelectorAll('.join-string');
+            const strings = Array.from(inputs)
+                .map(input => input.value.trim())
+                .filter(str => str.length > 0);
+
+            const separatorSelect = document.getElementById('separator-select');
+            let separator = separatorSelect.value;
+
+            if (separator === 'custom') {
+                separator = document.getElementById('custom-separator').value;
+            }
+
+            const resultDiv = document.getElementById('join-result');
+
+            if (strings.length === 0) {
+                resultDiv.textContent = 'Hiba: Adj meg legalább egy szöveget!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const joined = strings.join(separator);
+                resultDiv.innerHTML = `Összefűzött szöveg:<br><code>${joined}</code>`;
+                resultDiv.style.borderColor = 'var(--success)';
+
+                // Vizualizáció frissítése
+                updateJoinVisualization(strings, separator, joined);
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Elválasztó választó kezelése
+        document.getElementById('separator-select').addEventListener('change', function() {
+            const customInput = document.getElementById('custom-separator');
+            customInput.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        function updateJoinVisualization(strings, separator, result) {
+            const container = document.querySelector('.strings-container');
+            const resultValue = document.querySelector('.result-value');
+
+            // Stringek konténer frissítése
+            container.innerHTML = '';
+            strings.forEach((str, index) => {
+                const strDiv = document.createElement('div');
+                strDiv.className = 'string-item';
+                strDiv.textContent = str;
+                strDiv.style.animationDelay = `${index * 0.1}s`;
+                container.appendChild(strDiv);
+
+                // Elválasztó hozzáadása
+                if (index < strings.length - 1) {
+                    const sepDiv = document.createElement('div');
+                    sepDiv.className = 'string-item';
+                    sepDiv.textContent = separator;
+                    sepDiv.style.animationDelay = `${index * 0.1 + 0.05}s`;
+                    sepDiv.style.background = 'var(--accent-primary)';
+                    container.appendChild(sepDiv);
+                }
+            });
+
+            // Eredmény animálása
+            anime({
+                targets: '.result-value',
+                opacity: [0, 1],
+                duration: 1000,
+                easing: 'easeInOutQuad',
+                begin: function() {
+                    resultValue.textContent = result;
+                }
+            });
+        }
+
+        // Split demo funkciók
+        document.getElementById('split-separator').addEventListener('change', function() {
+            const customInput = document.getElementById('custom-split-separator');
+            customInput.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        function demonstrateSplit() {
+            const text = document.getElementById('split-input').value.trim();
+            const separatorSelect = document.getElementById('split-separator');
+            let separator = separatorSelect.value;
+
+            if (separator === 'custom') {
+                separator = document.getElementById('custom-split-separator').value;
+            }
+
+            const resultDiv = document.getElementById('split-result');
+
+            if (!text) {
+                resultDiv.textContent = 'Hiba: Adj meg szöveget a szétbontáshoz!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                const parts = text.split(separator);
+                resultDiv.innerHTML = `Szétbontott lista:<br><code>[${parts.map(p => `'${p.trim()}'`).join(', ')}]</code>`;
+                resultDiv.style.borderColor = 'var(--success)';
+
+                // Vizualizáció frissítése
+                updateSplitVisualization(text, separator, parts);
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function updateSplitVisualization(text, separator, parts) {
+            const originalText = document.querySelector('.original-text');
+            const splitResult = document.querySelector('.split-result');
+
+            // Eredeti szöveg megjelenítése
+            originalText.innerHTML = `<div class="string-item">${text}</div>`;
+
+            // Szétbontott elemek megjelenítése
+            splitResult.innerHTML = '<div class="split-items">';
+            parts.forEach((part, index) => {
+                splitResult.firstChild.innerHTML += `
+                    <div class="split-item" style="animation-delay: ${index * 0.1}s">
+                        ${part.trim()}
+                    </div>
+                `;
+            });
+            splitResult.innerHTML += '</div>';
+        }
+
+        // Enter billentyű kezelése
+       document.addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') {
+               if (e.target.classList.contains('join-string')) {
+                   demonstrateJoin();
+               } else if (e.target.id === 'split-input') {
+                   demonstrateSplit();
+               } else if (e.target.id === 'custom-separator') {
+                   demonstrateJoin();
+               } else if (e.target.id === 'custom-split-separator') {
+                   demonstrateSplit();
+               }
+           }
+       });
+
+       // Oldal betöltésekor
+       document.addEventListener('DOMContentLoaded', () => {
+           // Alapértelmezett mezők hozzáadása
+           addJoinInput();
+       });
+   </script>
+</section>
+
+
+<section id="egyeb" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-plus"></i>
+        Egyéb Hasznos Lista Függvények
+    </h1>
+
+    <div class="card">
+        <h2>Lista bővítése (append, extend)</h2>
+        <p>A lista végéhez adhatunk új elemeket egyesével vagy listákat összefűzve.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="add-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Lista létrehozása
+lista = [1, 2, 3]
+
+# append() - Egy elem hozzáadása
+lista.append(4)
+print(lista)  # [1, 2, 3, 4]
+
+# extend() - Több elem hozzáadása
+lista.extend([5, 6, 7])
+print(lista)  # [1, 2, 3, 4, 5, 6, 7]</code></pre>
+        </div>
+
+        <div class="append-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="demo-container">
+                <div class="current-list-container">
+                    <label>Aktuális lista:</label>
+                    <div id="append-current-list" class="current-list">[1, 2, 3]</div>
+                </div>
+
+                <div class="input-group">
+                    <select id="append-method" class="input" onchange="toggleAppendInputs()">
+                        <option value="append">append() - Egy elem hozzáadása</option>
+                        <option value="extend">extend() - Több elem hozzáadása</option>
+                    </select>
+
+                    <div id="append-single" class="input-row">
+                        <input type="text" id="append-value" class="input" placeholder="Új elem">
+                    </div>
+
+                    <div id="append-multiple" class="input-row" style="display: none;">
+                        <input type="text" id="extend-values" class="input" placeholder="Elemek vesszővel elválasztva (pl.: 4,5,6)">
+                    </div>
+
+                    <button class="btn" onclick="executeAppend()">
+                        <i class="fas fa-plus"></i> Hozzáadás
+                    </button>
+                </div>
+            </div>
+            <div id="append-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Lista módosítása (insert, pop, remove)</h2>
+        <p>Elemeket szúrhatunk be tetszőleges pozícióra, törölhetjük az utolsó elemet, vagy eltávolíthatjuk a megadott értéket.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="modify-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Lista létrehozása
+lista = [1, 2, 3, 4]
+
+# insert() - Elem beszúrása adott pozícióra
+lista.insert(1, 10)  # [1, 10, 2, 3, 4]
+
+# pop() - Utolsó elem törlése
+utolso = lista.pop()  # [1, 10, 2, 3]
+print(f"Törölt elem: {utolso}")  # 4
+
+# remove() - Adott érték törlése
+lista.remove(2)  # [1, 10, 3]</code></pre>
+        </div>
+
+        <div class="modify-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="demo-container">
+                <div class="current-list-container">
+                    <label>Aktuális lista:</label>
+                    <div id="modify-current-list" class="current-list">[1, 2, 3, 4]</div>
+                </div>
+
+                <div class="input-group">
+                    <select id="modify-method" class="input" onchange="toggleModifyInputs()">
+                        <option value="insert">insert() - Elem beszúrása</option>
+                        <option value="pop">pop() - Utolsó elem törlése</option>
+                        <option value="remove">remove() - Érték törlése</option>
+                    </select>
+
+                    <div id="insert-inputs" class="input-row">
+                        <input type="number" id="insert-position" class="input" placeholder="Pozíció">
+                        <input type="text" id="insert-value" class="input" placeholder="Beszúrandó érték">
+                    </div>
+
+                    <div id="remove-inputs" class="input-row" style="display: none;">
+                        <input type="text" id="remove-value" class="input" placeholder="Törlendő érték">
+                    </div>
+
+                    <button class="btn" onclick="executeModify()">
+                        <i class="fas fa-edit"></i> Végrehajtás
+                    </button>
+                </div>
+            </div>
+            <div id="modify-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Lista átrendezése (reverse, sort, clear)</h2>
+        <p>A lista elemeit megfordíthatjuk, rendezhetjük vagy törölhetjük az összes elemet.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="transform-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Lista létrehozása
+lista = [3, 1, 4, 2]
+
+# reverse() - Lista megfordítása
+lista.reverse()  # [2, 4, 1, 3]
+
+# sort() - Lista rendezése
+lista.sort()  # [1, 2, 3, 4]
+
+# clear() - Lista ürítése
+lista.clear()  # []</code></pre>
+        </div>
+
+        <div class="transform-demo">
+            <h3>Próbáld ki:</h3>
+            <div class="demo-container">
+                <div class="current-list-container">
+                    <label>Aktuális lista:</label>
+                    <div id="transform-current-list" class="current-list">[3, 1, 4, 2]</div>
+                </div>
+
+                <div class="input-group">
+                    <select id="transform-method" class="input">
+                        <option value="reverse">reverse() - Lista megfordítása</option>
+                        <option value="sort">sort() - Lista rendezése</option>
+                        <option value="clear">clear() - Lista ürítése</option>
+                    </select>
+
+                    <button class="btn" onclick="executeTransform()">
+                        <i class="fas fa-sync"></i> Végrehajtás
+                    </button>
+                </div>
+            </div>
+            <div id="transform-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .demo-container {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 5px;
+        }
+
+        .current-list-container {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--highlight);
+            border-radius: 5px;
+        }
+
+        .current-list {
+            font-family: 'Fira Code', monospace;
+            color: var(--func-other);
+            margin-top: 0.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Globális változók a listák tárolásához
+        let appendList = [1, 2, 3];
+        let modifyList = [1, 2, 3, 4];
+        let transformList = [3, 1, 4, 2];
+
+        // Append/Extend funkciók
+        function toggleAppendInputs() {
+            const method = document.getElementById('append-method').value;
+            document.getElementById('append-single').style.display =
+                method === 'append' ? 'block' : 'none';
+            document.getElementById('append-multiple').style.display =
+                method === 'extend' ? 'block' : 'none';
+        }
+
+        function executeAppend() {
+            const method = document.getElementById('append-method').value;
+            const resultDiv = document.getElementById('append-result');
+
+            try {
+                if (method === 'append') {
+                    const value = document.getElementById('append-value').value.trim();
+                    if (!value) throw new Error('Adj meg egy értéket!');
+                    appendList.push(isNaN(value) ? value : Number(value));
+                } else {
+                    const values = document.getElementById('extend-values').value.trim();
+                    if (!values) throw new Error('Adj meg értékeket!');
+                    const newValues = values.split(',').map(v => {
+                        const trimmed = v.trim();
+                        return isNaN(trimmed) ? trimmed : Number(trimmed);
+                    });
+                    appendList.push(...newValues);
+                }
+
+                document.getElementById('append-current-list').textContent =
+                    JSON.stringify(appendList);
+                resultDiv.textContent = 'Művelet sikeresen végrehajtva!';
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Modify funkciók
+        function toggleModifyInputs() {
+            const method = document.getElementById('modify-method').value;
+            document.getElementById('insert-inputs').style.display =
+                method === 'insert' ? 'flex' : 'none';
+            document.getElementById('remove-inputs').style.display =
+                method === 'remove' ? 'flex' : 'none';
+        }
+
+        function executeModify() {
+            const method = document.getElementById('modify-method').value;
+            const resultDiv = document.getElementById('modify-result');
+
+            try {
+                switch (method) {
+                    case 'insert':
+                        const pos = parseInt(document.getElementById('insert-position').value);
+                        const val = document.getElementById('insert-value').value.trim();
+                        if (isNaN(pos)) throw new Error('Érvénytelen pozíció!');
+                        if (!val) throw new Error('Adj meg egy értéket!');
+                        modifyList.splice(pos, 0, isNaN(val) ? val : Number(val));
+                        break;
+
+                    case 'pop':
+                        if (modifyList.length === 0) throw new Error('A lista üres!');
+                        const popped = modifyList.pop();
+                        resultDiv.textContent = `Törölt elem: ${popped}`;
+                        break;
+
+                    case 'remove':
+                        const removeVal = document.getElementById('remove-value').value.trim();
+                        if (!removeVal) throw new Error('Adj meg egy értéket!');
+                        const index = modifyList.indexOf(isNaN(removeVal) ? removeVal : Number(removeVal));
+                        if (index === -1) throw new Error('Az elem nem található!');
+                        modifyList.splice(index, 1);
+                        break;
+                }
+
+                document.getElementById('modify-current-list').textContent =
+                    JSON.stringify(modifyList);
+                if (method !== 'pop') {
+                    resultDiv.textContent = 'Művelet sikeresen végrehajtva!';
+                }
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Transform funkciók
+        function executeTransform() {
+            const method = document.getElementById('transform-method').value;
+            const resultDiv = document.getElementById('transform-result');
+
+            try {
+                switch (method) {
+                    case 'reverse':
+                        transformList.reverse();
+                        break;
+                    case 'sort':
+                        transformList.sort((a, b) => {
+                            if (typeof a === 'string' && typeof b === 'string') {
+                                return a.localeCompare(b);
+                            }
+                            return a - b;
+                        });
+                        break;
+                    case 'clear':
+                        transformList = [];
+                        break;
+                }
+
+                document.getElementById('transform-current-list').textContent =
+                    JSON.stringify(transformList);
+                resultDiv.textContent = 'Művelet sikeresen végrehajtva!';
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (e.target.id.startsWith('append') || e.target.id.startsWith('extend')) {
+                    executeAppend();
+                } else if (e.target.id.startsWith('insert') || e.target.id.startsWith('remove')) {
+                    executeModify();
+                }
+            }
+        });
+
+        // Inicializálás
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleAppendInputs();
+            toggleModifyInputs();
+        });
+    </script>
+</section>
+
+<section id="gyakorlat" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-tasks"></i>
+        Gyakorló Feladatok
+    </h1>
+
+    <div class="card">
+        <h2>Gyakorold a tanultakat!</h2>
+        <p>Az alábbi feladatokon keresztül gyakorolhatod a megismert lista függvényeket.</p>
+
+        <div class="exercises">
+            <!-- 1. Feladat -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="toggleExercise(1)">
+                    <h3>1. Feladat: Számok rendezése</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="exercise-content" id="exercise-1">
+                    <p class="task-description">
+                        Adott egy számlista. Rendezd növekvő sorrendbe, majd add hozzá a legnagyobb szám dupláját.
+                    </p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="exercise-1">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Példa megoldás:
+szamok = [5, 2, 8, 1, 9]
+szamok_rendezve = sorted(szamok)    # [1, 2, 5, 8, 9]
+legnagyobb = max(szamok)            # 9
+szamok_rendezve.append(legnagyobb * 2)  # [1, 2, 5, 8, 9, 18]</code></pre>
+                    </div>
+
+                    <div class="practice-area">
+                        <h4>Próbáld ki!</h4>
+                        <div class="input-group">
+                            <input type="text" id="exercise-1-input" class="input"
+                                   placeholder="Add meg a számokat vesszővel elválasztva (pl.: 5,2,8,1,9)">
+                            <button class="btn" onclick="solveExercise1()">
+                                <i class="fas fa-play"></i> Megoldás
+                            </button>
+                        </div>
+                        <div id="exercise-1-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Feladat -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="toggleExercise(2)">
+                    <h3>2. Feladat: Szövegek összefűzése</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="exercise-content" id="exercise-2">
+                    <p class="task-description">
+                        Adott egy szavakat tartalmazó lista. Fűzd össze a szavakat vesszővel és "és" kötőszóval
+                        az utolsó elem előtt.
+                    </p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="exercise-2">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Példa megoldás:
+szavak = ["alma", "körte", "szilva"]
+if len(szavak) > 1:
+    eredmeny = ", ".join(szavak[:-1]) + " és " + szavak[-1]
+else:
+    eredmeny = "".join(szavak)
+# Eredmény: "alma, körte és szilva"</code></pre>
+                    </div>
+
+                    <div class="practice-area">
+                        <h4>Próbáld ki!</h4>
+                        <div class="input-group">
+                            <input type="text" id="exercise-2-input" class="input"
+                                   placeholder="Add meg a szavakat vesszővel elválasztva (pl.: alma,körte,szilva)">
+                            <button class="btn" onclick="solveExercise2()">
+                                <i class="fas fa-play"></i> Megoldás
+                            </button>
+                        </div>
+                        <div id="exercise-2-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Feladat -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="toggleExercise(3)">
+                    <h3>3. Feladat: Lista műveletek kombinálása</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="exercise-content" id="exercise-3">
+                    <p class="task-description">
+                        Adott két lista. Az első listához add hozzá a második lista elemeit fordított sorrendben,
+                        majd távolítsd el a legkisebb elemet.
+                    </p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="exercise-3">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Példa megoldás:
+lista1 = [1, 2, 3]
+lista2 = [4, 5, 6]
+
+# Lista2 megfordítása és hozzáadása lista1-hez
+lista2.reverse()
+lista1.extend(lista2)    # [1, 2, 3, 6, 5, 4]
+
+# Legkisebb elem eltávolítása
+legkisebb = min(lista1)
+lista1.remove(legkisebb) # [2, 3, 6, 5, 4]</code></pre>
+                    </div>
+
+                    <div class="practice-area">
+                        <h4>Próbáld ki!</h4>
+                        <div class="input-group">
+                            <input type="text" id="exercise-3-input1" class="input"
+                                   placeholder="Első lista (pl.: 1,2,3)">
+                            <input type="text" id="exercise-3-input2" class="input"
+                                   placeholder="Második lista (pl.: 4,5,6)">
+                            <button class="btn" onclick="solveExercise3()">
+                                <i class="fas fa-play"></i> Megoldás
+                            </button>
+                        </div>
+                        <div id="exercise-3-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .exercises {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .exercise {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .exercise-header:hover {
+            background: var(--highlight);
+        }
+
+        .exercise-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+
+        .exercise-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .exercise-header.active i {
+            transform: rotate(180deg);
+        }
+
+        .exercise-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .exercise-content.active {
+            display: block;
+        }
+
+        .task-description {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--highlight);
+            border-radius: 5px;
+        }
+
+        .practice-area {
+            margin-top: 2rem;
+        }
+
+        .practice-area h4 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Feladat megjelenítés kezelése
+        function toggleExercise(num) {
+            const content = document.getElementById(`exercise-${num}`);
+            const header = content.previousElementSibling;
+
+            content.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+
+        // 1. Feladat megoldása
+        function solveExercise1() {
+            const input = document.getElementById('exercise-1-input').value;
+            const resultDiv = document.getElementById('exercise-1-result');
+
+            try {
+                // Számok beolvasása
+                const numbers = input.split(',').map(num => {
+                    const parsed = parseFloat(num.trim());
+                    if (isNaN(parsed)) throw new Error('Csak számokat adj meg!');
+                    return parsed;
+                });
+
+                if (numbers.length === 0) {
+                    throw new Error('Adj meg legalább egy számot!');
+                }
+
+                // Megoldás lépései
+                const sorted = [...numbers].sort((a, b) => a - b);
+                const max = Math.max(...numbers);
+                sorted.push(max * 2);
+
+                // Eredmény megjelenítése lépésenként
+                resultDiv.innerHTML = `
+                    Eredeti lista: [${numbers.join(', ')}]<br>
+                    Rendezett lista: [${sorted.slice(0, -1).join(', ')}]<br>
+                    Legnagyobb szám (${max}) duplája: ${max * 2}<br>
+                    Végső lista: [${sorted.join(', ')}]
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // 2. Feladat megoldása
+        function solveExercise2() {
+            const input = document.getElementById('exercise-2-input').value;
+            const resultDiv = document.getElementById('exercise-2-result');
+
+            try {
+                // Szavak beolvasása
+                const words = input.split(',').map(word => word.trim()).filter(word => word.length > 0);
+
+                if (words.length === 0) {
+                    throw new Error('Adj meg legalább egy szót!');
+                }
+
+                // Megoldás
+                let result;
+                if (words.length === 1) {
+                    result = words[0];
+                } else {
+                    result = words.slice(0, -1).join(', ') + ' és ' + words[words.length - 1];
+                }
+
+                // Eredmény megjelenítése
+                resultDiv.innerHTML = `
+                    Szavak listája: [${words.join(', ')}]<br>
+                    Összefűzött szöveg: "${result}"
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // 3. Feladat megoldása
+        function solveExercise3() {
+            const input1 = document.getElementById('exercise-3-input1').value;
+            const input2 = document.getElementById('exercise-3-input2').value;
+            const resultDiv = document.getElementById('exercise-3-result');
+
+            try {
+                // Listák beolvasása
+                const list1 = input1.split(',').map(num => {
+                    const parsed = parseFloat(num.trim());
+                    if (isNaN(parsed)) throw new Error('Csak számokat adj meg!');
+                    return parsed;
+                });
+
+                const list2 = input2.split(',').map(num => {
+                    const parsed = parseFloat(num.trim());
+                    if (isNaN(parsed)) throw new Error('Csak számokat adj meg!');
+                    return parsed;
+                });
+
+                if (list1.length === 0 || list2.length === 0) {
+                    throw new Error('Mindkét listához adj meg számokat!');
+                }
+
+                // Megoldás lépései
+                const reversedList2 = [...list2].reverse();
+                const combined = [...list1, ...reversedList2];
+                const min = Math.min(...combined);
+                const result = combined.filter(num => num !== min);
+
+                // Eredmény megjelenítése lépésenként
+                resultDiv.innerHTML = `
+                    Első lista: [${list1.join(', ')}]<br>
+                    Második lista: [${list2.join(', ')}]<br>
+                    Második lista megfordítva: [${reversedList2.join(', ')}]<br>
+                    Egyesített lista: [${combined.join(', ')}]<br>
+                    Legkisebb elem (${min}) eltávolítva<br>
+                    Végső lista: [${result.join(', ')}]
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            } catch (error) {
+                resultDiv.textContent = `Hiba: ${error.message}`;
+                resultDiv.style.borderColor = 'var(--error)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('exercise-1-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') solveExercise1();
+        });
+
+        document.getElementById('exercise-2-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') solveExercise2();
+        });
+
+        document.getElementById('exercise-3-input1').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('exercise-3-input2').focus();
+        });
+
+        document.getElementById('exercise-3-input2').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') solveExercise3();
+        });
+
+        // Az első feladat megnyitása oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleExercise(1);
+        });
+    </script>
+</section>
+
+    </main>
+
+    <footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h3 class="h5 mb-3">Kapcsolat</h3>
+                <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+            </div>
+            <div class="col-md-6">
+                <h3 class="h5 mb-3">Információk</h3>
+                <p class="mb-2">Utolsó frissítés: 2025.02.02.</p>
+                <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* Footer stílusok */
+    footer {
+        background: var(--bg-secondary);
+        padding: 2rem 0;
+        margin-top: 4rem;
+        border-top: 1px solid var(--border-color);
+        width: 100%;
+    }
+
+    .footer-link {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--accent-secondary);
+        text-decoration: underline;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-md-6 {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .h5 {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+    }
+
+    @media (min-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .mb-md-0 {
+            margin-bottom: 0;
+        }
+    }
+</style>
+
+    <!-- Lezáró script az oldal végén -->
+    <script>
+        // Prism újratöltése amikor új kód jelenik meg
+        function refreshPrism() {
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+        }
+
+        // Oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshPrism();
+        });
+    </script>
+</body>
+</html>

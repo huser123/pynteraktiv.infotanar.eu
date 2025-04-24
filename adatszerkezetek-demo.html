@@ -1,0 +1,3384 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Adatszerkezetek Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.css" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Adatszerkezet specifikus színek */
+            --list-color: #3498db;    /* Lista műveletek színe */
+            --tuple-color: #e74c3c;   /* Tuple műveletek színe */
+            --set-color: #f1c40f;     /* Halmaz műveletek színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Reszponzív dizájn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav">
+    <div class="nav-container">
+        <a href="#" class="nav-logo">
+            <i class="fab fa-python"></i> Python Adatszerkezetek
+        </a>
+        <ul class="nav-links">
+            <li><a href="#bevezeto" class="nav-link">
+                <i class="fas fa-book-open"></i> Bevezető
+            </a></li>
+            <li><a href="#listak" class="nav-link">
+                <i class="fas fa-list"></i> Listák
+            </a></li>
+            <li><a href="#tuple" class="nav-link">
+                <i class="fas fa-layer-group"></i> Tuple
+            </a></li>
+            <li><a href="#set" class="nav-link">
+                <i class="fas fa-object-group"></i> Halmaz
+            </a></li>
+            <li><a href="#osszehasonlitas" class="nav-link">
+                <i class="fas fa-balance-scale"></i> Összehasonlítás
+            </a></li>
+            <li><a href="#gyakorlo" class="nav-link">
+                <i class="fas fa-tasks"></i> Gyakorlatok
+            </a></li>
+            <li><a href="#kombinalt" class="nav-link">
+                <i class="fas fa-puzzle-piece"></i> Kombinált példák
+            </a></li>
+        </ul>
+    </div>
+</nav>
+
+<style>
+    /* Navigáció stílusa */
+    .nav {
+        background: var(--bg-secondary);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-logo {
+        font-size: 1.5rem;
+        color: var(--accent-primary);
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 1rem;
+        list-style: none;
+    }
+
+    .nav-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-link i {
+        font-size: 0.7rem;
+    }
+
+    .nav-link:hover {
+        color: var(--accent-primary);
+    }
+
+    /* Reszponzív navigáció */
+    @media (max-width: 768px) {
+        .nav-container {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .nav-link {
+            justify-content: center;
+        }
+    }
+</style>
+
+<main class="container">
+
+    <section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Python Adatszerkezetek
+    </h1>
+
+    <div class="card">
+        <h2>Miért fontosak az adatszerkezetek?</h2>
+        <p>Az adatszerkezetek a programozás alapvető építőkövei, amelyek segítenek az adatok hatékony tárolásában és kezelésében. A Python három alapvető beépített adatszerkezetet kínál: a listát, a tuple-t és a halmazt.</p>
+
+        <div class="data-structures">
+            <div class="structure">
+                <i class="fas fa-list" style="color: var(--list-color);"></i>
+                <h3>Lista (list)</h3>
+                <p>Módosítható, rendezett adatszerkezet. Ideális amikor az elemek sorrendje fontos és az adatok változhatnak.</p>
+                <div class="code-container">
+
+                    <pre><code class="language-python">szamok = [1, 2, 3]
+szamok.append(4)    # [1, 2, 3, 4]
+szamok[0] = 10      # [10, 2, 3, 4]</code></pre>
+                </div>
+            </div>
+
+            <div class="structure">
+                <i class="fas fa-layer-group" style="color: var(--tuple-color);"></i>
+                <h3>Tuple</h3>
+                <p>Nem módosítható, rendezett adatszerkezet. Tökéletes választás, amikor az adatok nem változhatnak.</p>
+                <div class="code-container">
+
+                    <pre><code class="language-python">koordinatak = (10, 20)
+x, y = koordinatak  # Kicsomagolás
+# koordinatak[0] = 30  # Hiba!</code></pre>
+                </div>
+            </div>
+
+            <div class="structure">
+                <i class="fas fa-object-group" style="color: var(--set-color);"></i>
+                <h3>Halmaz (set)</h3>
+                <p>Rendezetlen, egyedi elemeket tartalmazó adatszerkezet. Ideális ismétlődő elemek kiszűrésére.</p>
+                <div class="code-container">
+
+                    <pre><code class="language-python">szinek = {"piros", "kék", "piros"}
+print(szinek)  # {"piros", "kék"}
+szinek.add("zöld")</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="intro-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Válassz egy adatszerkezetet és adj hozzá elemeket:</label>
+                <div class="input-group">
+                    <select id="structure-type" class="input">
+                        <option value="list">Lista</option>
+                        <option value="tuple">Tuple</option>
+                        <option value="set">Halmaz</option>
+                    </select>
+                    <input type="text" id="element-input" class="input" placeholder="Elemek vesszővel elválasztva (pl.: 1,2,3)">
+                    <button class="btn" onclick="createStructure()">
+                        <i class="fas fa-play"></i> Létrehozás
+                    </button>
+                </div>
+            </div>
+            <div id="structure-result" class="result"></div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .section-title {
+        color: var(--accent-primary);
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--accent-primary);
+        padding-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .data-structures {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .structure {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .structure:hover {
+        transform: translateY(-5px);
+    }
+
+    .structure i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .structure h3 {
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .input-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    function createStructure() {
+        const type = document.getElementById('structure-type').value;
+        const input = document.getElementById('element-input').value;
+        const resultDiv = document.getElementById('structure-result');
+
+        if (!input.trim()) {
+            resultDiv.textContent = 'Hiba: Adj meg elemeket!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        try {
+            const elements = input.split(',').map(e => e.trim());
+            let result = '';
+            let structureStr = '';
+
+            switch(type) {
+                case 'list':
+                    structureStr = `[${elements.join(', ')}]`;
+                    result = `Lista létrehozva: ${structureStr}\nMódosítható: Igen\nRendezett: Igen`;
+                    break;
+                case 'tuple':
+                    structureStr = `(${elements.join(', ')})`;
+                    result = `Tuple létrehozva: ${structureStr}\nMódosítható: Nem\nRendezett: Igen`;
+                    break;
+                case 'set':
+                    const uniqueElements = [...new Set(elements)];
+                    structureStr = `{${uniqueElements.join(', ')}}`;
+                    result = `Halmaz létrehozva: ${structureStr}\nMódosítható: Igen\nRendezett: Nem\nEgyedi elemek száma: ${uniqueElements.length}`;
+                    break;
+            }
+
+            resultDiv.innerHTML = `<pre>${result}</pre>`;
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.getElementById('element-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') createStructure();
+    });
+
+    // Másolás gomb funkcionalitás
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+
+            try {
+                await navigator.clipboard.writeText(code);
+
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.color = 'var(--success)';
+
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.style.color = '';
+                }, 2000);
+            } catch (err) {
+                console.error('Sikertelen másolás:', err);
+            }
+        });
+    });
+</script>
+
+<section id="listak" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-list"></i>
+        Listák (List)
+    </h1>
+
+    <div class="card">
+        <h2>A lista működése</h2>
+        <p>A lista egy rendezett, módosítható adatszerkezet a Pythonban. Különböző típusú elemeket tartalmazhat, és számos beépített művelet érhető el hozzá.</p>
+
+        <div class="syntax-box">
+            <h3>Szintaxis</h3>
+            <div class="code-container">
+                <button class="copy-btn" data-code="list-syntax">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Lista létrehozása
+lista1 = []                  # Üres lista
+lista2 = [1, 2, 3]          # Számok listája
+lista3 = ["alma", "körte"]   # Szövegek listája
+lista4 = [1, "alma", True]   # Vegyes típusok</code></pre>
+            </div>
+            <div class="syntax-notes">
+                <div class="note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>A lista elemei szögletes zárójelek [] között, vesszővel elválasztva szerepelnek.</span>
+                </div>
+                <div class="note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Az elemek indexelése 0-tól kezdődik.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-operations">
+    <h3>Alapvető műveletek</h3>
+    <div class="operations-grid">
+        <div class="operation-card">
+            <h4><i class="fas fa-search"></i> Hozzáférés elemekhez</h4>
+            <div class="code-container">
+                <button class="copy-btn" data-code="list-access">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Elemek elérése
+lista = [10, 20, 30, 40, 50]
+print(lista[0])     # Első elem: 10
+print(lista[-1])    # Utolsó elem: 50
+print(lista[1:3])   # Szeletelés: [20, 30]</code></pre>
+            </div>
+            <div class="demo-area">
+                <div class="input-group">
+                    <input type="number" id="list-index" class="input" placeholder="Add meg az indexet">
+                    <button class="btn" onclick="accessListElement()">
+                        <i class="fas fa-search"></i> Elem keresése
+                    </button>
+                </div>
+                <div id="access-result" class="result"></div>
+            </div>
+        </div>
+
+        <div class="operation-card">
+            <h4><i class="fas fa-plus-circle"></i> Lista bővítése</h4>
+            <div class="code-container">
+                <button class="copy-btn" data-code="list-append">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Elemek hozzáadása
+lista = [1, 2, 3]
+lista.append(4)      # [1, 2, 3, 4]
+lista.insert(0, 0)   # [0, 1, 2, 3, 4]
+lista.extend([5, 6]) # [0, 1, 2, 3, 4, 5, 6]</code></pre>
+            </div>
+            <div class="demo-area">
+                <div class="list-modification">
+                    <select id="add-operation" class="input">
+                        <option value="append">Hozzáadás (append)</option>
+                        <option value="insert">Beszúrás (insert)</option>
+                        <option value="extend">Kiterjesztés (extend)</option>
+                    </select>
+                    <input type="text" id="add-value" class="input" placeholder="Érték vagy értékek vesszővel">
+                    <input type="number" id="add-index" class="input" placeholder="Index (beszúráshoz)" style="display: none;">
+                    <button class="btn" onclick="addToList()">
+                        <i class="fas fa-plus"></i> Hozzáadás
+                    </button>
+                </div>
+                <div id="add-result" class="result"></div>
+            </div>
+        </div>
+
+        <div class="operation-card">
+            <h4><i class="fas fa-minus-circle"></i> Lista módosítása</h4>
+            <div class="code-container">
+                <button class="copy-btn" data-code="list-modify">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Elemek módosítása és törlése
+lista = [1, 2, 3, 4, 5]
+lista.remove(3)      # [1, 2, 4, 5]
+del lista[0]        # [2, 4, 5]
+lista.pop()         # [2, 4]</code></pre>
+            </div>
+            <div class="demo-area">
+                <div class="list-modification">
+                    <select id="mod-operation" class="input">
+                        <option value="remove">Törlés érték alapján (remove)</option>
+                        <option value="del">Törlés index alapján (del)</option>
+                        <option value="pop">Utolsó elem törlése (pop)</option>
+                    </select>
+                    <input type="text" id="mod-value" class="input" placeholder="Érték vagy index">
+                    <button class="btn" onclick="modifyList()">
+                        <i class="fas fa-minus"></i> Törlés
+                    </button>
+                </div>
+                <div id="modification-result" class="result"></div>
+            </div>
+        </div>
+
+        <div class="operation-card">
+            <h4><i class="fas fa-cogs"></i> Lista műveletek</h4>
+            <div class="code-container">
+                <button class="copy-btn" data-code="list-operations">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Lista műveletek
+lista = [3, 1, 4, 1, 5]
+print(len(lista))      # Hossz: 5
+lista.sort()          # [1, 1, 3, 4, 5]
+lista.reverse()       # [5, 4, 3, 1, 1]
+print(lista.count(1)) # 1-esek száma: 2</code></pre>
+            </div>
+            <div class="demo-area">
+                <div class="list-operations-demo">
+                    <select id="list-operation" class="input">
+                        <option value="length">Hossz lekérdezése</option>
+                        <option value="sort">Rendezés</option>
+                        <option value="reverse">Megfordítás</option>
+                        <option value="count">Elem számolása</option>
+                    </select>
+                    <input type="text" id="count-value" class="input" placeholder="Számlálandó elem" style="display: none;">
+                    <button class="btn" onclick="performListOperation()">
+                        <i class="fas fa-cog"></i> Művelet végrehajtása
+                    </button>
+                </div>
+                <div id="operation-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .operations-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .operation-card {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .operation-card h4 {
+        color: var(--list-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .operation-card:hover {
+        transform: translateY(-5px);
+    }
+
+    @media (max-width: 1024px) {
+        .operations-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- javítani! -->
+
+<script>
+    // Aktuális lista állapotának tárolása
+    let currentList = [10, 20, 30, 40, 50];
+
+    // Lista vizualizációjának frissítése
+    function updateListVisualization() {
+        const visualDiv = document.createElement('div');
+        visualDiv.className = 'list-visualization';
+
+        currentList.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'list-item';
+            itemDiv.innerHTML = `
+                <span class="list-index">${index}</span>
+                ${item}
+            `;
+            visualDiv.appendChild(itemDiv);
+        });
+
+        return visualDiv;
+    }
+
+    // Elem elérése index alapján
+    function accessListElement() {
+        const index = parseInt(document.getElementById('list-index').value);
+        const resultDiv = document.getElementById('access-result');
+
+        try {
+            if (isNaN(index)) {
+                throw new Error('Kérlek adj meg egy érvényes indexet!');
+            }
+
+            if (index < -currentList.length || index >= currentList.length) {
+                throw new Error('Az index kívül esik a lista határain!');
+            }
+
+            const element = currentList[index];
+            resultDiv.innerHTML = `
+                <div>Elem a(z) ${index}. indexen: ${element}</div>
+                ${updateListVisualization().outerHTML}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Lista bővítése
+    function addToList() {
+        const operation = document.getElementById('add-operation').value;
+        const value = document.getElementById('add-value').value;
+        const index = parseInt(document.getElementById('add-index').value);
+        const resultDiv = document.getElementById('add-result');
+
+        try {
+            switch(operation) {
+                case 'append':
+                    if (!value.trim()) throw new Error('Adj meg egy értéket!');
+                    currentList.push(isNaN(value) ? value : parseFloat(value));
+                    break;
+                case 'insert':
+                    if (!value.trim()) throw new Error('Adj meg egy értéket!');
+                    if (isNaN(index)) throw new Error('Érvényes indexet adj meg!');
+                    currentList.splice(index, 0, isNaN(value) ? value : parseFloat(value));
+                    break;
+                case 'extend':
+                    const values = value.split(',').map(v => v.trim()).filter(v => v);
+                    if (values.length === 0) throw new Error('Adj meg értékeket vesszővel elválasztva!');
+                    currentList.push(...values.map(v => isNaN(v) ? v : parseFloat(v)));
+                    break;
+            }
+
+            resultDiv.innerHTML = `
+                <div>Elemek sikeresen hozzáadva!</div>
+                ${updateListVisualization().outerHTML}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            document.getElementById('add-value').value = '';
+            document.getElementById('add-index').value = '';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Lista módosítása (törlés műveletek)
+    function modifyList() {
+        const operation = document.getElementById('mod-operation').value;
+        const value = document.getElementById('mod-value').value;
+        const resultDiv = document.getElementById('modification-result');
+
+        try {
+            switch(operation) {
+                case 'remove':
+                    if (!value.trim()) throw new Error('Adj meg egy értéket!');
+                    const valueToRemove = isNaN(value) ? value : parseFloat(value);
+                    const index = currentList.indexOf(valueToRemove);
+                    if (index === -1) throw new Error('Az elem nem található a listában!');
+                    currentList.splice(index, 1);
+                    break;
+                case 'del':
+                    const delIndex = parseInt(value);
+                    if (isNaN(delIndex)) throw new Error('Érvényes indexet adj meg!');
+                    if (delIndex < 0 || delIndex >= currentList.length) {
+                        throw new Error('Az index kívül esik a lista határain!');
+                    }
+                    currentList.splice(delIndex, 1);
+                    break;
+                case 'pop':
+                    if (currentList.length === 0) throw new Error('A lista üres!');
+                    currentList.pop();
+                    break;
+            }
+
+            resultDiv.innerHTML = `
+                <div>Művelet sikeresen végrehajtva!</div>
+                ${updateListVisualization().outerHTML}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            document.getElementById('mod-value').value = '';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Lista műveletek végrehajtása
+    function performListOperation() {
+        const operation = document.getElementById('list-operation').value;
+        const countValue = document.getElementById('count-value').value;
+        const resultDiv = document.getElementById('operation-result');
+
+        try {
+            switch(operation) {
+                case 'length':
+                    resultDiv.innerHTML = `
+                        <div>A lista hossza: ${currentList.length}</div>
+                        ${updateListVisualization().outerHTML}
+                    `;
+                    break;
+                case 'sort':
+                    currentList.sort((a, b) => {
+                        if (typeof a === 'string' && typeof b === 'string') {
+                            return a.localeCompare(b);
+                        }
+                        return a - b;
+                    });
+                    break;
+                case 'reverse':
+                    currentList.reverse();
+                    break;
+                case 'count':
+                    if (!countValue.trim()) throw new Error('Adj meg egy értéket a számláláshoz!');
+                    const valueToCount = isNaN(countValue) ? countValue : parseFloat(countValue);
+                    const count = currentList.filter(item => item === valueToCount).length;
+                    resultDiv.innerHTML = `
+                        <div>A(z) ${valueToCount} elem ${count}x fordul elő a listában.</div>
+                        ${updateListVisualization().outerHTML}
+                    `;
+                    document.getElementById('count-value').value = '';
+                    break;
+            }
+
+            if (operation !== 'length' && operation !== 'count') {
+                resultDiv.innerHTML = `
+                    <div>Művelet végrehajtva!</div>
+                    ${updateListVisualization().outerHTML}
+                `;
+            }
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Eseménykezelők
+    document.addEventListener('DOMContentLoaded', () => {
+        // Bővítés műveletek eseménykezelője
+        document.getElementById('add-operation').addEventListener('change', (e) => {
+            const indexInput = document.getElementById('add-index');
+            const valueInput = document.getElementById('add-value');
+
+            indexInput.style.display = e.target.value === 'insert' ? 'block' : 'none';
+            valueInput.placeholder = e.target.value === 'extend' ?
+                'Értékek vesszővel elválasztva' : 'Érték';
+        });
+
+        // Lista műveletek eseménykezelője
+        document.getElementById('list-operation').addEventListener('change', (e) => {
+            const countInput = document.getElementById('count-value');
+            countInput.style.display = e.target.value === 'count' ? 'block' : 'none';
+        });
+
+        // Enter billentyű kezelése
+        document.getElementById('list-index').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') accessListElement();
+        });
+
+        document.getElementById('add-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addToList();
+        });
+
+        document.getElementById('add-index').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addToList();
+        });
+
+        document.getElementById('mod-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') modifyList();
+        });
+
+        document.getElementById('count-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performListOperation();
+        });
+    });
+</script>
+
+</section>
+
+<section id="tuple" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-layer-group"></i>
+        Tuple (n-es)
+    </h1>
+
+    <div class="card">
+        <h2>A tuple működése</h2>
+        <p>A tuple egy olyan adatszerkezet, amely rendezett és <strong>nem módosítható</strong> elemeket tartalmaz. Hasonlít a listához, de miután létrehoztuk, nem lehet megváltoztatni az elemeit. Gyakran használjuk olyan adatok tárolására, amelyeknek nem szabad változniuk a program futása során.</p>
+
+        <div class="syntax-box">
+            <h3>Szintaxis</h3>
+            <div class="code-container">
+                <button class="copy-btn" data-code="tuple-syntax">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Tuple létrehozása
+tuple1 = ()                      # Üres tuple
+tuple2 = (1, 2, 3)              # Számok tuple-je
+tuple3 = ("alma", "körte")       # Szövegek tuple-je
+tuple4 = (1,)                    # Egyelemű tuple - vessző kötelező!
+tuple5 = 1, 2, 3                 # Zárójelek opcionálisak</code></pre>
+            </div>
+            <div class="syntax-notes">
+                <div class="note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Egyelemű tuple esetén a vessző kötelező: <code>(1,)</code></span>
+                </div>
+                <div class="note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>A zárójelek általában opcionálisak: <code>x = 1, 2, 3</code></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tuple-operations">
+            <h3>Alapvető műveletek</h3>
+            <div class="operations-grid">
+                <div class="operation-card">
+                    <h4><i class="fas fa-search"></i> Hozzáférés elemekhez</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="tuple-access">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Elemek elérése (ugyanúgy mint listáknál)
+koordinatak = (10, 20, 30, 40)
+print(koordinatak[0])     # Első elem: 10
+print(koordinatak[-1])    # Utolsó elem: 40
+print(koordinatak[1:3])   # Szeletelés: (20, 30)</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="input-group">
+                            <input type="number" id="tuple-index" class="input" placeholder="Add meg az indexet">
+                            <button class="btn" onclick="accessTupleElement()">
+                                <i class="fas fa-search"></i> Elem keresése
+                            </button>
+                        </div>
+                        <div id="tuple-access-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="operation-card">
+                    <h4><i class="fas fa-random"></i> Tuple kicsomagolás</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="tuple-unpacking">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Tuple kicsomagolás
+pont = (100, 200)
+x, y = pont              # Kicsomagolás
+print(f"x = {x}, y = {y}")
+
+# Kibővített kicsomagolás
+szamok = (1, 2, 3, 4, 5)
+elso, *kozepso, utolso = szamok
+print(kozepso)  # [2, 3, 4]</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="input-group">
+                            <input type="text" id="tuple-values" class="input" placeholder="Értékek vesszővel elválasztva">
+                            <select id="unpack-type" class="input">
+                                <option value="simple">Egyszerű kicsomagolás</option>
+                                <option value="extended">Kibővített kicsomagolás</option>
+                            </select>
+                            <button class="btn" onclick="unpackTuple()">
+                                <i class="fas fa-box-open"></i> Kicsomagolás
+                            </button>
+                        </div>
+                        <div id="unpack-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="operation-card">
+                    <h4><i class="fas fa-tools"></i> Tuple műveletek</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="tuple-operations">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Tuple műveletek
+t1 = (1, 2, 3)
+t2 = (4, 5, 6)
+print(t1 + t2)          # Összefűzés: (1, 2, 3, 4, 5, 6)
+print(t1 * 2)           # Ismétlés: (1, 2, 3, 1, 2, 3)
+print(len(t1))          # Hossz: 3
+print(2 in t1)          # Tartalmazás: True</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="tuple-operations-demo">
+                            <select id="tuple-operation" class="input">
+                                <option value="concatenate">Összefűzés (+)</option>
+                                <option value="repeat">Ismétlés (*)</option>
+                                <option value="length">Hossz</option>
+                                <option value="contains">Tartalmazás</option>
+                            </select>
+                            <input type="text" id="tuple-op-value" class="input" placeholder="Érték">
+                            <button class="btn" onclick="performTupleOperation()">
+                                <i class="fas fa-play"></i> Művelet
+                            </button>
+                        </div>
+                        <div id="tuple-operation-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="operation-card">
+                    <h4><i class="fas fa-exchange-alt"></i> Konverziók</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="tuple-conversion">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Konverziók más típusokból/típusokká
+lista = [1, 2, 3]
+t1 = tuple(lista)       # Listából tuple
+t2 = tuple("Python")    # Stringből tuple: ('P','y','t','h','o','n')
+lista2 = list(t1)       # Tuple-ból lista
+
+# Rendezés workaround (mivel a tuple nem módosítható)
+t3 = (3, 1, 4, 1, 5)
+t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="conversion-controls">
+                            <select id="conversion-type" class="input">
+                                <option value="list_to_tuple">Listából tuple</option>
+                                <option value="string_to_tuple">Szövegből tuple</option>
+                                <option value="tuple_to_list">Tuple-ból lista</option>
+                                <option value="sort_tuple">Tuple rendezése</option>
+                            </select>
+                            <input type="text" id="conversion-input" class="input" placeholder="Érték">
+                            <button class="btn" onclick="convertType()">
+                                <i class="fas fa-exchange-alt"></i> Konvertálás
+                            </button>
+                        </div>
+                        <div id="conversion-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .tuple-operations {
+        margin-top: 2rem;
+        max-width: 100%; /* Ez biztosítja, hogy ne lógjon ki a konténerből */
+    }
+
+    .operations-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem; /* Csökkentett rés a dobozok között */
+        margin-top: 2rem;
+        width: 100%; /* Explicit szélesség beállítás */
+    }
+
+    .operation-card {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.25rem; /* Kicsit csökkentett belső padding */
+        transition: transform 0.3s ease;
+        height: 100%;
+        width: 100%; /* Explicit szélesség beállítás */
+        overflow: hidden; /* Rejtse el, ha valami túllógna */
+    }
+
+    .operation-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .tuple-visualization {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+        overflow-x: auto;
+        padding: 1rem 0;
+    }
+
+    .tuple-item {
+        background: var(--highlight);
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        border: 1px solid var(--tuple-color);
+        min-width: 60px;
+        text-align: center;
+        position: relative;
+    }
+
+    .tuple-index {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .conversion-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .tuple-operations-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+     /* Ha a kód blokkok túl szélesek lennének */
+    .code-container {
+        width: 100%;
+        overflow-x: auto; /* Vízszintes görgetés, ha szükséges */
+    }
+
+    /* Input mezők és gombok igazítása */
+    .input-group {
+        display: flex;
+        flex-direction: column; /* Egymás alá rendezzük az elemeket */
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    /* Reszponzivitás finomhangolása */
+    @media (max-width: 1200px) {
+        .operations-grid {
+            gap: 1rem;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .operations-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .operation-card {
+            margin-bottom: 1rem;
+        }
+    }
+    }
+</style>
+
+<script>
+    // Aktuális tuple állapotának tárolása
+    let currentTuple = [10, 20, 30, 40, 50];
+
+    // Tuple vizualizációjának frissítése
+    function updateTupleVisualization(tuple) {
+        const visualDiv = document.createElement('div');
+        visualDiv.className = 'tuple-visualization';
+
+        tuple.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'tuple-item';
+            itemDiv.innerHTML = `
+                <span class="tuple-index">${index}</span>
+                ${item}
+            `;
+            visualDiv.appendChild(itemDiv);
+        });
+
+        return visualDiv;
+    }
+
+    // Elem elérése index alapján
+    function accessTupleElement() {
+        const index = parseInt(document.getElementById('tuple-index').value);
+        const resultDiv = document.getElementById('tuple-access-result');
+
+        try {
+            if (isNaN(index)) {
+                throw new Error('Kérlek adj meg egy érvényes indexet!');
+            }
+
+            if (index < -currentTuple.length || index >= currentTuple.length) {
+                throw new Error('Az index kívül esik a tuple határain!');
+            }
+
+            const element = currentTuple[index];
+            resultDiv.innerHTML = `
+                <div>Elem a(z) ${index}. indexen: ${element}</div>
+                ${updateTupleVisualization(currentTuple).outerHTML}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Tuple kicsomagolás
+    function unpackTuple() {
+        const values = document.getElementById('tuple-values').value;
+        const type = document.getElementById('unpack-type').value;
+        const resultDiv = document.getElementById('unpack-result');
+
+        try {
+            const items = values.split(',').map(item => item.trim());
+            if (items.length === 0 || items[0] === '') {
+                throw new Error('Kérlek adj meg értékeket!');
+            }
+
+            if (type === 'simple') {
+                if (items.length !== 2) {
+                    throw new Error('Az egyszerű kicsomagoláshoz pontosan 2 érték szükséges!');
+                }
+                const [x, y] = items;
+                resultDiv.innerHTML = `
+                    <div>Kicsomagolt értékek:</div>
+                    <div>x = ${x}</div>
+                    <div>y = ${y}</div>
+                `;
+            } else {
+                if (items.length < 3) {
+                    throw new Error('A kibővített kicsomagoláshoz legalább 3 érték szükséges!');
+                }
+                const [first, ...middle] = items;
+                const last = middle.pop();
+                resultDiv.innerHTML = `
+                    <div>Kicsomagolt értékek:</div>
+                    <div>Első: ${first}</div>
+                    <div>Középső elemek: ${middle.join(', ')}</div>
+                    <div>Utolsó: ${last}</div>
+                `;
+            }
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Tuple műveletek végrehajtása
+    function performTupleOperation() {
+        const operation = document.getElementById('tuple-operation').value;
+        const value = document.getElementById('tuple-op-value').value;
+        const resultDiv = document.getElementById('tuple-operation-result');
+
+        try {
+            let result;
+            switch(operation) {
+                case 'concatenate':
+                    if (!value.trim()) throw new Error('Adj meg értékeket az összefűzéshez!');
+                    const addItems = value.split(',').map(v => v.trim());
+                    result = [...currentTuple, ...addItems];
+                    break;
+                case 'repeat':
+                    const count = parseInt(value);
+                    if (isNaN(count) || count < 0) throw new Error('Adj meg egy pozitív számot!');
+                    result = Array(count).fill(currentTuple).flat();
+                    break;
+                case 'length':
+                    result = currentTuple;
+                    resultDiv.innerHTML = `A tuple hossza: ${currentTuple.length}`;
+                    break;
+                case 'contains':
+                    if (!value.trim()) throw new Error('Adj meg egy keresendő értéket!');
+                    const searchValue = isNaN(value) ? value : parseFloat(value);
+                    const contains = currentTuple.includes(searchValue);
+                    resultDiv.innerHTML = `A tuple ${contains ? 'tartalmazza' : 'nem tartalmazza'} a(z) ${value} értéket.`;
+                    break;
+            }
+
+            if (operation !== 'length' && operation !== 'contains') {
+                resultDiv.innerHTML = `
+                    <div>Eredmény:</div>
+                    ${updateTupleVisualization(result).outerHTML}
+                `;
+            }
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Típuskonverziók
+    function convertType() {
+        const type = document.getElementById('conversion-type').value;
+        const input = document.getElementById('conversion-input').value;
+        const resultDiv = document.getElementById('conversion-result');
+
+        try {
+            let result;
+            switch(type) {
+                case 'list_to_tuple':
+                    if (!input.trim()) throw new Error('Adj meg értékeket vesszővel elválasztva!');
+                    result = input.split(',').map(v => v.trim());
+                    resultDiv.innerHTML = `
+                        <div>Lista: [${result.join(', ')}]</div>
+                        <div>Tuple: (${result.join(', ')})</div>
+                    `;
+                    break;
+                case 'string_to_tuple':
+                    if (!input.trim()) throw new Error('Adj meg egy szöveget!');
+                    result = Array.from(input);
+                    resultDiv.innerHTML = `
+                        <div>Szöveg: "${input}"</div>
+                        <div>Tuple: (${result.map(c => `'${c}'`).join(', ')})</div>
+                    `;
+                    break;
+                case 'tuple_to_list':
+                    if (!input.trim()) throw new Error('Adj meg értékeket vesszővel elválasztva!');
+                    result = input.split(',').map(v => v.trim());
+                    resultDiv.innerHTML = `
+                        <div>Tuple: (${result.join(', ')})</div>
+                        <div>Lista: [${result.join(', ')}]</div>
+                    `;
+                    break;
+                case 'sort_tuple':
+                    if (!input.trim()) throw new Error('Adj meg értékeket vesszővel elválasztva!');
+                    result = input.split(',').map(v => v.trim());
+                    const sorted = [...result].sort((a, b) => {
+                        const numA = parseFloat(a);
+                        const numB = parseFloat(b);
+                        return isNaN(numA) || isNaN(numB) ? a.localeCompare(b) : numA - numB;
+                    });
+                    resultDiv.innerHTML = `
+                        <div>Eredeti tuple: (${result.join(', ')})</div>
+                        <div>Rendezett tuple: (${sorted.join(', ')})</div>
+                    `;
+                    break;
+            }
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Eseménykezelők
+    document.addEventListener('DOMContentLoaded', () => {
+        // Tuple operáció változásának kezelése
+        document.getElementById('tuple-operation').addEventListener('change', (e) => {
+            const valueInput = document.getElementById('tuple-op-value');
+            switch(e.target.value) {
+                case 'concatenate':
+                    valueInput.placeholder = 'Értékek vesszővel elválasztva';
+                    valueInput.style.display = 'block';
+                    break;
+                case 'repeat':
+                    valueInput.placeholder = 'Ismétlések száma';
+                    valueInput.style.display = 'block';
+                    break;
+                case 'length':
+                    valueInput.style.display = 'none';
+                    break;
+                case 'contains':
+                    valueInput.placeholder = 'Keresett érték';
+                    valueInput.style.display = 'block';
+                    break;
+            }
+        });
+
+        // Enter billentyű kezelése
+        document.getElementById('tuple-index').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') accessTupleElement();
+        });
+
+        document.getElementById('tuple-values').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') unpackTuple();
+        });
+
+        document.getElementById('tuple-op-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performTupleOperation();
+        });
+
+        document.getElementById('conversion-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') convertType();
+        });
+    });
+</script>
+
+</section>
+
+<section id="set" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-object-group"></i>
+        Halmaz (Set)
+    </h1>
+
+    <div class="card">
+        <h2>A halmaz működése</h2>
+        <p>A halmaz (set) egy olyan módosítható adatszerkezet, amely rendezetlen és csak egyedi elemeket tartalmazhat. Kiválóan alkalmas az ismétlődő elemek kiszűrésére, és a halmazműveletek (unió, metszet, különbség) végrehajtására.</p>
+
+        <div class="syntax-box">
+            <h3>Szintaxis</h3>
+            <div class="code-container">
+                <button class="copy-btn" data-code="set-syntax">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python"># Halmaz létrehozása
+halmaz1 = set()                  # Üres halmaz
+halmaz2 = {1, 2, 3}             # Számok halmaza
+halmaz3 = {"alma", "körte"}      # Szövegek halmaza
+halmaz4 = set([1, 2, 2, 3, 3])  # Lista átalakítása halmazzá: {1, 2, 3}</code></pre>
+            </div>
+            <div class="syntax-notes">
+                <div class="note warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Üres halmazt nem lehet {} -vel létrehozni, mert az egy üres szótárat eredményez!</span>
+                </div>
+                <div class="note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>A halmaz automatikusan eltávolítja az ismétlődő elemeket.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="set-operations">
+            <h3>Alapvető műveletek</h3>
+            <div class="operations-grid">
+                <div class="operation-card">
+                    <h4><i class="fas fa-plus-circle"></i> Elemek kezelése</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="set-elements">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Elemek hozzáadása és törlése
+halmaz = {1, 2, 3}
+halmaz.add(4)         # {1, 2, 3, 4}
+halmaz.remove(2)      # {1, 3, 4} (hibát dob, ha nincs elem)
+halmaz.discard(5)     # Nincs hiba, ha nem létezik
+halmaz.clear()        # Minden elem törlése</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="set-element-controls">
+                            <select id="element-operation" class="input">
+                                <option value="add">Elem hozzáadása (add)</option>
+                                <option value="remove">Elem törlése (remove)</option>
+                                <option value="discard">Elem törlése (discard)</option>
+                                <option value="clear">Halmaz ürítése (clear)</option>
+                            </select>
+                            <input type="text" id="element-value" class="input" placeholder="Érték">
+                            <button class="btn" onclick="modifySet()">
+                                <i class="fas fa-play"></i> Végrehajtás
+                            </button>
+                        </div>
+                        <div id="element-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="operation-card">
+                    <h4><i class="fas fa-search"></i> Tartalmazás vizsgálata</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="set-membership">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Elem keresése és tartalmazás
+halmaz = {1, 2, 3, 4, 5}
+print(2 in halmaz)        # True
+print(6 in halmaz)        # False
+print(len(halmaz))        # 5
+for elem in halmaz:       # Bejárás
+    print(elem)</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="membership-controls">
+                            <input type="text" id="search-value" class="input" placeholder="Keresett érték">
+                            <button class="btn" onclick="checkMembership()">
+                                <i class="fas fa-search"></i> Keresés
+                            </button>
+                        </div>
+                        <div id="membership-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="operation-card">
+                    <h4><i class="fas fa-sitemap"></i> Halmazműveletek</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="set-operations">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Halmazműveletek
+A = {1, 2, 3, 4}
+B = {3, 4, 5, 6}
+
+print(A | B)    # Unió: {1, 2, 3, 4, 5, 6}
+print(A & B)    # Metszet: {3, 4}
+print(A - B)    # Különbség: {1, 2}
+print(A ^ B)    # Szimmetrikus diff.: {1, 2, 5, 6}</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="set-operation-controls">
+                            <input type="text" id="set-a" class="input" placeholder="A halmaz elemei (pl.: 1,2,3)">
+                            <input type="text" id="set-b" class="input" placeholder="B halmaz elemei (pl.: 3,4,5)">
+                            <select id="set-operation" class="input">
+                                <option value="union">Unió (|)</option>
+                                <option value="intersection">Metszet (&)</option>
+                                <option value="difference">Különbség (-)</option>
+                                <option value="symmetric_difference">Szimmetrikus differencia (^)</option>
+                            </select>
+                            <button class="btn" onclick="performSetOperation()">
+                                <i class="fas fa-calculator"></i> Számolás
+                            </button>
+                        </div>
+                        <div id="set-operation-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="operation-card">
+                    <h4><i class="fas fa-code-branch"></i> Részhalmaz vizsgálatok</h4>
+                    <div class="code-container">
+                        <button class="copy-btn" data-code="set-subset">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code class="language-python"># Részhalmaz vizsgálatok
+A = {1, 2}
+B = {1, 2, 3}
+C = {1, 2, 3}
+
+print(A.issubset(B))      # True (A ⊆ B)
+print(B.issuperset(A))    # True (B ⊇ A)
+print(B == C)             # True (egyenlőség)
+print(len(B))             # 3 (elemszám)</code></pre>
+                    </div>
+                    <div class="demo-area">
+                        <div class="subset-controls">
+                            <input type="text" id="subset-a" class="input" placeholder="A halmaz elemei">
+                            <input type="text" id="subset-b" class="input" placeholder="B halmaz elemei">
+                            <select id="subset-operation" class="input">
+                                <option value="issubset">Részhalmaza? (⊆)</option>
+                                <option value="issuperset">Tartalmazó halmaza? (⊇)</option>
+                                <option value="equals">Egyenlő? (=)</option>
+                            </select>
+                            <button class="btn" onclick="checkSubset()">
+                                <i class="fas fa-check"></i> Ellenőrzés
+                            </button>
+                        </div>
+                        <div id="subset-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .set-operations {
+        margin-top: 2rem;
+        max-width: 100%;
+    }
+
+    .operations-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-top: 2rem;
+        width: 100%;
+    }
+
+    .operation-card {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.25rem;
+        transition: transform 0.3s ease;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .operation-card h4 {
+        color: var(--set-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .operation-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .set-visualization {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: var(--bg-secondary);
+        border-radius: 5px;
+    }
+
+    .set-item {
+        background: var(--highlight);
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        border: 1px solid var(--set-color);
+        display: inline-block;
+    }
+
+    .set-operation-visual {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .set-operation-diagram {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        padding: 1rem;
+        background: var(--bg-secondary);
+        border-radius: 5px;
+    }
+
+    .set-circle {
+        width: 120px;
+        height: 120px;
+        border: 2px solid var(--set-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: rgba(241, 196, 15, 0.1);
+    }
+
+    .operator-symbol {
+        font-size: 1.5rem;
+        color: var(--set-color);
+        font-weight: bold;
+    }
+
+    @media (max-width: 1024px) {
+        .operations-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .set-operation-diagram {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    // Aktuális halmaz állapota
+    let currentSet = new Set([1, 2, 3, 4, 5]);
+
+    // Halmaz vizualizációjának frissítése
+    function updateSetVisualization(set, containerId = null) {
+        const visualDiv = document.createElement('div');
+        visualDiv.className = 'set-visualization';
+
+        Array.from(set).forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'set-item';
+            itemDiv.textContent = item;
+            visualDiv.appendChild(itemDiv);
+        });
+
+        if (containerId) {
+            const container = document.getElementById(containerId);
+            container.appendChild(visualDiv);
+        }
+        return visualDiv;
+    }
+
+    // Elem hozzáadása/törlése
+    function modifySet() {
+        const operation = document.getElementById('element-operation').value;
+        const value = document.getElementById('element-value').value;
+        const resultDiv = document.getElementById('element-result');
+
+        try {
+            const parsedValue = isNaN(value) ? value : parseFloat(value);
+
+            switch(operation) {
+                case 'add':
+                    if (!value.trim()) throw new Error('Adj meg egy értéket!');
+                    currentSet.add(parsedValue);
+                    break;
+                case 'remove':
+                    if (!currentSet.has(parsedValue)) {
+                        throw new Error('Az elem nem található a halmazban!');
+                    }
+                    currentSet.delete(parsedValue);
+                    break;
+                case 'discard':
+                    currentSet.delete(parsedValue);
+                    break;
+                case 'clear':
+                    currentSet.clear();
+                    break;
+            }
+
+            resultDiv.innerHTML = `
+                <div>Művelet végrehajtva! Jelenlegi halmaz:</div>
+                ${updateSetVisualization(currentSet).outerHTML}
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            document.getElementById('element-value').value = '';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Tartalmazás vizsgálata
+    function checkMembership() {
+        const value = document.getElementById('search-value').value;
+        const resultDiv = document.getElementById('membership-result');
+
+        try {
+            if (!value.trim()) {
+                throw new Error('Adj meg egy keresendő értéket!');
+            }
+
+            const searchValue = isNaN(value) ? value : parseFloat(value);
+            const contains = currentSet.has(searchValue);
+
+            resultDiv.innerHTML = `
+                <div>A halmaz ${contains ? 'tartalmazza' : 'nem tartalmazza'} a(z) ${value} értéket.</div>
+                ${updateSetVisualization(currentSet).outerHTML}
+            `;
+            resultDiv.style.borderColor = contains ? 'var(--success)' : 'var(--error)';
+            document.getElementById('search-value').value = '';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Halmazműveletek végrehajtása
+    function performSetOperation() {
+        const setAInput = document.getElementById('set-a').value;
+        const setBInput = document.getElementById('set-b').value;
+        const operation = document.getElementById('set-operation').value;
+        const resultDiv = document.getElementById('set-operation-result');
+
+        try {
+            if (!setAInput.trim() || !setBInput.trim()) {
+                throw new Error('Mindkét halmazt meg kell adnod!');
+            }
+
+            const setA = new Set(setAInput.split(',').map(x => x.trim()).map(x => isNaN(x) ? x : parseFloat(x)));
+            const setB = new Set(setBInput.split(',').map(x => x.trim()).map(x => isNaN(x) ? x : parseFloat(x)));
+            let result;
+
+            switch(operation) {
+                case 'union':
+                    result = new Set([...setA, ...setB]);
+                    break;
+                case 'intersection':
+                    result = new Set([...setA].filter(x => setB.has(x)));
+                    break;
+                case 'difference':
+                    result = new Set([...setA].filter(x => !setB.has(x)));
+                    break;
+                case 'symmetric_difference':
+                    result = new Set(
+                        [...setA].filter(x => !setB.has(x)).concat([...setB].filter(x => !setA.has(x)))
+                    );
+                    break;
+            }
+
+            resultDiv.innerHTML = `
+                <div>A művelet eredménye:</div>
+                <div class="set-operation-visual">
+                    <div class="set-operation-diagram">
+                        <div class="set-circle">A: {${[...setA].join(', ')}}</div>
+                        <div class="operator-symbol">${getOperatorSymbol(operation)}</div>
+                        <div class="set-circle">B: {${[...setB].join(', ')}}</div>
+                    </div>
+                    <div>Eredmény: {${[...result].join(', ')}}</div>
+                    ${updateSetVisualization(result).outerHTML}
+                </div>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Részhalmaz vizsgálatok
+    function checkSubset() {
+        const setAInput = document.getElementById('subset-a').value;
+        const setBInput = document.getElementById('subset-b').value;
+        const operation = document.getElementById('subset-operation').value;
+        const resultDiv = document.getElementById('subset-result');
+
+        try {
+            if (!setAInput.trim() || !setBInput.trim()) {
+                throw new Error('Mindkét halmazt meg kell adnod!');
+            }
+
+            const setA = new Set(setAInput.split(',').map(x => x.trim()).map(x => isNaN(x) ? x : parseFloat(x)));
+            const setB = new Set(setBInput.split(',').map(x => x.trim()).map(x => isNaN(x) ? x : parseFloat(x)));
+            let result;
+
+            switch(operation) {
+                case 'issubset':
+                    result = [...setA].every(x => setB.has(x));
+                    break;
+                case 'issuperset':
+                    result = [...setB].every(x => setA.has(x));
+                    break;
+                case 'equals':
+                    result = setA.size === setB.size && [...setA].every(x => setB.has(x));
+                    break;
+            }
+
+            resultDiv.innerHTML = `
+                <div>A: {${[...setA].join(', ')}}</div>
+                <div>B: {${[...setB].join(', ')}}</div>
+                <div>${getSubsetMessage(operation, result)}</div>
+            `;
+            resultDiv.style.borderColor = result ? 'var(--success)' : 'var(--error)';
+        } catch (error) {
+            resultDiv.textContent = `Hiba: ${error.message}`;
+            resultDiv.style.borderColor = 'var(--error)';
+        }
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Segédfüggvények
+    function getOperatorSymbol(operation) {
+        const symbols = {
+            'union': '∪',
+            'intersection': '∩',
+            'difference': '−',
+            'symmetric_difference': '⊕'
+        };
+        return symbols[operation] || '?';
+    }
+
+    function getSubsetMessage(operation, result) {
+        const messages = {
+            'issubset': ['A részhalmaza B-nek', 'A nem részhalmaza B-nek'],
+            'issuperset': ['A tartalmazza B-t', 'A nem tartalmazza B-t'],
+            'equals': ['A egyenlő B-vel', 'A nem egyenlő B-vel']
+        };
+        return messages[operation][result ? 0 : 1];
+    }
+
+    // Eseménykezelők
+    document.addEventListener('DOMContentLoaded', () => {
+        // Elem műveletek eseménykezelője
+        document.getElementById('element-operation').addEventListener('change', (e) => {
+            const valueInput = document.getElementById('element-value');
+            valueInput.style.display = e.target.value === 'clear' ? 'none' : 'block';
+        });
+
+        // Enter billentyű kezelése
+        document.getElementById('element-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') modifySet();
+        });
+
+        document.getElementById('search-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkMembership();
+        });
+
+        document.getElementById('set-a').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('set-b').focus();
+        });
+
+        document.getElementById('set-b').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSetOperation();
+        });
+
+        document.getElementById('subset-a').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('subset-b').focus();
+        });
+
+        document.getElementById('subset-b').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkSubset();
+        });
+    });
+</script>
+
+</section>
+
+<section id="osszehasonlitas" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-balance-scale"></i>
+        Adatszerkezetek összehasonlítása
+    </h1>
+
+    <div class="card">
+        <h2>Lista vs. Tuple vs. Halmaz</h2>
+        <p>Lássuk az egyes adatszerkezetek főbb jellemzőit és hogy mikor melyiket érdemes használni!</p>
+
+        <div class="comparison-diagram">
+            <h3>Tulajdonságok összehasonlítása</h3>
+            <div class="mermaid">
+                graph TD
+                    A[Adatszerkezetek] --> B[Lista]
+                    A --> C[Tuple]
+                    A --> D[Halmaz]
+
+                    B --> B1[Módosítható]
+                    B --> B2[Rendezett]
+                    B --> B3[Ismétlődhet]
+
+                    C --> C1[Nem módosítható]
+                    C --> C2[Rendezett]
+                    C --> C3[Ismétlődhet]
+
+                    D --> D1[Módosítható]
+                    D --> D2[Nem rendezett]
+                    D --> D3[Egyedi elemek]
+
+                    style A fill:#2ecc71,stroke:#27ae60
+                    style B fill:#3498db,stroke:#2980b9
+                    style C fill:#e74c3c,stroke:#c0392b
+                    style D fill:#f1c40f,stroke:#f39c12
+            </div>
+        </div>
+
+        <div class="comparison-table">
+            <h3>Részletes összehasonlítás</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tulajdonság</th>
+                            <th class="list-col">Lista</th>
+                            <th class="tuple-col">Tuple</th>
+                            <th class="set-col">Halmaz</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Szintaxis</td>
+                            <td class="list-col"><code>[1, 2, 3]</code></td>
+                            <td class="tuple-col"><code>(1, 2, 3)</code></td>
+                            <td class="set-col"><code>{1, 2, 3}</code></td>
+                        </tr>
+                        <tr>
+                            <td>Módosíthatóság</td>
+                            <td class="list-col">✅ Igen</td>
+                            <td class="tuple-col">❌ Nem</td>
+                            <td class="set-col">✅ Igen</td>
+                        </tr>
+                        <tr>
+                            <td>Rendezettség</td>
+                            <td class="list-col">✅ Igen</td>
+                            <td class="tuple-col">✅ Igen</td>
+                            <td class="set-col">❌ Nem</td>
+                        </tr>
+                        <tr>
+                            <td>Ismétlődő elemek</td>
+                            <td class="list-col">✅ Igen</td>
+                            <td class="tuple-col">✅ Igen</td>
+                            <td class="set-col">❌ Nem</td>
+                        </tr>
+                        <tr>
+                            <td>Indexelés</td>
+                            <td class="list-col">✅ Igen</td>
+                            <td class="tuple-col">✅ Igen</td>
+                            <td class="set-col">❌ Nem</td>
+                        </tr>
+                        <tr>
+                            <td>Teljesítmény*</td>
+                            <td class="list-col">Átlagos</td>
+                            <td class="tuple-col">Gyors</td>
+                            <td class="set-col">Nagyon gyors keresés</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="table-note">* A teljesítmény az adott művelet típusától függ</p>
+            </div>
+        </div>
+
+        <div class="use-cases">
+            <h3>Mikor melyiket használjuk?</h3>
+
+            <div class="use-cases-grid">
+                <div class="use-case-card list-card">
+                    <h4><i class="fas fa-list"></i> Lista</h4>
+                    <ul>
+                        <li>Amikor az elemek sorrendje fontos</li>
+                        <li>Ha gyakran módosítjuk az elemeket</li>
+                        <li>Ha ugyanaz az elem többször is előfordulhat</li>
+                        <li>Például: felhasználói bemenetek tárolása, játékállások mentése</li>
+                    </ul>
+                </div>
+
+                <div class="use-case-card tuple-card">
+                    <h4><i class="fas fa-layer-group"></i> Tuple</h4>
+                    <ul>
+                        <li>Amikor az adatok nem változhatnak</li>
+                        <li>Heterogén adatok tárolására</li>
+                        <li>Függvények többszörös visszatérési értékeihez</li>
+                        <li>Például: koordináták, RGB színkódok</li>
+                    </ul>
+                </div>
+
+                <div class="use-case-card set-card">
+                    <h4><i class="fas fa-object-group"></i> Halmaz</h4>
+                    <ul>
+                        <li>Amikor csak egyedi elemek kellenek</li>
+                        <li>Gyors kereséshez</li>
+                        <li>Halmazműveletek végrehajtásához</li>
+                        <li>Például: egyedi felhasználói ID-k tárolása</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-demo">
+            <h3>Interaktív összehasonlítás</h3>
+            <div class="demo-controls">
+                <div class="input-group">
+                    <input type="text" id="compare-input" class="input" placeholder="Adj meg vesszővel elválasztott értékeket">
+                    <button class="btn" onclick="compareStructures()">
+                        <i class="fas fa-play"></i> Összehasonlítás
+                    </button>
+                </div>
+            </div>
+            <div id="comparison-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+   .comparison-diagram {
+       margin: 2rem 0;
+       padding: 1.5rem;
+       background: var(--bg-primary);
+       border-radius: 10px;
+   }
+
+   .mermaid-diagram {
+       display: flex;
+       justify-content: center;
+       min-height: 400px;
+       margin: 1rem 0;
+   }
+
+   .comparison-table {
+       margin: 2rem 0;
+   }
+
+   .table-container {
+       overflow-x: auto;
+   }
+
+   table {
+       width: 100%;
+       border-collapse: collapse;
+       margin: 1rem 0;
+       background: var(--bg-primary);
+       border-radius: 10px;
+       overflow: hidden;
+   }
+
+   th, td {
+       padding: 1rem;
+       text-align: left;
+       border-bottom: 1px solid var(--border-color);
+   }
+
+   th {
+       background: var(--bg-secondary);
+       font-weight: 500;
+   }
+
+   .list-col {
+       color: var(--list-color);
+   }
+
+   .tuple-col {
+       color: var(--tuple-color);
+   }
+
+   .set-col {
+       color: var(--set-color);
+   }
+
+   .table-note {
+       margin-top: 0.5rem;
+       color: var(--text-secondary);
+       font-size: 0.9rem;
+       font-style: italic;
+   }
+
+   .use-cases {
+       margin: 2rem 0;
+   }
+
+   .use-cases-grid {
+       display: grid;
+       grid-template-columns: repeat(3, 1fr);
+       gap: 1.5rem;
+       margin: 1rem 0;
+   }
+
+   .use-case-card {
+       background: var(--bg-primary);
+       border-radius: 10px;
+       padding: 1.5rem;
+       transition: transform 0.3s ease;
+       height: 100%;
+   }
+
+   .use-case-card:hover {
+       transform: translateY(-5px);
+   }
+
+   .use-case-card h4 {
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+       margin-bottom: 1rem;
+   }
+
+   .use-case-card ul {
+       list-style: none;
+       padding: 0;
+   }
+
+   .use-case-card li {
+       padding: 0.5rem 0;
+       margin-left: 1.5rem;
+       position: relative;
+   }
+
+   .use-case-card li::before {
+       content: "•";
+       position: absolute;
+       left: -1.5rem;
+   }
+
+   .list-card h4 {
+       color: var(--list-color);
+   }
+
+   .tuple-card h4 {
+       color: var(--tuple-color);
+   }
+
+   .set-card h4 {
+       color: var(--set-color);
+   }
+
+   .comparison-demo {
+       margin: 2rem 0;
+       padding: 1.5rem;
+       background: var(--bg-primary);
+       border-radius: 10px;
+   }
+
+   .demo-visualization {
+       display: grid;
+       grid-template-columns: repeat(3, 1fr);
+       gap: 1.5rem;
+       margin-top: 1rem;
+   }
+
+   .structure-visual {
+       background: var(--bg-secondary);
+       padding: 1rem;
+       border-radius: 5px;
+   }
+
+   .structure-title {
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+       margin-bottom: 0.5rem;
+       font-weight: 500;
+   }
+
+   .structure-content {
+       font-family: 'Fira Code', monospace;
+       padding: 0.5rem;
+       background: var(--highlight);
+       border-radius: 3px;
+       word-break: break-all;
+   }
+
+   @media (max-width: 1024px) {
+       .use-cases-grid {
+           grid-template-columns: 1fr;
+       }
+
+       .demo-visualization {
+           grid-template-columns: 1fr;
+       }
+   }
+</style>
+
+<script>
+   // Mermaid inicializálása
+   mermaid.initialize({
+       theme: 'dark',
+       themeVariables: {
+           fontFamily: 'Roboto',
+           primaryColor: '#2ecc71',
+           primaryTextColor: '#e0e0e0',
+           primaryBorderColor: '#27ae60',
+           lineColor: '#a0a0a0',
+           secondaryColor: '#3498db',
+           tertiaryColor: '#e74c3c'
+       }
+   });
+
+   // Adatszerkezetek összehasonlítása
+   function compareStructures() {
+       const input = document.getElementById('compare-input').value;
+       const resultDiv = document.getElementById('comparison-result');
+
+       try {
+           if (!input.trim()) {
+               throw new Error('Kérlek adj meg értékeket!');
+           }
+
+           // Értékek feldolgozása
+           const values = input.split(',').map(v => v.trim());
+
+           // Lista létrehozása
+           const list = [...values];
+
+           // Tuple létrehozása
+           const tuple = [...values];
+
+           // Halmaz létrehozása
+           const set = new Set(values);
+
+           // Eredmények vizualizációja
+           resultDiv.innerHTML = `
+               <div class="demo-visualization">
+                   <div class="structure-visual">
+                       <div class="structure-title" style="color: var(--list-color)">
+                           <i class="fas fa-list"></i> Lista
+                       </div>
+                       <div class="structure-content">
+                           [${list.join(', ')}]
+                       </div>
+                       <div class="structure-info">
+                           <small>Hossz: ${list.length}</small><br>
+                           <small>Módosítható: ✅</small><br>
+                           <small>Ismétlődések: ✅</small>
+                       </div>
+                   </div>
+
+                   <div class="structure-visual">
+                       <div class="structure-title" style="color: var(--tuple-color)">
+                           <i class="fas fa-layer-group"></i> Tuple
+                       </div>
+                       <div class="structure-content">
+                           (${tuple.join(', ')})
+                       </div>
+                       <div class="structure-info">
+                           <small>Hossz: ${tuple.length}</small><br>
+                           <small>Módosítható: ❌</small><br>
+                           <small>Ismétlődések: ✅</small>
+                       </div>
+                   </div>
+
+                   <div class="structure-visual">
+                       <div class="structure-title" style="color: var(--set-color)">
+                           <i class="fas fa-object-group"></i> Halmaz
+                       </div>
+                       <div class="structure-content">
+                           {${Array.from(set).join(', ')}}
+                       </div>
+                       <div class="structure-info">
+                           <small>Elemszám: ${set.size}</small><br>
+                           <small>Módosítható: ✅</small><br>
+                           <small>Ismétlődések: ❌</small>
+                       </div>
+                   </div>
+               </div>
+
+               <div class="comparison-analysis">
+                   ${generateAnalysis(list, set)}
+               </div>
+           `;
+           resultDiv.style.borderColor = 'var(--success)';
+       } catch (error) {
+           resultDiv.textContent = `Hiba: ${error.message}`;
+           resultDiv.style.borderColor = 'var(--error)';
+       }
+
+       resultDiv.classList.remove('show');
+       void resultDiv.offsetWidth;
+       resultDiv.classList.add('show');
+   }
+
+   // Elemzés generálása
+   function generateAnalysis(list, set) {
+       const analysis = [];
+
+       // Ismétlődések vizsgálata
+       if (list.length !== set.size) {
+           analysis.push('Ismétlődő elemeket tartalmaz!');
+       }
+
+       // Rendezettség jelentősége
+       if (list.some(x => !isNaN(x))) {
+           analysis.push('Számokat tartalmaz - a halmaz nem őrzi meg a sorrendet!');
+       }
+
+       // Memória használat
+       if (set.size < list.length) {
+           analysis.push(`A halmaz ${list.length - set.size} elemmel kevesebbet tárol az ismétlődések miatt.`);
+       }
+
+       return analysis.length > 0 ?
+           `<div class="mt-3 text-info"><strong>Elemzés:</strong><br>${analysis.join('<br>')}</div>` :
+           '';
+   }
+
+   // Enter billentyű kezelése
+   document.getElementById('compare-input').addEventListener('keypress', (e) => {
+       if (e.key === 'Enter') compareStructures();
+   });
+</script>
+
+</section>
+
+<!-- új kódokat ide -->
+
+<section id="gyakorlo" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-tasks"></i>
+        Gyakorló feladatok
+    </h1>
+
+    <div class="card">
+        <h2>Feladatok megoldása</h2>
+        <p>Az alábbi feladatok segítenek az adatszerkezetek használatának gyakorlásában. Minden feladatnál megtalálod a leírást, a példakódot, és ki is próbálhatod őket.</p>
+
+        <!-- 1. Lista feladat -->
+        <div class="exercise">
+            <div class="exercise-header" onclick="toggleExercise(1)">
+                <h3>1. Feladat: Lista műveletek</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="exercise-content" id="exercise-1">
+                <div class="task-description">
+                    <p>Hozz létre egy listát számokkal, majd végezd el rajta az alábbi műveleteket: rendezés, megfordítás és minden elem megduplázása.</p>
+                </div>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="exercise-1">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Lista műveletek
+szamok = [5, 2, 8, 1, 9]
+
+# Rendezés
+rendezett = sorted(szamok)        # [1, 2, 5, 8, 9]
+
+# Megfordítás
+forditott = szamok[::-1]         # [9, 1, 8, 2, 5]
+
+# Minden elem duplázása
+duplazott = [x * 2 for x in szamok]  # [10, 4, 16, 2, 18]</code></pre>
+                </div>
+
+                <div class="practice-area">
+                    <h4>Próbáld ki!</h4>
+                    <div class="form-group">
+                        <label>Add meg a számokat vesszővel elválasztva:</label>
+                        <div class="input-group">
+                            <input type="text" id="list-numbers" class="input" placeholder="Pl.: 5,2,8,1,9">
+                            <select id="list-operation-2" class="input">
+                                <option value="sort">Rendezés</option>
+                                <option value="reverse">Megfordítás</option>
+                                <option value="double">Duplázás</option>
+                            </select>
+                            <button class="btn" onclick="processListOperation()">
+                                <i class="fas fa-play"></i> Végrehajtás
+                            </button>
+                        </div>
+                    </div>
+                    <div id="list-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Tuple feladat -->
+        <div class="exercise">
+            <div class="exercise-header" onclick="toggleExercise(2)">
+                <h3>2. Feladat: Pont koordináták</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="exercise-content" id="exercise-2">
+                <div class="task-description">
+                    <p>Hozz létre két pontot tuple-ként (x, y koordinátákkal), majd számold ki a pontok távolságát!</p>
+                </div>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="exercise-2">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">import math
+
+# Két pont koordinátái
+pont1 = (0, 0)
+pont2 = (3, 4)
+
+# Távolság számítás
+dx = pont2[0] - pont1[0]
+dy = pont2[1] - pont1[1]
+tavolsag = math.sqrt(dx**2 + dy**2)
+
+print(f"A két pont távolsága: {tavolsag}")</code></pre>
+                </div>
+
+                <div class="practice-area">
+                    <h4>Próbáld ki!</h4>
+                    <div class="form-group">
+                        <div class="points-input">
+                            <div class="point-group">
+                                <label>Első pont (x,y):</label>
+                                <input type="text" id="point1" class="input" placeholder="Pl.: 0,0">
+                            </div>
+                            <div class="point-group">
+                                <label>Második pont (x,y):</label>
+                                <input type="text" id="point2" class="input" placeholder="Pl.: 3,4">
+                            </div>
+                        </div>
+                        <button class="btn" onclick="calculateDistance()">
+                            <i class="fas fa-calculator"></i> Távolság számítása
+                        </button>
+                    </div>
+                    <div class="coordinate-system" id="coordinate-system"></div>
+                    <div id="distance-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Set feladat -->
+        <div class="exercise">
+            <div class="exercise-header" onclick="toggleExercise(3)">
+                <h3>3. Feladat: Közös elemek keresése</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="exercise-content" id="exercise-3">
+                <div class="task-description">
+                    <p>Hozz létre két halmazt különböző elemekkel, majd keresd meg a közös elemeket, az egyedi elemeket és az összes elemet!</p>
+                </div>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="exercise-3">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python"># Halmazok létrehozása
+A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+
+# Közös elemek (metszet)
+kozos = A & B               # {4, 5}
+
+# Egyedi elemek (szimmetrikus különbség)
+egyedi = A ^ B             # {1, 2, 3, 6, 7, 8}
+
+# Összes elem (unió)
+osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
+                </div>
+
+                <div class="practice-area">
+                    <h4>Próbáld ki!</h4>
+                    <div class="form-group">
+                        <div class="sets-input">
+                            <div class="set-group">
+                                <label>A halmaz elemei:</label>
+                                <input type="text" id="set-a-2" class="input" placeholder="Pl.: 1,2,3,4,5">
+                            </div>
+                            <div class="set-group">
+                                <label>B halmaz elemei:</label>
+                                <input type="text" id="set-b-2" class="input" placeholder="Pl.: 4,5,6,7,8">
+                            </div>
+                        </div>
+                        <button class="btn" onclick="analyzeSets()">
+                            <i class="fas fa-search"></i> Elemzés
+                        </button>
+                    </div>
+                    <div class="venn-diagram" id="venn-diagram"></div>
+                    <div id="sets-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+   .exercise {
+       margin: 2rem 0;
+       background: var(--bg-primary);
+       border-radius: 10px;
+       overflow: hidden;
+   }
+
+   .exercise-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       padding: 1.5rem;
+       background: var(--bg-secondary);
+       cursor: pointer;
+       transition: background-color 0.3s ease;
+   }
+
+   .exercise-header:hover {
+       background: var(--highlight);
+   }
+
+   .exercise-header h3 {
+       margin: 0;
+       font-size: 1.2rem;
+       color: var(--accent-primary);
+   }
+
+   .exercise-header i {
+       transition: transform 0.3s ease;
+   }
+
+   .exercise-header.active i {
+       transform: rotate(180deg);
+   }
+
+   .exercise-content {
+       padding: 0;
+       max-height: 0;
+       overflow: hidden;
+       transition: max-height 0.3s ease, padding 0.3s ease;
+   }
+
+   .exercise-content.active {
+       padding: 1.5rem;
+       max-height: 2000px;
+   }
+
+   .task-description {
+       background: var(--highlight);
+       padding: 1rem;
+       border-radius: 5px;
+       margin-bottom: 1.5rem;
+   }
+
+   .points-input, .sets-input {
+       display: grid;
+       grid-template-columns: repeat(2, 1fr);
+       gap: 1rem;
+       margin-bottom: 1rem;
+   }
+
+   .point-group, .set-group {
+       display: flex;
+       flex-direction: column;
+       gap: 0.5rem;
+   }
+
+   .coordinate-system {
+       height: 300px;
+       background: var(--bg-secondary);
+       border-radius: 5px;
+       margin: 1rem 0;
+       position: relative;
+       overflow: hidden;
+   }
+
+   .point-marker {
+       position: absolute;
+       width: 10px;
+       height: 10px;
+       background: var(--accent-primary);
+       border-radius: 50%;
+       transform: translate(-50%, -50%);
+   }
+
+   .distance-line {
+       position: absolute;
+       height: 2px;
+       background: var(--accent-secondary);
+       transform-origin: left center;
+   }
+
+   .venn-diagram {
+       height: 300px;
+       margin: 1rem 0;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       position: relative;
+   }
+
+   .set-circle {
+       width: 200px;
+       height: 200px;
+       border: 2px solid;
+       border-radius: 50%;
+       position: absolute;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       font-size: 0.9rem;
+       opacity: 0.7;
+   }
+
+   .set-a {
+       border-color: var(--list-color);
+       background: rgba(52, 152, 219, 0.1);
+       transform: translateX(-50px);
+   }
+
+   .set-b {
+       border-color: var(--set-color);
+       background: rgba(241, 196, 15, 0.1);
+       transform: translateX(50px);
+   }
+
+   @media (max-width: 768px) {
+       .points-input, .sets-input {
+           grid-template-columns: 1fr;
+       }
+   }
+</style>
+
+<script>
+   // Feladat megjelenítés kezelése
+   function toggleExercise(num) {
+       const content = document.getElementById(`exercise-${num}`);
+       const header = content.previousElementSibling;
+
+       content.classList.toggle('active');
+       header.classList.toggle('active');
+   }
+
+   // 1. Lista feladat
+   function processListOperation() {
+    const input = document.getElementById('list-numbers').value;
+    const operationElement = document.getElementById('list-operation-2');
+    const operation = operationElement.options[operationElement.selectedIndex].value; // Pontos érték lekérdezése
+    const resultDiv = document.getElementById('list-result');
+
+    console.log('Element:', operationElement); // Ellenőrzés
+    console.log('Value:', operation); // Ellenőrzés
+
+    try {
+        if (!input.trim()) {
+            throw new Error('Kérlek adj meg számokat!');
+        }
+
+        // Számok feldolgozása és ellenőrzése
+        const numbers = input.split(',')
+            .map(n => n.trim())
+            .filter(n => n !== '')
+            .map(n => {
+                const num = parseFloat(n);
+                if (isNaN(num)) {
+                    throw new Error('Csak számokat adj meg!');
+                }
+                return num;
+            });
+
+        if (numbers.length === 0) {
+            throw new Error('Nincs feldolgozható szám!');
+        }
+
+        let result;
+        switch (operation) {
+            case 'sort':
+                result = [...numbers].sort((a, b) => a - b);
+                break;
+            case 'reverse':
+                result = [...numbers].reverse();
+                break;
+            case 'double':
+                result = numbers.map(n => n * 2);
+                break;
+            default:
+                console.error(`Ismeretlen művelet: "${operation}"`); // Hibakereséshez
+                throw new Error('Ismeretlen művelet! Kérlek válassz egyet a listából.');
+        }
+
+        resultDiv.innerHTML = `
+            <div>Eredeti lista: [${numbers.join(', ')}]</div>
+            <div>Eredmény: [${result.join(', ')}]</div>
+        `;
+        resultDiv.style.borderColor = 'var(--success)';
+    } catch (error) {
+        resultDiv.textContent = `Hiba: ${error.message}`;
+        resultDiv.style.borderColor = 'var(--error)';
+    }
+
+    resultDiv.classList.remove('show');
+    void resultDiv.offsetWidth;
+    resultDiv.classList.add('show');
+}
+
+
+
+
+
+
+   // 2. Pont koordináták
+   function calculateDistance() {
+       const point1Input = document.getElementById('point1').value;
+       const point2Input = document.getElementById('point2').value;
+       const resultDiv = document.getElementById('distance-result');
+       const coordSystem = document.getElementById('coordinate-system');
+
+       try {
+           // Pontok feldolgozása
+           const p1 = point1Input.split(',').map(n => parseFloat(n.trim()));
+           const p2 = point2Input.split(',').map(n => parseFloat(n.trim()));
+
+           if (p1.length !== 2 || p2.length !== 2 || p1.some(isNaN) || p2.some(isNaN)) {
+               throw new Error('Kérlek adj meg érvényes koordinátákat (x,y)!');
+           }
+
+           // Távolság számítás
+           const dx = p2[0] - p1[0];
+           const dy = p2[1] - p1[1];
+           const distance = Math.sqrt(dx*dx + dy*dy);
+
+           // Vizualizáció
+           coordSystem.innerHTML = '';
+           const scale = 30;
+           const offsetX = coordSystem.offsetWidth / 2;
+           const offsetY = coordSystem.offsetHeight / 2;
+
+           // Koordináta tengelyek
+           coordSystem.innerHTML += `
+               <div style="position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: var(--border-color);"></div>
+               <div style="position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: var(--border-color);"></div>
+           `;
+
+           // Pontok és vonal megjelenítése
+           const x1 = offsetX + p1[0] * scale;
+           const y1 = offsetY - p1[1] * scale;
+           const x2 = offsetX + p2[0] * scale;
+           const y2 = offsetY - p2[1] * scale;
+
+           coordSystem.innerHTML += `
+               <div class="point-marker" style="left: ${x1}px; top: ${y1}px;"></div>
+               <div class="point-marker" style="left: ${x2}px; top: ${y2}px;"></div>
+               <div class="distance-line" style="
+                   left: ${x1}px;
+                   top: ${y1}px;
+                   width: ${Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2))}px;
+                   transform: rotate(${Math.atan2(y2-y1, x2-x1)}rad);
+               "></div>
+           `;
+
+           resultDiv.innerHTML = `
+               <div>Első pont: (${p1[0]}, ${p1[1]})</div>
+               <div>Második pont: (${p2[0]}, ${p2[1]})</div>
+               <div>Távolság: ${distance.toFixed(2)} egység</div>
+           `;
+           resultDiv.style.borderColor = 'var(--success)';
+       } catch (error) {
+           resultDiv.textContent = `Hiba: ${error.message}`;
+           resultDiv.style.borderColor = 'var(--error)';
+       }
+
+       resultDiv.classList.remove('show');
+       void resultDiv.offsetWidth;
+       resultDiv.classList.add('show');
+   }
+
+   // 3. Halmazok elemzése
+   function analyzeSets() {
+    const setAInput = document.getElementById('set-a-2').value;
+    const setBInput = document.getElementById('set-b-2').value;
+    const resultDiv = document.getElementById('sets-result');
+    const vennDiv = document.getElementById('venn-diagram');
+
+    console.log('Bemeneti értékek:');
+    console.log('setAInput:', setAInput);
+    console.log('setBInput:', setBInput);
+
+    try {
+        // Ellenőrizd, hogy van-e megadott érték mindkét mezőben
+        if (!setAInput.trim() || !setBInput.trim()) {
+            console.log('Üres vagy whitespace-only bemenet észlelve.');
+            console.log('setAInput:', setAInput.trim());
+            console.log('setBInput:', setBInput.trim());
+            throw new Error('Kérlek add meg mindkét halmaz elemeit!');
+        }
+
+        // Halmazok feldolgozása
+        const setA = new Set(
+            setAInput.split(',').map(x => x.trim()).filter(x => x !== '')
+        );
+        const setB = new Set(
+            setBInput.split(',').map(x => x.trim()).filter(x => x !== '')
+        );
+
+        console.log('Tisztított halmazok:');
+        console.log('setA:', [...setA]);
+        console.log('setB:', [...setB]);
+
+        if (setA.size === 0 || setB.size === 0) {
+            console.log('Üres halmaz észlelve.');
+            throw new Error('Mindkét halmaznak tartalmaznia kell legalább egy elemet!');
+        }
+
+        // Halmazműveletek
+        const intersection = new Set([...setA].filter(x => setB.has(x)));
+        const symmetricDiff = new Set(
+            [...setA].filter(x => !setB.has(x)).concat([...setB].filter(x => !setA.has(x)))
+        );
+        const union = new Set([...setA, ...setB]);
+
+        console.log('Halmazműveletek eredménye:');
+        console.log('Közös elemek:', [...intersection]);
+        console.log('Egyedi elemek:', [...symmetricDiff]);
+        console.log('Összes elem:', [...union]);
+
+        // Venn diagram frissítése
+        vennDiv.innerHTML = `
+            <div class="set-circle set-a">
+                A<br>${[...setA].join(', ')}
+            </div>
+            <div class="set-circle set-b">
+                B<br>${[...setB].join(', ')}
+            </div>
+        `;
+
+        resultDiv.innerHTML = `
+            <div>Közös elemek: {${[...intersection].join(', ') || '-'}}</div>
+            <div>Egyedi elemek: {${[...symmetricDiff].join(', ') || '-'}}</div>
+            <div>Összes elem: {${[...union].join(', ') || '-'}}</div>
+        `;
+        resultDiv.style.borderColor = 'var(--success)';
+    } catch (error) {
+        console.log('Hiba történt:', error.message);
+        resultDiv.textContent = `Hiba: ${error.message}`;
+        resultDiv.style.borderColor = 'var(--error)';
+    }
+
+    resultDiv.classList.remove('show');
+    void resultDiv.offsetWidth;
+    resultDiv.classList.add('show');
+}
+
+
+
+
+   // Enter billentyű kezelése
+   document.addEventListener('DOMContentLoaded', () => {
+       document.getElementById('list-numbers').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') processListOperation();
+       });
+
+       document.getElementById('point1').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('point2').focus();
+       });
+
+       document.getElementById('point2').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') calculateDistance();
+       });
+
+       document.getElementById('set-a').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('set-b').focus();
+       });
+
+       document.getElementById('set-b').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') analyzeSets();
+       });
+
+       // Az első feladat megnyitása
+       toggleExercise(1);
+   });
+</script>
+
+</section>
+
+<!-- új kódokat ide -->
+
+<section id="kombinalt" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-puzzle-piece"></i>
+        Kombinált példák
+    </h1>
+
+    <div class="card">
+        <h2>Játékos pontgyűjtő</h2>
+        <p>Ez a példa mindhárom adatszerkezetet használja: a játékosok listáját, a pontszámok tuple-jét és az egyedi teljesítmények halmazát.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="game">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Játékos pontgyűjtő rendszer
+jatekosok = ["Anna", "Béla", "Csaba"]              # Lista a játékosoknak
+pontszamok = (100, 150, 80)                        # Tuple a pontszámoknak
+teljesitmenyek = {"győzelem", "vereség", "döntetlen"}  # Halmaz az egyedi teljesítményeknek
+
+def jatekos_statisztika(jatekos, pont, teljesitmeny):
+    """Játékos statisztikájának kezelése"""
+    if jatekos in jatekosok:
+        index = jatekosok.index(jatekos)
+        print(f"Játékos: {jatekos}")
+        print(f"Pontszám: {pontszamok[index]}")
+        teljesitmenyek.add(teljesitmeny)
+        print(f"Lehetséges teljesítmények: {teljesitmenyek}")
+    else:
+        print("Játékos nem található!")
+
+# Példa használat
+jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
+        </div>
+
+        <div class="game-demo">
+            <h3>Játékos kezelő felület</h3>
+            <div class="game-controls">
+                <!-- Játékos műveletek -->
+                <div class="control-section">
+                    <h4>Játékos műveletek</h4>
+                    <div class="input-group">
+                        <input type="text" id="player-name" class="input" placeholder="Játékos neve">
+                        <input type="number" id="player-score" class="input" placeholder="Pontszám">
+                        <select id="player-performance" class="input">
+                            <option value="győzelem">Győzelem</option>
+                            <option value="vereség">Vereség</option>
+                            <option value="döntetlen">Döntetlen</option>
+                        </select>
+                        <button class="btn" onclick="addPlayerStats()">
+                            <i class="fas fa-plus"></i> Hozzáadás
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Játékos statisztikák -->
+                <div class="stats-display">
+                    <div class="stats-section">
+                        <h4>Játékosok listája</h4>
+                        <div id="players-list" class="stats-list"></div>
+                    </div>
+                    <div class="stats-section">
+                        <h4>Pontszámok</h4>
+                        <div id="scores-list" class="stats-list"></div>
+                    </div>
+                    <div class="stats-section">
+                        <h4>Teljesítmények</h4>
+                        <div id="performances-list" class="stats-list"></div>
+                    </div>
+                </div>
+
+                <!-- Keresés és szűrés -->
+                <div class="control-section">
+                    <h4>Keresés és szűrés</h4>
+                    <div class="search-controls">
+                        <input type="text" id="search-term" class="input" placeholder="Keresés...">
+                        <select id="search-type" class="input">
+                            <option value="player">Játékos szerint</option>
+                            <option value="score">Pontszám szerint</option>
+                            <option value="performance">Teljesítmény szerint</option>
+                        </select>
+                        <button class="btn" onclick="searchStats()">
+                            <i class="fas fa-search"></i> Keresés
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="game-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+   .game-demo {
+       margin-top: 2rem;
+       background: var(--bg-primary);
+       border-radius: 10px;
+       padding: 2rem;
+   }
+
+   .game-controls {
+       display: grid;
+       gap: 2rem;
+   }
+
+   .control-section {
+       background: var(--bg-secondary);
+       border-radius: 8px;
+       padding: 1.5rem;
+   }
+
+   .stats-display {
+       display: grid;
+       grid-template-columns: repeat(3, 1fr);
+       gap: 1.5rem;
+       margin: 1.5rem 0;
+   }
+
+   .stats-section {
+       background: var(--bg-secondary);
+       border-radius: 8px;
+       padding: 1rem;
+   }
+
+   .stats-section h4 {
+       color: var(--accent-primary);
+       margin-bottom: 1rem;
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+   }
+
+   .stats-list {
+       min-height: 200px;
+       max-height: 300px;
+       overflow-y: auto;
+       padding: 0.5rem;
+   }
+
+   .stats-item {
+       background: var(--highlight);
+       padding: 0.75rem;
+       border-radius: 5px;
+       margin-bottom: 0.5rem;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       animation: slideIn 0.3s ease;
+   }
+
+   .stats-item-player {
+       border-left: 3px solid var(--list-color);
+   }
+
+   .stats-item-score {
+       border-left: 3px solid var(--tuple-color);
+   }
+
+   .stats-item-performance {
+       border-left: 3px solid var(--set-color);
+   }
+
+   .search-controls {
+       display: grid;
+       grid-template-columns: 2fr 1fr auto;
+       gap: 1rem;
+       align-items: start;
+   }
+
+   @keyframes slideIn {
+       from {
+           opacity: 0;
+           transform: translateX(-10px);
+       }
+       to {
+           opacity: 1;
+           transform: translateX(0);
+       }
+   }
+
+   @media (max-width: 1024px) {
+       .stats-display {
+           grid-template-columns: 1fr;
+       }
+
+       .search-controls {
+           grid-template-columns: 1fr;
+       }
+   }
+</style>
+
+<script>
+   // Játék állapot
+   let gamePlayers = [];
+   let gameScores = [];
+   let gamePerformances = new Set();
+
+   function addPlayerStats() {
+       const name = document.getElementById('player-name').value;
+       const score = parseInt(document.getElementById('player-score').value);
+       const performance = document.getElementById('player-performance').value;
+       const resultDiv = document.getElementById('game-result');
+
+       try {
+           if (!name.trim()) {
+               throw new Error('Adj meg egy játékosnevet!');
+           }
+           if (isNaN(score)) {
+               throw new Error('Adj meg érvényes pontszámot!');
+           }
+
+           // Adatok hozzáadása
+           gamePlayers.push(name);
+           gameScores.push(score);
+           gamePerformances.add(performance);
+
+           // Listák frissítése
+           updateStatsDisplay();
+
+           resultDiv.innerHTML = `Játékos sikeresen hozzáadva: ${name} (${score} pont, ${performance})`;
+           resultDiv.style.borderColor = 'var(--success)';
+
+           // Input mezők törlése
+           document.getElementById('player-name').value = '';
+           document.getElementById('player-score').value = '';
+       } catch (error) {
+           resultDiv.textContent = `Hiba: ${error.message}`;
+           resultDiv.style.borderColor = 'var(--error)';
+       }
+
+       resultDiv.classList.remove('show');
+       void resultDiv.offsetWidth;
+       resultDiv.classList.add('show');
+   }
+
+   function updateStatsDisplay() {
+       // Játékosok listája
+       const playersList = document.getElementById('players-list');
+       playersList.innerHTML = gamePlayers.map((player, index) => `
+           <div class="stats-item stats-item-player">
+               <span>${player}</span>
+               <small>#${index + 1}</small>
+           </div>
+       `).join('');
+
+       // Pontszámok listája
+       const scoresList = document.getElementById('scores-list');
+       scoresList.innerHTML = gameScores.map((score, index) => `
+           <div class="stats-item stats-item-score">
+               <span>${gamePlayers[index]}</span>
+               <strong>${score} pont</strong>
+           </div>
+       `).join('');
+
+       // Teljesítmények listája
+       const performancesList = document.getElementById('performances-list');
+       performancesList.innerHTML = Array.from(gamePerformances).map(perf => `
+           <div class="stats-item stats-item-performance">
+               <span>${perf}</span>
+               <small>${countPerformance(perf)}x</small>
+           </div>
+       `).join('');
+   }
+
+   function countPerformance(performance) {
+       return gamePlayers.length;
+   }
+
+   function searchStats() {
+       const searchTerm = document.getElementById('search-term').value.toLowerCase();
+       const searchType = document.getElementById('search-type').value;
+       const resultDiv = document.getElementById('game-result');
+
+       try {
+           let results = [];
+           switch(searchType) {
+               case 'player':
+                   results = gamePlayers
+                       .filter(player => player.toLowerCase().includes(searchTerm))
+                       .map((player, index) => ({
+                           name: player,
+                           score: gameScores[index]
+                       }));
+                   break;
+               case 'score':
+                   const searchScore = parseInt(searchTerm);
+                   results = gameScores
+                       .map((score, index) => ({
+                           name: gamePlayers[index],
+                           score: score
+                       }))
+                       .filter(item => item.score === searchScore);
+                   break;
+               case 'performance':
+                   results = Array.from(gamePerformances)
+                       .filter(perf => perf.toLowerCase().includes(searchTerm))
+                       .map(perf => ({
+                           name: perf,
+                           count: countPerformance(perf)
+                       }));
+                   break;
+           }
+
+           if (results.length === 0) {
+               resultDiv.textContent = 'Nincs találat!';
+               resultDiv.style.borderColor = 'var(--warning)';
+           } else {
+               resultDiv.innerHTML = `
+                   <div>Találatok (${results.length}):</div>
+                   ${results.map(result => `
+                       <div class="stats-item">
+                           <span>${result.name}</span>
+                           <span>${result.score || result.count}</span>
+                       </div>
+                   `).join('')}
+               `;
+               resultDiv.style.borderColor = 'var(--success)';
+           }
+       } catch (error) {
+           resultDiv.textContent = `Hiba: ${error.message}`;
+           resultDiv.style.borderColor = 'var(--error)';
+       }
+
+       resultDiv.classList.remove('show');
+       void resultDiv.offsetWidth;
+       resultDiv.classList.add('show');
+   }
+
+   // Enter billentyű kezelése
+   document.addEventListener('DOMContentLoaded', () => {
+       document.getElementById('player-name').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('player-score').focus();
+       });
+
+       document.getElementById('player-score').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') addPlayerStats();
+       });
+
+       document.getElementById('search-term').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') searchStats();
+       });
+   });
+</script>
+
+</section>
+
+<!-- új kódokat ide -->
+
+</main>
+<!-- Footer -->
+   <footer>
+       <div class="container">
+           <div class="row">
+               <div class="col-md-6 mb-4 mb-md-0">
+                   <h3 class="h5 mb-3">Kapcsolat</h3>
+                   <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+               </div>
+               <div class="col-md-6">
+                   <h3 class="h5 mb-3">Információk</h3>
+                   <p class="mb-2">Utolsó frissítés: 2025.01.19.</p>
+                   <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+               </div>
+           </div>
+       </div>
+   </footer>
+
+   <style>
+       /* Footer stílusok */
+       footer {
+           background: var(--bg-secondary);
+           padding: 2rem 0;
+           margin-top: 4rem;
+           border-top: 1px solid var(--border-color);
+       }
+
+       .footer-link {
+           color: var(--accent-primary);
+           text-decoration: none;
+           transition: color 0.3s ease;
+       }
+
+       .footer-link:hover {
+           color: var(--accent-secondary);
+           text-decoration: underline;
+       }
+
+       .row {
+           display: flex;
+           flex-wrap: wrap;
+           margin-right: -15px;
+           margin-left: -15px;
+       }
+
+       .col-md-6 {
+           position: relative;
+           width: 100%;
+           padding-right: 15px;
+           padding-left: 15px;
+       }
+
+       .mb-4 { margin-bottom: 1.5rem; }
+       .mb-3 { margin-bottom: 1rem; }
+       .mb-2 { margin-bottom: 0.5rem; }
+
+       .h5 {
+           font-size: 1.25rem;
+           color: var(--text-primary);
+       }
+
+       @media (min-width: 768px) {
+           .col-md-6 {
+               flex: 0 0 50%;
+               max-width: 50%;
+           }
+           .mb-md-0 {
+               margin-bottom: 0;
+           }
+       }
+   </style>
+
+   <!-- Prism és egyéb inicializációk -->
+   <script>
+       function refreshPrism() {
+           if (typeof Prism !== 'undefined') {
+               Prism.highlightAll();
+           }
+       }
+
+       document.addEventListener('DOMContentLoaded', () => {
+           refreshPrism();
+
+           // Smooth scroll a navigációs linkekhez
+           document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+               anchor.addEventListener('click', function (e) {
+                   e.preventDefault();
+                   const targetId = this.getAttribute('href');
+                   const targetElement = document.querySelector(targetId);
+
+                   if (targetElement) {
+                       targetElement.scrollIntoView({
+                           behavior: 'smooth',
+                           block: 'start'
+                       });
+                   }
+               });
+           });
+       });
+   </script>
+
+</main>
+</body>
+</html>

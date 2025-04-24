@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Függvényparaméterek Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Kiemelő színek különböző paraméter típusokhoz */
+            --param-positional: #3498db;
+            --param-optional: #e74c3c;
+            --param-args: #f1c40f;
+            --param-kwargs: #9b59b6;
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigáció stílusa */
+        .nav {
+            background: var(--bg-secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Szekció címek */
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            font-size: 1.75rem;
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Tooltip stílus */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Form elemek csoportosítása */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Reszponzív dizájn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-code"></i> Python Paraméterek
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link">Bevezető</a></li>
+                <li><a href="#pozicionalis" class="nav-link">Pozicionális</a></li>
+                <li><a href="#args" class="nav-link">*args</a></li>
+                <li><a href="#kwargs" class="nav-link">**kwargs</a></li>
+                <li><a href="#kombinalt" class="nav-link">Kombinált példák</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Bevezető szekció -->
+        <section id="bevezeto" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-book-open"></i>
+                Függvényparaméterek a Pythonban
+            </h1>
+
+            <div class="card">
+                <h2>Miért fontosak a függvényparaméterek?</h2>
+                <p>A függvényparaméterek lehetővé teszik, hogy rugalmas és újrafelhasználható kódot írjunk. A Python különböző paramétertípusai segítenek abban, hogy függvényeink alkalmazkodni tudjanak különböző helyzetekhez.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="basic-function">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def koszont(nev):
+    """Egyszerű köszöntő függvény egy paraméterrel"""
+    return f"Szia {nev}!"
+
+# Használat
+print(koszont("Anna"))  # Kiírja: Szia Anna!</code></pre>
+                </div>
+
+                <div class="form-group">
+                    <label for="nev-input">Próbáld ki:</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="text" id="nev-input" class="input" placeholder="Írd be a neved" style="flex: 1;">
+                        <button class="btn" onclick="koszontoPelda()">
+                            <i class="fas fa-play"></i> Futtatás
+                        </button>
+                    </div>
+                </div>
+                <div id="koszonto-eredmeny" class="result"></div>
+            </div>
+
+            <div class="card">
+                <h2>Mit fogunk tanulni?</h2>
+                <div class="learning-objectives">
+                    <div class="objective">
+                        <i class="fas fa-check-circle" style="color: var(--param-positional);"></i>
+                        <span>Pozicionális és opcionális paraméterek</span>
+                    </div>
+                    <div class="objective">
+                        <i class="fas fa-check-circle" style="color: var(--param-args);"></i>
+                        <span>*args - változó számú pozicionális paraméter</span>
+                    </div>
+                    <div class="objective">
+                        <i class="fas fa-check-circle" style="color: var(--param-kwargs);"></i>
+                        <span>**kwargs - változó számú kulcsszavas paraméter</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            .learning-objectives {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .objective {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                background: var(--bg-primary);
+                border-radius: 5px;
+                transition: transform 0.3s ease;
+            }
+
+            .objective:hover {
+                transform: translateX(10px);
+            }
+
+            .objective i {
+                font-size: 1.5rem;
+            }
+        </style>
+
+        <script>
+            // Másolás gomb funkcionalitás
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const codeBlock = button.nextElementSibling;
+                    const code = codeBlock.textContent;
+
+                    try {
+                        await navigator.clipboard.writeText(code);
+
+                        // Visszajelzés
+                        const originalContent = button.innerHTML;
+                        button.innerHTML = '<i class="fas fa-check"></i>';
+                        button.style.color = 'var(--success)';
+
+                        setTimeout(() => {
+                            button.innerHTML = originalContent;
+                            button.style.color = '';
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Sikertelen másolás:', err);
+                    }
+                });
+            });
+
+            // Köszöntő példa funkcionalitás
+            function koszontoPelda() {
+                const nevInput = document.getElementById('nev-input');
+                const eredmenyDiv = document.getElementById('koszonto-eredmeny');
+
+                if (!nevInput.value.trim()) {
+                    eredmenyDiv.textContent = 'Hiba: Kérlek adj meg egy nevet!';
+                    eredmenyDiv.style.borderColor = 'var(--error)';
+                } else {
+                    eredmenyDiv.textContent = `Szia ${nevInput.value.trim()}!`;
+                    eredmenyDiv.style.borderColor = 'var(--success)';
+                }
+
+                eredmenyDiv.classList.remove('show');
+                void eredmenyDiv.offsetWidth; // Reflow
+                eredmenyDiv.classList.add('show');
+            }
+
+            // Enter billentyű kezelése a név inputnál
+            document.getElementById('nev-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    koszontoPelda();
+                }
+            });
+        </script>
+
+        <!-- Pozicionális paraméterek szekció -->
+        <section id="pozicionalis" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-arrow-right"></i>
+                Pozicionális és Opcionális Paraméterek
+            </h1>
+
+            <div class="card">
+                <h2>Pozicionális Paraméterek</h2>
+                <p>A pozicionális paramétereket sorrendben kell megadni a függvényhíváskor. Ezek kötelező paraméterek, amelyeket mindenképpen meg kell adnunk.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="positional">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def osszeadas(a, b):
+    """Két szám összeadása pozicionális paraméterekkel"""
+    return a + b
+
+# Használat
+print(osszeadas(5, 3))  # Eredmény: 8</code></pre>
+                </div>
+
+                <div class="form-group">
+                    <label>Próbáld ki az összeadást:</label>
+                    <div class="input-group">
+                        <input type="number" id="szam1" class="input" placeholder="Első szám" style="flex: 1;">
+                        <span class="operator">+</span>
+                        <input type="number" id="szam2" class="input" placeholder="Második szám" style="flex: 1;">
+                        <button class="btn" onclick="szamolas()">
+                            <i class="fas fa-equals"></i> Számol
+                        </button>
+                    </div>
+                    <div id="osszeadas-eredmeny" class="result"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Opcionális Paraméterek</h2>
+                <p>Az opcionális paramétereknek alapértelmezett értékük van, így nem kötelező őket megadni a függvényhíváskor.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="optional">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def koszont(nev, udvozles="Szia"):
+    """Köszöntés opcionális üdvözlő szöveggel"""
+    return f"{udvozles}, {nev}!"
+
+# Használat
+print(koszont("Anna"))          # Eredmény: Szia, Anna!
+print(koszont("Béla", "Hello")) # Eredmény: Hello, Béla!</code></pre>
+                </div>
+
+                <div class="form-group">
+                    <label>Próbáld ki a köszöntést:</label>
+                    <div class="input-group-stacked">
+                        <input type="text" id="nev-koszont" class="input" placeholder="Add meg a neved">
+                        <div class="input-row">
+                            <input type="text" id="udvozles-koszont" class="input" placeholder="Üdvözlés (opcionális, alapértelmezett: Szia)">
+                            <button class="btn" onclick="koszontesProba()">
+                                <i class="fas fa-comment"></i> Köszönés
+                            </button>
+                        </div>
+                    </div>
+                    <div id="koszontes-eredmeny" class="result"></div>
+                </div>
+            </div>
+
+            <style>
+                .input-group {
+                    display: flex;
+                    gap: 1rem;
+                    align-items: center;
+                    margin-bottom: 1rem;
+                }
+
+                .input-group-stacked {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .input-row {
+                    display: flex;
+                    gap: 1rem;
+                }
+
+                .operator {
+                    font-size: 1.5rem;
+                    color: var(--accent-primary);
+                    font-weight: bold;
+                }
+
+                .parameter-highlight {
+                    display: inline-block;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 3px;
+                    margin: 0 0.25rem;
+                    font-family: 'Fira Code', monospace;
+                }
+
+                .positional {
+                    background: rgba(52, 152, 219, 0.2);
+                    border: 1px solid var(--param-positional);
+                }
+
+                .optional {
+                    background: rgba(231, 76, 60, 0.2);
+                    border: 1px solid var(--param-optional);
+                }
+
+                @media (max-width: 768px) {
+                    .input-group {
+                        flex-direction: column;
+                    }
+
+                    .input-row {
+                        flex-direction: column;
+                    }
+
+                    .operator {
+                        align-self: center;
+                    }
+                }
+            </style>
+
+            <script>
+                function szamolas() {
+                    const szam1 = document.getElementById('szam1').value;
+                    const szam2 = document.getElementById('szam2').value;
+                    const eredmenyDiv = document.getElementById('osszeadas-eredmeny');
+
+                    // Validálás
+                    if (!szam1 || !szam2) {
+                        eredmenyDiv.textContent = 'Hiba: Mindkét számot meg kell adni!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        const eredmeny = parseFloat(szam1) + parseFloat(szam2);
+                        eredmenyDiv.textContent = `${szam1} + ${szam2} = ${eredmeny}`;
+                        eredmenyDiv.style.borderColor = 'var(--success)';
+                    }
+
+                    // Animáció
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth; // Reflow
+                    eredmenyDiv.classList.add('show');
+                }
+
+                function koszontesProba() {
+                    const nev = document.getElementById('nev-koszont').value.trim();
+                    const udvozles = document.getElementById('udvozles-koszont').value.trim();
+                    const eredmenyDiv = document.getElementById('koszontes-eredmeny');
+
+                    if (!nev) {
+                        eredmenyDiv.textContent = 'Hiba: A név megadása kötelező!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        const hasznaltUdvozles = udvozles || 'Szia';
+                        eredmenyDiv.textContent = `${hasznaltUdvozles}, ${nev}!`;
+                        eredmenyDiv.style.borderColor = 'var(--success)';
+                    }
+
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth;
+                    eredmenyDiv.classList.add('show');
+                }
+
+                // Enter billentyű kezelése
+                document.getElementById('szam1').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') document.getElementById('szam2').focus();
+                });
+
+                document.getElementById('szam2').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') szamolas();
+                });
+
+                document.getElementById('nev-koszont').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') document.getElementById('udvozles-koszont').focus();
+                });
+
+                document.getElementById('udvozles-koszont').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') koszontesProba();
+                });
+            </script>
+
+            <!-- *args paraméterek szekció -->
+        <section id="args" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-asterisk"></i>
+                *args - Változó Számú Pozicionális Paraméter
+            </h1>
+
+            <div class="card">
+                <h2>Mi az a *args?</h2>
+                <p>A <code>*args</code> lehetővé teszi tetszőleges számú pozicionális paraméter átadását egy függvénynek. A Python egy tuple-be gyűjti ezeket az értékeket.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="args-basic">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def osszegzes(*args):
+    """Tetszőleges számú érték összeadása"""
+    return sum(args)
+
+# Használat
+print(osszegzes(1, 2, 3))       # Eredmény: 6
+print(osszegzes(1, 2, 3, 4, 5)) # Eredmény: 15</code></pre>
+                </div>
+
+                <div class="args-demo">
+                    <div class="form-group">
+                        <label>Próbáld ki az összeadást tetszőleges számú értékkel:</label>
+                        <div id="args-inputs" class="args-inputs">
+                            <div class="input-row">
+                                <input type="number" class="input args-input" placeholder="Szám">
+                                <input type="number" class="input args-input" placeholder="Szám">
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="addArgsInput()">
+                                <i class="fas fa-plus"></i> Új szám hozzáadása
+                            </button>
+                            <button class="btn" onclick="calculateArgs()">
+                                <i class="fas fa-equals"></i> Összegzés
+                            </button>
+                        </div>
+                    </div>
+                    <div id="args-eredmeny" class="result"></div>
+
+                    <!-- Vizualizáció -->
+                    <div class="args-visualization">
+                        <h3>Hogyan működik?</h3>
+                        <div class="args-flow">
+                            <div class="args-values">
+                                <!-- Dinamikusan feltöltődik -->
+                            </div>
+                            <div class="args-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="args-tuple">
+                                <span class="tuple-label">args tuple:</span>
+                                <span class="tuple-content">( )</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Példa: Átlagszámítás</h2>
+                <p>Az alábbi függvény tetszőleges számú érték átlagát számolja ki:</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="args-average">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def atlag(*args):
+    """Tetszőleges számú érték átlaga"""
+    if not args:
+        return 0
+    return sum(args) / len(args)
+
+# Használat
+print(atlag(70, 80, 90))     # Eredmény: 80.0
+print(atlag(1, 2, 3, 4, 5))  # Eredmény: 3.0</code></pre>
+                </div>
+
+                <div class="form-group">
+                    <label>Számold ki néhány szám átlagát:</label>
+                    <div id="average-inputs" class="args-inputs">
+                        <div class="input-row">
+                            <input type="number" class="input average-input" placeholder="Szám">
+                            <input type="number" class="input average-input" placeholder="Szám">
+                            <input type="number" class="input average-input" placeholder="Szám">
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="addAverageInput()">
+                            <i class="fas fa-plus"></i> Új szám
+                        </button>
+                        <button class="btn" onclick="calculateAverage()">
+                            <i class="fas fa-calculator"></i> Átlag számítása
+                        </button>
+                    </div>
+                    <div id="average-eredmeny" class="result"></div>
+                </div>
+            </div>
+
+            <style>
+                .args-demo {
+                    position: relative;
+                }
+
+                .args-inputs {
+                    margin-bottom: 1rem;
+                }
+
+                .button-group {
+                    display: flex;
+                    gap: 1rem;
+                    margin: 1rem 0;
+                }
+
+                .btn-secondary {
+                    background: var(--bg-primary);
+                    border: 1px solid var(--accent-primary);
+                    color: var(--accent-primary);
+                }
+
+                .btn-secondary:hover {
+                    background: var(--accent-primary);
+                    color: var(--bg-primary);
+                }
+
+                .args-visualization {
+                    margin-top: 2rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid var(--border-color);
+                }
+
+                .args-flow {
+                    display: flex;
+                    align-items: center;
+                    gap: 2rem;
+                    margin-top: 1rem;
+                    padding: 1rem;
+                    background: var(--bg-primary);
+                    border-radius: 10px;
+                }
+
+                .args-values {
+                    display: flex;
+                    gap: 0.5rem;
+                    flex-wrap: wrap;
+                }
+
+                .args-value {
+                    padding: 0.5rem 1rem;
+                    background: var(--param-args);
+                    color: var(--bg-primary);
+                    border-radius: 5px;
+                    font-weight: 500;
+                    animation: slideIn 0.3s ease;
+                }
+
+                .args-arrow {
+                    color: var(--accent-primary);
+                    font-size: 1.5rem;
+                }
+
+                .args-tuple {
+                    padding: 1rem;
+                    background: rgba(241, 196, 15, 0.1);
+                    border: 1px solid var(--param-args);
+                    border-radius: 5px;
+                }
+
+                .tuple-label {
+                    display: block;
+                    color: var(--text-secondary);
+                    font-size: 0.9rem;
+                    margin-bottom: 0.5rem;
+                }
+
+                .tuple-content {
+                    font-family: 'Fira Code', monospace;
+                    color: var(--param-args);
+                }
+
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .args-flow {
+                        flex-direction: column;
+                        gap: 1rem;
+                    }
+
+                    .button-group {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+
+            <script>
+                function addArgsInput() {
+                    const container = document.getElementById('args-inputs');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input args-input';
+                    input.placeholder = 'Szám';
+
+                    const row = document.createElement('div');
+                    row.className = 'input-row';
+                    row.appendChild(input);
+
+                    container.appendChild(row);
+
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') calculateArgs();
+                    });
+
+                    // Animáció az új mezőhöz
+                    anime({
+                        targets: input,
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                }
+
+                function calculateArgs() {
+                    const inputs = document.querySelectorAll('.args-input');
+                    const numbers = Array.from(inputs)
+                        .map(input => input.value ? parseFloat(input.value) : null)
+                        .filter(val => val !== null);
+
+                    const eredmenyDiv = document.getElementById('args-eredmeny');
+
+                    if (numbers.length === 0) {
+                        eredmenyDiv.textContent = 'Hiba: Adj meg legalább egy számot!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        const sum = numbers.reduce((a, b) => a + b, 0);
+                        eredmenyDiv.textContent = `A számok összege: ${sum}`;
+                        eredmenyDiv.style.borderColor = 'var(--success)';
+
+                        // Vizualizáció frissítése
+                        updateArgsVisualization(numbers);
+                    }
+
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth;
+                    eredmenyDiv.classList.add('show');
+                }
+
+                function updateArgsVisualization(numbers) {
+                    const valuesContainer = document.querySelector('.args-values');
+                    const tupleContent = document.querySelector('.tuple-content');
+
+                    // Értékek törlése
+                    valuesContainer.innerHTML = '';
+
+                    // Új értékek hozzáadása animációval
+                    numbers.forEach((num, index) => {
+                        const valueDiv = document.createElement('div');
+                        valueDiv.className = 'args-value';
+                        valueDiv.textContent = num;
+                        valueDiv.style.animationDelay = `${index * 0.1}s`;
+                        valuesContainer.appendChild(valueDiv);
+                    });
+
+                    // Tuple tartalom frissítése
+                    tupleContent.textContent = `(${numbers.join(', ')})`;
+                }
+
+                function addAverageInput() {
+                    const container = document.getElementById('average-inputs');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input average-input';
+                    input.placeholder = 'Szám';
+
+                    const row = document.createElement('div');
+                    row.className = 'input-row';
+                    row.appendChild(input);
+
+                    container.appendChild(row);
+
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') calculateAverage();
+                    });
+
+                    anime({
+                        targets: input,
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                }
+
+                function calculateAverage() {
+                    const inputs = document.querySelectorAll('.average-input');
+                    const numbers = Array.from(inputs)
+                        .map(input => input.value ? parseFloat(input.value) : null)
+                        .filter(val => val !== null);
+
+                    const eredmenyDiv = document.getElementById('average-eredmeny');
+
+                    if (numbers.length === 0) {
+                        eredmenyDiv.textContent = 'Hiba: Adj meg legalább egy számot!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        const sum = numbers.reduce((a, b) => a + b, 0);
+                        const avg = sum / numbers.length;
+                        eredmenyDiv.textContent = `A számok átlaga: ${avg.toFixed(2)}`;
+                        eredmenyDiv.style.borderColor = 'var(--success)';
+                    }
+
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth;
+                    eredmenyDiv.classList.add('show');
+                }
+            </script>
+
+            <!-- **kwargs paraméterek szekció -->
+        <section id="kwargs" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-key"></i>
+                **kwargs - Kulcs-Érték Párok
+            </h1>
+
+            <div class="card">
+                <h2>Mi az a **kwargs?</h2>
+                <p>A <code>**kwargs</code> lehetővé teszi tetszőleges számú kulcs-érték pár átadását egy függvénynek. A Python egy dictionary-be (szótárba) gyűjti ezeket az értékeket.</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="kwargs-basic">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def szemely_info(**kwargs):
+    """Személyes információk megjelenítése"""
+    return "\n".join(f"{key}: {value}" for key, value in kwargs.items())
+
+# Használat
+print(szemely_info(nev="Anna", kor=25, varos="Budapest"))
+print(szemely_info(nev="Béla", foglalkozas="programozó"))</code></pre>
+                </div>
+
+                <div class="kwargs-demo">
+                    <h3>Készíts személyi adatlapot:</h3>
+                    <div id="kwargs-form" class="kwargs-form">
+                        <div class="kwargs-pairs">
+                            <!-- Alapértelmezett kulcs-érték pár mezők -->
+                            <div class="kwargs-pair">
+                                <input type="text" class="input kwargs-key" placeholder="Kulcs (pl. név)">
+                                <span class="pair-separator">:</span>
+                                <input type="text" class="input kwargs-value" placeholder="Érték">
+                                <button class="btn-icon remove-pair" onclick="removePair(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="addKwargsPair()">
+                                <i class="fas fa-plus"></i> Új tulajdonság
+                            </button>
+                            <button class="btn" onclick="createProfile()">
+                                <i class="fas fa-user-plus"></i> Profil létrehozása
+                            </button>
+                        </div>
+                    </div>
+                    <div id="kwargs-eredmeny" class="result"></div>
+
+                    <!-- Vizualizáció -->
+                    <div class="kwargs-visualization">
+                        <h3>Hogyan működik?</h3>
+                        <div class="kwargs-flow">
+                            <div class="kwargs-pairs-visual">
+                                <!-- Dinamikusan feltöltődik -->
+                            </div>
+                            <div class="kwargs-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="kwargs-dict">
+                                <span class="dict-label">kwargs dictionary:</span>
+                                <pre class="dict-content">{ }</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Gyakorlati példa: Termék konfigurátor</h2>
+                <p>A következő példában egy terméket konfigurálhatunk különböző tulajdonságokkal:</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="kwargs-product">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def termek_konfig(**kwargs):
+    """Termék konfigurálása különböző tulajdonságokkal"""
+    alap = {
+        'szin': 'fehér',
+        'meret': 'M',
+        'anyag': 'pamut'
+    }
+    alap.update(kwargs)  # Frissítjük az alapértékeket
+    return alap
+
+# Használat
+print(termek_konfig(szin="kék", meret="L"))
+print(termek_konfig(anyag="selyem", extra_zseb=True))</code></pre>
+                </div>
+
+                <div class="product-config">
+                    <h3>Termék konfigurátor:</h3>
+                    <div class="config-options">
+                        <div class="form-group">
+                            <label>Szín:</label>
+                            <select class="input config-select" id="szin">
+                                <option value="fehér">Fehér</option>
+                                <option value="kék">Kék</option>
+                                <option value="piros">Piros</option>
+                                <option value="fekete">Fekete</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Méret:</label>
+                            <select class="input config-select" id="meret">
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Anyag:</label>
+                            <select class="input config-select" id="anyag">
+                                <option value="pamut">Pamut</option>
+                                <option value="selyem">Selyem</option>
+                                <option value="len">Len</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Extra tulajdonságok:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="extra_zseb"> Extra zseb
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="vizallo"> Vízálló
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="configureProduct()">
+                        <i class="fas fa-cog"></i> Konfiguráció mentése
+                    </button>
+                    <div id="config-eredmeny" class="result"></div>
+                </div>
+            </div>
+
+            <style>
+                .kwargs-form {
+                    margin-bottom: 2rem;
+                }
+
+                .kwargs-pairs {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .kwargs-pair {
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                }
+
+                .pair-separator {
+                    color: var(--param-kwargs);
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                }
+
+                .btn-icon {
+                    background: none;
+                    border: none;
+                    color: var(--error);
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                }
+
+                .btn-icon:hover {
+                    background: rgba(231, 76, 60, 0.1);
+                }
+
+                .kwargs-visualization {
+                    margin-top: 2rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid var(--border-color);
+                }
+
+                .kwargs-flow {
+                    display: flex;
+                    align-items: center;
+                    gap: 2rem;
+                    margin-top: 1rem;
+                    padding: 1rem;
+                    background: var(--bg-primary);
+                    border-radius: 10px;
+                }
+
+                .kwargs-pairs-visual {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .kwargs-pair-visual {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.5rem;
+                    background: rgba(155, 89, 182, 0.1);
+                    border: 1px solid var(--param-kwargs);
+                    border-radius: 5px;
+                    animation: slideIn 0.3s ease;
+                }
+
+                .kwargs-key {
+                    color: var(--param-kwargs);
+                    font-weight: 500;
+                }
+
+                .kwargs-arrow {
+                    color: var(--accent-primary);
+                    font-size: 1.5rem;
+                }
+
+                .kwargs-dict {
+                    padding: 1rem;
+                    background: rgba(155, 89, 182, 0.1);
+                    border: 1px solid var(--param-kwargs);
+                    border-radius: 5px;
+                    flex-grow: 1;
+                }
+
+                .dict-label {
+                    display: block;
+                    color: var(--text-secondary);
+                    font-size: 0.9rem;
+                    margin-bottom: 0.5rem;
+                }
+
+                .dict-content {
+                    font-family: 'Fira Code', monospace;
+                    color: var(--param-kwargs);
+                    margin: 0;
+                    white-space: pre-wrap;
+                }
+
+                .product-config {
+                    margin-top: 2rem;
+                }
+
+                .config-options {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .checkbox-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .checkbox-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    cursor: pointer;
+                }
+
+                .config-select {
+                    width: 100%;
+                    padding: 0.5rem;
+                }
+
+                @media (max-width: 768px) {
+                    .kwargs-flow {
+                        flex-direction: column;
+                    }
+
+                    .kwargs-pair {
+                        flex-wrap: wrap;
+                    }
+
+                    .config-options {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
+
+            <script>
+                function addKwargsPair() {
+                    const container = document.querySelector('.kwargs-pairs');
+                    const pair = document.createElement('div');
+                    pair.className = 'kwargs-pair';
+                    pair.innerHTML = `
+                        <input type="text" class="input kwargs-key" placeholder="Kulcs (pl. név)">
+                        <span class="pair-separator">:</span>
+                        <input type="text" class="input kwargs-value" placeholder="Érték">
+                        <button class="btn-icon remove-pair" onclick="removePair(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    container.appendChild(pair);
+
+                    // Animáció
+                    anime({
+                        targets: pair,
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                }
+
+                function removePair(button) {
+                    const pair = button.parentElement;
+
+                    // Animáció a törléshez
+                    anime({
+                        targets: pair,
+                        translateX: [0, 20],
+                        opacity: [1, 0],
+                        duration: 300,
+                        easing: 'easeInCubic',
+                        complete: () => {
+                            pair.remove();
+                        }
+                    });
+                }
+
+                function createProfile() {
+                    const pairs = document.querySelectorAll('.kwargs-pair');
+                    const kwargs = {};
+                    let hasError = false;
+
+                    pairs.forEach(pair => {
+                        const key = pair.querySelector('.kwargs-key').value.trim();
+                        const value = pair.querySelector('.kwargs-value').value.trim();
+
+                        if (key && value) {
+                            kwargs[key] = value;
+                        } else if (key || value) {
+                            hasError = true;
+                        }
+                    });
+
+                    const eredmenyDiv = document.getElementById('kwargs-eredmeny');
+
+                    if (hasError) {
+                        eredmenyDiv.textContent = 'Hiba: Minden mezőpárnak tartalmaznia kell kulcsot és értéket is!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else if (Object.keys(kwargs).length === 0) {
+                        eredmenyDiv.textContent = 'Hiba: Adj meg legalább egy kulcs-érték párt!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        const profileText = Object.entries(kwargs)
+                            .map(([key, value]) => `${key}: ${value}`)
+                            .join('\n');
+                        eredmenyDiv.textContent = profileText;
+                        eredmenyDiv.style.borderColor = 'var(--success)';
+
+                        // Vizualizáció frissítése
+                        updateKwargsVisualization(kwargs);
+                    }
+
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth;
+                    eredmenyDiv.classList.add('show');
+                }
+
+                function updateKwargsVisualization(kwargs) {
+                    const pairsContainer = document.querySelector('.kwargs-pairs-visual');
+                    const dictContent = document.querySelector('.dict-content');
+
+                    // Párok törlése
+                    pairsContainer.innerHTML = '';
+
+                    // Új párok hozzáadása animációval
+                    Object.entries(kwargs).forEach(([key, value], index) => {
+                        const pairDiv = document.createElement('div');
+                        pairDiv.className = 'kwargs-pair-visual';
+                        pairDiv.innerHTML = `
+                            <span class="kwargs-key">${key}</span>
+                            <span class="pair-separator">:</span>
+                            <span class="kwargs-value">${value}</span>
+                        `;
+                        pairDiv.style.animationDelay = `${index * 0.1}s`;
+                        pairsContainer.appendChild(pairDiv);
+                    });
+
+                    // Dictionary megjelenítés frissítése
+                    const dictString = JSON.stringify(kwargs, null, 2)
+                        .replace(/"/g, "'")
+                        .replace(/}$/, '\n}');
+                    dictContent.textContent = dictString;
+                }
+
+                function configureProduct() {
+                    const config = {
+                        szin: document.getElementById('szin').value,
+                        meret: document.getElementById('meret').value,
+                        anyag: document.getElementById('anyag').value
+                    };
+
+                    // Extra tulajdonságok hozzáadása
+                    if (document.getElementById('extra_zseb').checked) {
+                        config.extra_zseb = true;
+                    }
+                    if (document.getElementById('vizallo').checked) {
+                        config.vizallo = true;
+                    }
+
+                    const eredmenyDiv = document.getElementById('config-eredmeny');
+                    const configText = Object.entries(config)
+                        .map(([key, value]) => `${key}: ${value}`)
+                        .join('\n');
+
+                    eredmenyDiv.textContent = configText;
+                    eredmenyDiv.style.borderColor = 'var(--success)';
+
+                    // Vizualizáció frissítése
+                    updateKwargsVisualization(config);
+
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth;
+                    eredmenyDiv.classList.add('show');
+                }
+
+                // Inicializálás
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Alapértelmezett kulcs-érték pár hozzáadása
+                    addKwargsPair();
+                });
+            </script>
+        </section>
+
+        <!-- Kombinált példák szekció -->
+        <section id="kombinalt" class="section">
+            <h1 class="section-title">
+                <i class="fas fa-code-branch"></i>
+                Kombinált Paraméterek
+            </h1>
+
+            <div class="card">
+                <h2>Minden együtt</h2>
+                <p>Az alábbi példában láthatjuk, hogyan használhatjuk együtt a különböző típusú paramétereket:</p>
+
+                <div class="code-container">
+                    <button class="copy-btn" data-code="combined">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">def rendezes(sorrend="növekvő", *szamok, **beallitasok):
+    """
+    Számok rendezése különböző beállításokkal
+    - sorrend: növekvő vagy csökkenő (opcionális)
+    - *szamok: a rendezendő számok
+    - **beallitasok: extra beállítások (pl. abszolút=True)
+    """
+    szamlista = list(szamok)
+
+    # Abszolút érték szerinti rendezés
+    if beallitasok.get('abszolut', False):
+        szamlista.sort(key=abs)
+    else:
+        szamlista.sort()
+
+    # Sorrend beállítása
+    if sorrend == "csökkenő":
+        szamlista.reverse()
+
+    return szamlista
+
+# Példák:
+print(rendezes(5, 1, -3, 2))                    # [1, 2, -3, 5]
+print(rendezes("csökkenő", 5, 1, -3, 2))        # [5, 2, -3, 1]
+print(rendezes(5, 1, -3, 2, abszolut=True))     # [1, 2, -3, 5]</code></pre>
+                </div>
+
+                <div class="combined-demo">
+                    <h3>Próbáld ki az összes paramétertípust egyszerre:</h3>
+
+                    <div class="combined-form">
+                        <!-- Opcionális paraméter -->
+                        <div class="form-group">
+                            <label>Sorrend (opcionális):</label>
+                            <select id="sorrend" class="input">
+                                <option value="növekvő">Növekvő</option>
+                                <option value="csökkenő">Csökkenő</option>
+                            </select>
+                        </div>
+
+                        <!-- *args számok -->
+                        <div class="form-group">
+                            <label>Számok (*args):</label>
+                            <div id="combined-numbers" class="args-inputs">
+                                <div class="input-row">
+                                    <input type="number" class="input combined-number" placeholder="Szám">
+                                    <input type="number" class="input combined-number" placeholder="Szám">
+                                    <input type="number" class="input combined-number" placeholder="Szám">
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="addCombinedNumber()">
+                                <i class="fas fa-plus"></i> Új szám
+                            </button>
+                        </div>
+
+                        <!-- **kwargs beállítások -->
+                        <div class="form-group">
+                            <label>Beállítások (**kwargs):</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="abszolut"> Abszolút érték szerinti rendezés
+                                </label>
+                            </div>
+                        </div>
+
+                        <button class="btn" onclick="combinedSort()">
+                            <i class="fas fa-sort"></i> Rendezés
+                        </button>
+                    </div>
+
+                    <div id="combined-eredmeny" class="result"></div>
+
+                    <!-- Paraméterek vizualizációja -->
+                    <div class="params-visualization">
+                        <h3>A paraméterek feldolgozása:</h3>
+                        <div class="params-flow">
+                            <div class="param-block">
+                                <span class="param-label">Opcionális</span>
+                                <div id="optional-visual" class="param-content">
+                                    sorrend="növekvő"
+                                </div>
+                            </div>
+                            <div class="param-block">
+                                <span class="param-label">*args</span>
+                                <div id="args-visual" class="param-content">
+                                    (5, 1, -3, 2)
+                                </div>
+                            </div>
+                            <div class="param-block">
+                                <span class="param-label">**kwargs</span>
+                                <div id="kwargs-visual" class="param-content">
+                                    {"abszolut": false}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .combined-demo {
+                    margin-top: 2rem;
+                }
+
+                .combined-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    margin-bottom: 2rem;
+                }
+
+                .params-visualization {
+                    margin-top: 2rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid var(--border-color);
+                }
+
+                .params-flow {
+                    display: flex;
+                    gap: 1rem;
+                    margin-top: 1rem;
+                    overflow-x: auto;
+                    padding-bottom: 1rem;
+                }
+
+                .param-block {
+                    flex: 1;
+                    min-width: 200px;
+                    background: var(--bg-primary);
+                    border-radius: 10px;
+                    padding: 1rem;
+                }
+
+                .param-label {
+                    display: block;
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 0.5rem;
+                }
+
+                .param-content {
+                    font-family: 'Fira Code', monospace;
+                    padding: 0.5rem;
+                    border-radius: 5px;
+                    word-break: break-all;
+                }
+
+                #optional-visual {
+                    background: rgba(52, 152, 219, 0.1);
+                    border: 1px solid var(--param-positional);
+                    color: var(--param-positional);
+                }
+
+                #args-visual {
+                    background: rgba(241, 196, 15, 0.1);
+                    border: 1px solid var(--param-args);
+                    color: var(--param-args);
+                }
+
+                #kwargs-visual {
+                    background: rgba(155, 89, 182, 0.1);
+                    border: 1px solid var(--param-kwargs);
+                    color: var(--param-kwargs);
+                }
+
+                @media (max-width: 768px) {
+                    .params-flow {
+                        flex-direction: column;
+                    }
+
+                    .param-block {
+                        width: 100%;
+                    }
+                }
+            </style>
+
+            <script>
+                function addCombinedNumber() {
+                    const container = document.getElementById('combined-numbers');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input combined-number';
+                    input.placeholder = 'Szám';
+
+                    const row = document.createElement('div');
+                    row.className = 'input-row';
+                    row.appendChild(input);
+
+                    container.appendChild(row);
+
+                    anime({
+                        targets: input,
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                }
+
+                function combinedSort() {
+                    // Értékek összegyűjtése
+                    const sorrend = document.getElementById('sorrend').value;
+                    const szamok = Array.from(document.querySelectorAll('.combined-number'))
+                        .map(input => input.value ? parseFloat(input.value) : null)
+                        .filter(num => num !== null);
+                    const abszolut = document.getElementById('abszolut').checked;
+
+                    // Paraméterek vizualizációjának frissítése
+                    document.getElementById('optional-visual').textContent = `sorrend="${sorrend}"`;
+                    document.getElementById('args-visual').textContent = `(${szamok.join(', ')})`;
+                    document.getElementById('kwargs-visual').textContent = `{"abszolut": ${abszolut}}`;
+
+                    const eredmenyDiv = document.getElementById('combined-eredmeny');
+
+                    if (szamok.length === 0) {
+                        eredmenyDiv.textContent = 'Hiba: Adj meg legalább egy számot!';
+                        eredmenyDiv.style.borderColor = 'var(--error)';
+                    } else {
+                        // Rendezés
+                        let rendezettSzamok = [...szamok];
+                        if (abszolut) {
+                            rendezettSzamok.sort((a, b) => Math.abs(a) - Math.abs(b));
+                        } else {
+                            rendezettSzamok.sort((a, b) => a - b);
+                        }
+
+                        if (sorrend === "csökkenő") {
+                            rendezettSzamok.reverse();
+                        }
+
+                        eredmenyDiv.textContent = `Rendezett lista: [${rendezettSzamok.join(', ')}]`;
+                        eredmenyDiv.style.borderColor = 'var(--success)';
+                    }
+
+                    eredmenyDiv.classList.remove('show');
+                    void eredmenyDiv.offsetWidth;
+                    eredmenyDiv.classList.add('show');
+
+                    // Animáljuk a paraméter blokkokat
+                    anime({
+                        targets: '.param-block',
+                        translateY: [-10, 0],
+                        opacity: [0.5, 1],
+                        delay: anime.stagger(100),
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                }
+            </script>
+        </section>
+
+        <!-- Lezáró script az oldal végén -->
+        <script>
+            // Prism újratöltése amikor új kód jelenik meg
+            function refreshPrism() {
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                }
+            }
+
+            // Oldal betöltésekor
+            document.addEventListener('DOMContentLoaded', () => {
+                refreshPrism();
+
+                // Smooth scroll a navigációs linkekhez
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h3 class="h5 mb-3">Kapcsolat</h3>
+                    <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Információk</h3>
+                    <p class="mb-2">Utolsó frissítés: 2025.01.18.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Footer stílusok */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .mb-md-0 {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</body>
+</html>

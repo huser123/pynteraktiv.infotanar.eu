@@ -1,0 +1,3272 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Osztályok Interaktív Bemutatása</title>
+
+    <!-- Külső stílusok -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Külső scriptek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            /* Alap színek */
+            --bg-primary: #0a1914;
+            --bg-secondary: #122420;
+            --accent-primary: #2ecc71;
+            --accent-secondary: #27ae60;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2d3436;
+
+            /* Kiemelő színek különböző osztály elemekhez */
+            --class-name: #3498db;    /* Osztály nevek színe */
+            --method-name: #e74c3c;   /* Metódus nevek színe */
+            --attribute: #f1c40f;     /* Attribútumok színe */
+            --inheritance: #9b59b6;   /* Öröklődés színe */
+
+            /* Gradiens háttér */
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary), #1a332d);
+
+            /* Extra színek és árnyalatok */
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+            --highlight: rgba(46, 204, 113, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 2rem;
+            padding: 4rem 1rem 2rem;
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigáció stílusa */
+        .nav {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.7rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Alap kártya stílus */
+        .card {
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Gombok alapstílusa */
+        .btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Input mezők alapstílusa */
+        .input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Másolás gomb */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Kód blokkok konténere */
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Eredmény megjelenítés */
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Reszponzív dizájn */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fab fa-python"></i> Python Osztályok
+            </a>
+            <ul class="nav-links">
+                <li><a href="#bevezeto" class="nav-link"><i class="fas fa-book-open"></i> Bevezető</a></li>
+                <li><a href="#alapok" class="nav-link"><i class="fas fa-cube"></i> Osztályok alapjai</a></li>
+                <li><a href="#konstruktor" class="nav-link"><i class="fas fa-cogs"></i> Konstruktor és változók</a></li>
+                <li><a href="#metodusok" class="nav-link"><i class="fas fa-code"></i> Metódusok</a></li>
+                <li><a href="#oroklodes" class="nav-link"><i class="fas fa-sitemap"></i> Öröklődés</a></li>
+                <li><a href="#specialis" class="nav-link"><i class="fas fa-star"></i> Speciális metódusok</a></li>
+                <li><a href="#gyakorlatok" class="nav-link"><i class="fas fa-tasks"></i> Gyakorlatok</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+
+    <!-- Bevezető szekció -->
+<section id="bevezeto" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-book-open"></i>
+        Osztályok a Pythonban
+    </h1>
+
+    <div class="card">
+        <h2>Mi az az osztály (class)?</h2>
+        <p>Az osztály a Python objektumorientált programozásának alapvető építőeleme. Egy osztály olyan mint egy tervrajz vagy sablon, amely alapján objektumokat hozhatunk létre.</p>
+
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-cubes"></i>
+                <h3>Újrafelhasználható</h3>
+                <p>Egy osztályból több példányt is létrehozhatunk</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-box"></i>
+                <h3>Adatbezárás</h3>
+                <p>Az adatok és a rajtuk végzett műveletek egy egységbe zárva</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-sitemap"></i>
+                <h3>Öröklődés</h3>
+                <p>Új osztályokat építhetünk meglévőkből</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Első osztályunk: Autó</h2>
+        <p>Nézzük meg egy egyszerű osztály létrehozását Python kódban:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="first-class">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Auto:
+    """Ez egy egyszerű autó osztály."""
+
+    def __init__(self, marka, szin):
+        self.marka = marka  # Az autó márkája
+        self.szin = szin    # Az autó színe
+
+    def bemutatkozas(self):
+        print(f"Ez egy {self.szin} színű {self.marka}.")
+
+# Példányosítás és használat
+my_car = Auto("Toyota", "piros")
+my_car.bemutatkozas()  # Kiírja: Ez egy piros színű Toyota.</code></pre>
+        </div>
+
+        <div id="car-demo" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="form-group">
+                <label>Hozz létre egy autót:</label>
+                <div class="input-with-validation">
+                    <input type="text" id="car-brand" class="input" placeholder="Márka (pl. Toyota)">
+                    <input type="text" id="car-color" class="input" placeholder="Szín (pl. piros)">
+                </div>
+                <button class="btn" onclick="createCar()">
+                    <i class="fas fa-car"></i> Autó létrehozása
+                </button>
+            </div>
+            <div id="car-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Osztályok vs. Szótárak</h2>
+        <p>Nézzük meg, mi a különbség egy osztály és egy szótár között:</p>
+
+        <div class="comparison-container">
+            <div class="comparison-item">
+                <div class="comparison-header">
+                    <i class="fas fa-cube"></i>
+                    <h3>Osztály</h3>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" data-code="class-example">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">class Szemely:
+    def __init__(self, nev, kor):
+        self.nev = nev
+        self.kor = kor
+
+    def koszon(self):
+        return f"Szia, {self.nev} vagyok!"
+
+ember = Szemely("Anna", 25)
+print(ember.koszon())</code></pre>
+                </div>
+            </div>
+
+            <div class="comparison-item">
+                <div class="comparison-header">
+                    <i class="fas fa-book"></i>
+                    <h3>Szótár</h3>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" data-code="dict-example">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre><code class="language-python">szemely = {
+    "nev": "Anna",
+    "kor": 25
+}
+
+# Nincs beépített metódus
+print(f"Szia, {szemely['nev']} vagyok!")</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="compare-demo" class="interactive-demo">
+            <h3>Hasonlítsd össze!</h3>
+            <div class="form-group">
+                <label>Adj meg egy nevet és kort:</label>
+                <div class="compare-inputs">
+                    <input type="text" id="person-name" class="input" placeholder="Név">
+                    <input type="number" id="person-age" class="input" placeholder="Kor">
+                    <button class="btn" onclick="compareImplementations()">
+                        <i class="fas fa-random"></i> Összehasonlítás
+                    </button>
+                </div>
+            </div>
+            <div id="compare-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: var(--text-secondary);
+        }
+
+        .interactive-demo {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-with-validation {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-item {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .comparison-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-header i {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .compare-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .input-with-validation,
+            .compare-inputs {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        function createCar() {
+            const brand = document.getElementById('car-brand').value.trim();
+            const color = document.getElementById('car-color').value.trim();
+            const resultDiv = document.getElementById('car-result');
+
+            if (!brand || !color) {
+                resultDiv.textContent = 'Hiba: Add meg az autó márkáját és színét!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                resultDiv.textContent = `Ez egy ${color} színű ${brand}.`;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function compareImplementations() {
+            const name = document.getElementById('person-name').value.trim();
+            const age = document.getElementById('person-age').value;
+            const resultDiv = document.getElementById('compare-result');
+
+            if (!name || !age) {
+                resultDiv.textContent = 'Hiba: Add meg a nevet és kort!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const classOutput = `Osztály: Szia, ${name} vagyok! (${age} éves)`;
+            const dictOutput = `Szótár: Szia, ${name} vagyok! (${age} éves)`;
+
+            resultDiv.innerHTML = `<div style="color: var(--class-name)">${classOutput}</div>
+                                 <div style="color: var(--dict-key)">${dictOutput}</div>`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('car-brand').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('car-color').focus();
+        });
+
+        document.getElementById('car-color').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createCar();
+        });
+
+        document.getElementById('person-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('person-age').focus();
+        });
+
+        document.getElementById('person-age').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') compareImplementations();
+        });
+    </script>
+</section>
+
+<!-- Osztályok alapjai szekció -->
+<section id="alapok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-cube"></i>
+        Osztályok Alapjai
+    </h1>
+
+    <div class="card">
+        <h2>Osztály létrehozása</h2>
+        <p>Az osztályokat a <code>class</code> kulcsszóval hozzuk létre. Az osztály egy tervrajz, ami alapján objektumokat (példányokat) készíthetünk.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="class-basic">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Egyszerű osztály létrehozása
+class Kutya:
+    # Osztályváltozó - minden példány között megosztva
+    faj = "kutya"
+
+    # Konstruktor metódus
+    def __init__(self, nev):
+        # Példányváltozó - minden példánynak saját
+        self.nev = nev
+
+# Objektum (példány) létrehozása
+bodri = Kutya("Bodri")
+print(bodri.nev)     # Kiírja: Bodri
+print(bodri.faj)     # Kiírja: kutya</code></pre>
+        </div>
+
+        <div id="class-demo" class="interactive-demo">
+            <h3>Hozz létre egy kutyát!</h3>
+            <div class="form-group">
+                <label>Add meg a kutya nevét:</label>
+                <input type="text" id="dog-name" class="input" placeholder="Kutya neve">
+                <button class="btn" onclick="createDog()">
+                    <i class="fas fa-paw"></i> Kutya létrehozása
+                </button>
+            </div>
+            <div id="dog-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Osztály vs. Példány</h2>
+        <p>Az osztály és a példány közötti különbség megértése alapvető fontosságú:</p>
+
+        <div class="class-instance-comparison">
+            <div class="comparison-side">
+                <div class="comparison-header">
+                    <i class="fas fa-cube"></i>
+                    <h3>Osztály (Class)</h3>
+                </div>
+                <ul class="comparison-list">
+                    <li>Tervrajz vagy sablon</li>
+                    <li>Meghatározza a szerkezetet</li>
+                    <li>Osztályváltozókat tartalmaz</li>
+                    <li>Metódusokat definiál</li>
+                </ul>
+            </div>
+            <div class="comparison-side">
+                <div class="comparison-header">
+                    <i class="fas fa-box"></i>
+                    <h3>Példány (Instance)</h3>
+                </div>
+                <ul class="comparison-list">
+                    <li>Konkrét objektum</li>
+                    <li>Saját adatokat tárol</li>
+                    <li>Példányváltozókat tartalmaz</li>
+                    <li>Használja az osztály metódusait</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="class-instance">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Macska:
+    # Osztályváltozó
+    faj = "macska"
+
+    def __init__(self, nev, kor):
+        # Példányváltozók
+        self.nev = nev
+        self.kor = kor
+
+# Két különböző példány
+cirmi = Macska("Cirmi", 3)
+mirci = Macska("Mirci", 2)
+
+# Mindkettő ugyanazt az osztályváltozót használja
+print(cirmi.faj)   # macska
+print(mirci.faj)   # macska
+
+# De különböző példányváltozóik vannak
+print(cirmi.nev)   # Cirmi
+print(mirci.nev)   # Mirci</code></pre>
+        </div>
+
+        <div id="instance-demo" class="interactive-demo">
+            <h3>Hozz létre két macskát!</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Első macska:</label>
+                    <input type="text" id="cat1-name" class="input" placeholder="Név">
+                    <input type="number" id="cat1-age" class="input" placeholder="Kor">
+                </div>
+                <div class="form-group">
+                    <label>Második macska:</label>
+                    <input type="text" id="cat2-name" class="input" placeholder="Név">
+                    <input type="number" id="cat2-age" class="input" placeholder="Kor">
+                </div>
+            </div>
+            <button class="btn" onclick="createCats()">
+                <i class="fas fa-cat"></i> Macskák létrehozása
+            </button>
+            <div id="cats-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Osztályok és memória</h2>
+        <p>Nézzük meg, hogyan tárolódnak az objektumok a memóriában:</p>
+
+        <div class="memory-visualization">
+            <div id="memory-diagram" class="memory-diagram">
+                <!-- Memória diagram dinamikusan generálódik -->
+            </div>
+            <div class="memory-controls">
+                <input type="text" id="object-name" class="input" placeholder="Objektum neve">
+                <input type="text" id="object-value" class="input" placeholder="Érték">
+                <button class="btn" onclick="addObjectToMemory()">
+                    <i class="fas fa-plus"></i> Objektum hozzáadása
+                </button>
+            </div>
+            <div id="memory-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .class-instance-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .comparison-side {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .comparison-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .comparison-list li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .comparison-list li:before {
+            content: "•";
+            color: var(--accent-primary);
+            position: absolute;
+            left: 0;
+        }
+
+        .memory-visualization {
+            margin-top: 2rem;
+        }
+
+        .memory-diagram {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            min-height: 200px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .memory-object {
+            background: var(--highlight);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--accent-primary);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .memory-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .memory-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        function createDog() {
+            const name = document.getElementById('dog-name').value.trim();
+            const resultDiv = document.getElementById('dog-result');
+
+            if (!name) {
+                resultDiv.textContent = 'Hiba: Add meg a kutya nevét!';
+                resultDiv.style.borderColor = 'var(--error)';
+            } else {
+                resultDiv.innerHTML = `
+                    <div>Létrejött kutya adatai:</div>
+                    <div style="color: var(--class-name)">Név: ${name}</div>
+                    <div style="color: var(--class-name)">Faj: kutya</div>
+                `;
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function createCats() {
+            const cat1Name = document.getElementById('cat1-name').value.trim();
+            const cat1Age = document.getElementById('cat1-age').value;
+            const cat2Name = document.getElementById('cat2-name').value.trim();
+            const cat2Age = document.getElementById('cat2-age').value;
+            const resultDiv = document.getElementById('cats-result');
+
+            if (!cat1Name || !cat1Age || !cat2Name || !cat2Age) {
+                resultDiv.textContent = 'Hiba: Töltsd ki az összes mezőt!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <div style="color: var(--class-name)">Első macska:</div>
+                    <div>Név: ${cat1Name}</div>
+                    <div>Kor: ${cat1Age} év</div>
+                    <div>Faj: macska</div>
+                </div>
+                <div>
+                    <div style="color: var(--class-name)">Második macska:</div>
+                    <div>Név: ${cat2Name}</div>
+                    <div>Kor: ${cat2Age} év</div>
+                    <div>Faj: macska</div>
+                </div>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        let memoryObjects = [];
+
+        function addObjectToMemory() {
+            const name = document.getElementById('object-name').value.trim();
+            const value = document.getElementById('object-value').value.trim();
+            const resultDiv = document.getElementById('memory-result');
+
+            if (!name || !value) {
+                resultDiv.textContent = 'Hiba: Add meg az objektum nevét és értékét!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const memoryId = Math.random().toString(36).substr(2, 9);
+            memoryObjects.push({ id: memoryId, name, value });
+            updateMemoryDiagram();
+
+            document.getElementById('object-name').value = '';
+            document.getElementById('object-value').value = '';
+
+            resultDiv.textContent = `Objektum hozzáadva a memóriához! (ID: ${memoryId})`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function updateMemoryDiagram() {
+            const diagram = document.getElementById('memory-diagram');
+            diagram.innerHTML = '';
+
+            memoryObjects.forEach(obj => {
+                const objectDiv = document.createElement('div');
+                objectDiv.className = 'memory-object';
+                objectDiv.innerHTML = `
+                    <div style="color: var(--accent-primary)">ID: ${obj.id}</div>
+                    <div>Név: ${obj.name}</div>
+                    <div>Érték: ${obj.value}</div>
+                `;
+                diagram.appendChild(objectDiv);
+            });
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('dog-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createDog();
+        });
+
+        document.getElementById('cat1-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('cat1-age').focus();
+        });
+        document.getElementById('cat1-age').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('cat2-name').focus();
+        });
+        document.getElementById('cat2-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('cat2-age').focus();
+        });
+        document.getElementById('cat2-age').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createCats();
+        });
+
+        document.getElementById('object-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('object-value').focus();
+        });
+        document.getElementById('object-value').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addObjectToMemory();
+        });
+    </script>
+</section>
+
+<!-- Konstruktor és osztályváltozók szekció -->
+<section id="konstruktor" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-cogs"></i>
+        Konstruktor és Osztályváltozók
+    </h1>
+
+    <div class="card">
+        <h2>A konstruktor (__init__)</h2>
+<p>A konstruktor egy speciális metódus (függvény) az osztályban, ami akkor fut le automatikusan, amikor létrehozunk egy új objektumot. Ez olyan, mint egy "előkészítő" függvény: beállítja az objektum kezdeti állapotát, létrehozza és feltölti a szükséges változókat.</p>
+<p>Pythonban ezt a <code>__init__</code> metódus valósítja meg. A <code>self</code> paraméter mindig az aktuális objektumra mutat, amin keresztül el tudjuk érni az objektum saját változóit.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="constructor-basic">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Jatekos:
+    def __init__(self, nev, eletero=100):
+        # Példányváltozók inicializálása
+        self.nev = nev
+        self.eletero = eletero
+        self.aktiv = True
+
+    def serules(self, mennyiseg):
+        self.eletero -= mennyiseg
+        if self.eletero <= 0:
+            self.aktiv = False
+            print(f"{self.nev} játékos kiesett!")
+
+# Játékos létrehozása
+player1 = Jatekos("Harcos", 120)
+player2 = Jatekos("Íjász")  # Alapértelmezett életerővel</code></pre>
+        </div>
+
+        <div id="player-demo" class="interactive-demo">
+            <h3>Hozz létre egy játékost!</h3>
+            <div class="form-group">
+                <label>Játékos adatai:</label>
+                <div class="player-inputs">
+                    <input type="text" id="player-name" class="input" placeholder="Név">
+                    <input type="number" id="player-health" class="input" placeholder="Életerő (alapért.: 100)">
+                </div>
+                <button class="btn" onclick="createPlayer()">
+                    <i class="fas fa-user-plus"></i> Játékos létrehozása
+                </button>
+                <div class="damage-control" style="display: none">
+                    <input type="number" id="damage-amount" class="input" placeholder="Sebzés mértéke">
+                    <button class="btn btn-warning" onclick="damagePlayer()">
+                        <i class="fas fa-heart-broken"></i> Sebzés
+                    </button>
+                </div>
+            </div>
+            <div id="player-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Osztályváltozók vs. Példányváltozók</h2>
+<p>Kétféle változót használhatunk az osztályokban:</p>
+<ul>
+    <li><strong>Osztályváltozók:</strong> Ezek olyan változók, amik az osztályhoz tartoznak, nem pedig az egyes objektumokhoz. Minden objektum ugyanazt az értéket látja és használja. Például egy játékban a maximális pontszám vagy egy webshopban az áfa mértéke lehet osztályváltozó.</li>
+    <li><strong>Példányváltozók:</strong> Ezek az egyes objektumok saját változói. Minden objektumnak saját, független példánya van belőlük. Például egy játékosnak a saját pontszáma vagy egy terméknek a saját ára.</li>
+</ul>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="variables">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Szamolo:
+    # Osztályváltozó - minden példány között megosztva
+    osszes_szamolas = 0
+
+    def __init__(self, kezdoertek=0):
+        # Példányváltozó - minden példánynak saját
+        self.ertek = kezdoertek
+
+    def novel(self, mennyiseg):
+        self.ertek += mennyiseg
+        # Osztályváltozó módosítása
+        Szamolo.osszes_szamolas += 1
+
+# Példányok létrehozása
+szam1 = Szamolo(10)
+szam2 = Szamolo(20)
+
+szam1.novel(5)  # ertek: 15, osszes_szamolas: 1
+szam2.novel(10) # ertek: 30, osszes_szamolas: 2</code></pre>
+        </div>
+
+        <div id="counter-demo" class="interactive-demo">
+            <h3>Számlálók kezelése</h3>
+            <div class="counters-container">
+                <div class="counter-box" id="counter1">
+                    <h4>Első számláló</h4>
+                    <div class="counter-value">0</div>
+                    <div class="counter-controls">
+                        <input type="number" class="input counter-input" placeholder="Mennyiség">
+                        <button class="btn" onclick="incrementCounter(1)">
+                            <i class="fas fa-plus"></i> Növelés
+                        </button>
+                    </div>
+                </div>
+                <div class="counter-box" id="counter2">
+                    <h4>Második számláló</h4>
+                    <div class="counter-value">0</div>
+                    <div class="counter-controls">
+                        <input type="number" class="input counter-input" placeholder="Mennyiség">
+                        <button class="btn" onclick="incrementCounter(2)">
+                            <i class="fas fa-plus"></i> Növelés
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="total-operations">
+                <h4>Összes művelet:</h4>
+                <div class="total-value">0</div>
+            </div>
+            <div id="counter-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Osztálymetódusok és Statikus metódusok</h2>
+<p>A normál metódusok (mint amiket eddig láttunk) mindig egy konkrét objektumon működnek, de van két speciális típusú metódus is:</p>
+<ul>
+    <li><strong>Osztálymetódusok (@classmethod):</strong> Ezek olyan függvények, amiket úgy jelölünk meg a <code>@classmethod</code> dekorátorral, hogy közvetlenül az osztályon is meghívhatók legyenek (nem kell előtte objektumot létrehozni). Az első paraméterük (<code>cls</code>) az osztályt jelenti, így hozzáférnek az osztályváltozókhoz.</li>
+    <li><strong>Statikus metódusok (@staticmethod):</strong> Ezek olyan függvények az osztályon belül, amik nem függnek sem az osztálytól, sem az objektumoktól. Olyan segédfüggvények, amik logikailag az osztályhoz tartoznak, de nem használnak osztály- vagy példányváltozókat.</li>
+</ul>
+<p>A dekorátorok (mint a <code>@classmethod</code> és <code>@staticmethod</code>) olyan speciális jelölések Pythonban, amik módosítják a függvények viselkedését. Úgy képzeld el őket, mint egy "címkét" vagy "matricát", ami megmondja Pythonnak, hogy az adott függvényt hogyan kell kezelnie.</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="special-methods">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Matematika:
+    PI = 3.14159
+
+    @classmethod
+    def kor_terulet(cls, sugar):
+        """Osztálymetódus - használhatja az osztály adatait"""
+        return cls.PI * sugar * sugar
+
+    @staticmethod
+    def negyzet_terulet(oldal):
+        """Statikus metódus - független az osztálytól"""
+        return oldal * oldal
+
+# Használat példányosítás nélkül
+print(Matematika.kor_terulet(5))    # Használja a PI osztályváltozót
+print(Matematika.negyzet_terulet(4)) # Nem használ osztályváltozót</code></pre>
+        </div>
+
+        <div id="math-demo" class="interactive-demo">
+            <h3>Geometriai számítások</h3>
+            <div class="math-controls">
+                <div class="form-group">
+                    <label>Kör területe:</label>
+                    <div class="input-group">
+                        <input type="number" id="circle-radius" class="input" placeholder="Sugár">
+                        <button class="btn" onclick="calculateCircle()">
+                            <i class="fas fa-circle"></i> Számítás
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Négyzet területe:</label>
+                    <div class="input-group">
+                        <input type="number" id="square-side" class="input" placeholder="Oldal">
+                        <button class="btn" onclick="calculateSquare()">
+                            <i class="fas fa-square"></i> Számítás
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="math-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .player-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .damage-control {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #d68910;
+        }
+
+        .counters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .counter-box {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .counter-value {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin: 1rem 0;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .counter-controls {
+            display: flex;
+            gap: 1rem;
+            flex-direction: column;
+        }
+
+        .total-operations {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        .total-value {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin-top: 0.5rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .math-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .player-inputs,
+            .damage-control,
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Játékos kezelés
+        let currentPlayer = null;
+
+        function createPlayer() {
+            const name = document.getElementById('player-name').value.trim();
+            const health = document.getElementById('player-health').value;
+            const resultDiv = document.getElementById('player-result');
+
+            if (!name) {
+                resultDiv.textContent = 'Hiba: Add meg a játékos nevét!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            currentPlayer = {
+                name: name,
+                health: health ? parseInt(health) : 100,
+                active: true
+            };
+
+            document.querySelector('.damage-control').style.display = 'flex';
+            updatePlayerStatus();
+        }
+
+        function damagePlayer() {
+            if (!currentPlayer) return;
+
+            const damage = parseInt(document.getElementById('damage-amount').value);
+            if (isNaN(damage) || damage <= 0) {
+                document.getElementById('player-result').textContent = 'Hiba: Érvénytelen sebzés!';
+                return;
+            }
+
+            currentPlayer.health -= damage;
+            if (currentPlayer.health <= 0) {
+                currentPlayer.health = 0;
+                currentPlayer.active = false;
+            }
+
+            updatePlayerStatus();
+        }
+
+        function updatePlayerStatus() {
+            const resultDiv = document.getElementById('player-result');
+            resultDiv.innerHTML = `
+                <div>Játékos: ${currentPlayer.name}</div>
+                <div>Életerő: ${currentPlayer.health}</div>
+                <div>Státusz: ${currentPlayer.active ? 'Aktív' : 'Kiesett'}</div>
+            `;
+            resultDiv.style.borderColor = currentPlayer.active ? 'var(--success)' : 'var(--error)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Számláló kezelés
+        let counters = {
+            totalOperations: 0,
+            counter1: 0,
+            counter2: 0
+        };
+
+        function incrementCounter(id) {
+            const inputElement = document.querySelector(`#counter${id} .counter-input`);
+            const amount = parseInt(inputElement.value);
+
+            if (isNaN(amount)) {
+                document.getElementById('counter-result').textContent = 'Hiba: Érvénytelen mennyiség!';
+                return;
+            }
+
+            counters[`counter${id}`] += amount;
+            counters.totalOperations++;
+
+            updateCounters();
+            inputElement.value = '';
+        }
+
+        function updateCounters() {
+            document.querySelector('#counter1 .counter-value').textContent = counters.counter1;
+            document.querySelector('#counter2 .counter-value').textContent = counters.counter2;
+            document.querySelector('.total-value').textContent = counters.totalOperations;
+
+            const resultDiv = document.getElementById('counter-result');
+            resultDiv.textContent = `Művelet végrehajtva! (Összes: ${counters.totalOperations})`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Matematikai számítások
+        function calculateCircle() {
+            const radius = parseFloat(document.getElementById('circle-radius').value);
+            const resultDiv = document.getElementById('math-result');
+
+            if (isNaN(radius) || radius <= 0) {
+                resultDiv.textContent = 'Hiba: Érvénytelen sugár!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const area = Math.PI * radius * radius;
+            resultDiv.innerHTML = `
+                <div>Kör területe (r = ${radius}):</div>
+                <div style="font-family: 'Fira Code', monospace;">${area.toFixed(2)} egység²</div>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function calculateSquare() {
+            const side = parseFloat(document.getElementById('square-side').value);
+            const resultDiv = document.getElementById('math-result');
+
+            if (isNaN(side) || side <= 0) {
+                resultDiv.textContent = 'Hiba: Érvénytelen oldalhossz!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const area = side * side;
+            resultDiv.innerHTML = `
+                <div>Négyzet területe (a = ${side}):</div>
+                <div style="font-family: 'Fira Code', monospace;">${area.toFixed(2)} egység²</div>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('player-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('player-health').focus();
+        });
+        document.getElementById('player-health').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createPlayer();
+        });
+        document.getElementById('damage-amount').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') damagePlayer();
+        });
+
+        // Számláló inputok Enter kezelése
+        document.querySelectorAll('.counter-input').forEach((input, index) => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') incrementCounter(index + 1);
+            });
+        });
+
+        // Matematikai inputok Enter kezelése
+        document.getElementById('circle-radius').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') calculateCircle();
+        });
+        document.getElementById('square-side').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') calculateSquare();
+        });
+    </script>
+</section>
+
+<!-- Metódusok és tulajdonságok szekció -->
+<section id="metodusok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-code"></i>
+        Metódusok és Tulajdonságok
+    </h1>
+
+    <div class="card">
+        <h2>Metódusok az osztályokban</h2>
+        <p>A metódusok olyan függvények, amelyeket az osztályon belül definiálunk. Ezek határozzák meg, hogy mit tud csinálni az objektumunk. Minden metódus első paramétere a <code>self</code>, ami az aktuális objektumra mutat.</p>
+        <p>A metódusok segítségével tudjuk:</p>
+        <ul>
+            <li>Az objektum adatait módosítani</li>
+            <li>Számításokat végezni az objektum adataival</li>
+            <li>Az objektum viselkedését szabályozni</li>
+            <li>Az objektum állapotát lekérdezni</li>
+        </ul>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="methods">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class BankSzamla:
+    def __init__(self, tulajdonos, egyenleg=0):
+        self.tulajdonos = tulajdonos
+        self.egyenleg = egyenleg
+
+    def befizet(self, osszeg):
+        """Pénz befizetése a számlára"""
+        if osszeg > 0:
+            self.egyenleg += osszeg
+            return True
+        return False
+
+    def kivesz(self, osszeg):
+        """Pénz kivétele a számláról"""
+        if osszeg > 0 and osszeg <= self.egyenleg:
+            self.egyenleg -= osszeg
+            return True
+        return False
+
+    def egyenleg_lekerdezes(self):
+        """Aktuális egyenleg lekérdezése"""
+        return f"{self.egyenleg} Ft"
+
+    def atutal(self, masik_szamla, osszeg):
+        """Pénz átutalása másik számlára"""
+        if self.kivesz(osszeg):
+            masik_szamla.befizet(osszeg)
+            return True
+        return False</code></pre>
+        </div>
+
+        <div id="bank-demo" class="interactive-demo">
+            <h3>Bankszámla kezelése</h3>
+            <div class="bank-accounts">
+                <!-- Első számla -->
+                <div class="account-box">
+                    <h4>1. Számla</h4>
+                    <div class="balance">Egyenleg: <span>0</span> Ft</div>
+                    <div class="account-inputs">
+                        <input type="number" class="input" placeholder="Összeg">
+                        <div class="button-group">
+                            <button class="btn btn-success" onclick="deposit(1)">
+                                <i class="fas fa-plus"></i> Befizetés
+                            </button>
+                            <button class="btn btn-warning" onclick="withdraw(1)">
+                                <i class="fas fa-minus"></i> Kivétel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Második számla -->
+                <div class="account-box">
+                    <h4>2. Számla</h4>
+                    <div class="balance">Egyenleg: <span>0</span> Ft</div>
+                    <div class="account-inputs">
+                        <input type="number" class="input" placeholder="Összeg">
+                        <div class="button-group">
+                            <button class="btn btn-success" onclick="deposit(2)">
+                                <i class="fas fa-plus"></i> Befizetés
+                            </button>
+                            <button class="btn btn-warning" onclick="withdraw(2)">
+                                <i class="fas fa-minus"></i> Kivétel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Átutalás szekció -->
+            <div class="transfer-section">
+                <h4>Átutalás</h4>
+                <div class="transfer-controls">
+                    <select id="from-account" class="input">
+                        <option value="1">1. Számláról</option>
+                        <option value="2">2. Számláról</option>
+                    </select>
+                    <select id="to-account" class="input">
+                        <option value="2">2. Számlára</option>
+                        <option value="1">1. Számlára</option>
+                    </select>
+                    <input type="number" id="transfer-amount" class="input" placeholder="Összeg">
+                    <button class="btn" onclick="transfer()">
+                        <i class="fas fa-exchange-alt"></i> Átutalás
+                    </button>
+                </div>
+            </div>
+            <div id="bank-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Tulajdonságok (Properties)</h2>
+        <p>A tulajdonságok lehetővé teszik, hogy az osztály adataihoz biztonságosan férhessünk hozzá. Segítségükkel:</p>
+        <ul>
+            <li>Ellenőrizhetjük és validálhatjuk az értékeket beállításkor</li>
+            <li>Számított értékeket adhatunk vissza lekérdezéskor</li>
+            <li>Elrejthetjük az osztály belső működését</li>
+            <li>Változóként használhatjuk a metódusokat</li>
+        </ul>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="properties">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Teglalap:
+    def __init__(self, hossz, szelesseg):
+        self._hossz = hossz        # védett változó
+        self._szelesseg = szelesseg
+
+    @property
+    def terulet(self):
+        """Terület lekérdezése számított értékként"""
+        return self._hossz * self._szelesseg
+
+    @property
+    def hossz(self):
+        """Hossz lekérdezése"""
+        return self._hossz
+
+    @hossz.setter
+    def hossz(self, ertek):
+        """Hossz beállítása ellenőrzéssel"""
+        if ertek > 0:
+            self._hossz = ertek
+        else:
+            raise ValueError("A hossz nem lehet negatív!")
+
+    @property
+    def szelesseg(self):
+        """Szélesség lekérdezése"""
+        return self._szelesseg
+
+    @szelesseg.setter
+    def szelesseg(self, ertek):
+        """Szélesség beállítása ellenőrzéssel"""
+        if ertek > 0:
+            self._szelesseg = ertek
+        else:
+            raise ValueError("A szélesség nem lehet negatív!")</code></pre>
+        </div>
+
+        <div id="rectangle-demo" class="interactive-demo">
+            <h3>Téglalap tulajdonságainak kezelése</h3>
+            <div class="rectangle-container">
+                <div class="rectangle-controls">
+                    <div class="input-group">
+                        <label>Hosszúság:</label>
+                        <input type="number" id="length-input" class="input" value="5">
+                    </div>
+                    <div class="input-group">
+                        <label>Szélesség:</label>
+                        <input type="number" id="width-input" class="input" value="3">
+                    </div>
+                    <button class="btn" onclick="updateRectangle()">
+                        <i class="fas fa-sync"></i> Frissítés
+                    </button>
+                </div>
+                <div class="rectangle-visualization">
+                    <div class="rectangle-shape">
+                        <!-- SVG téglalap vizualizáció -->
+                    </div>
+                    <div class="rectangle-info">
+                        <div>Terület: <span id="area-display">15</span> egység²</div>
+                        <div>Kerület: <span id="perimeter-display">16</span> egység</div>
+                    </div>
+                </div>
+            </div>
+            <div id="rectangle-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .bank-accounts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .account-box {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .balance {
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+            margin: 1rem 0;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .account-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .transfer-section {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .transfer-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .rectangle-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .rectangle-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .rectangle-visualization {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rectangle-shape {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rectangle-info {
+            font-family: 'Fira Code', monospace;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .button-group,
+            .transfer-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Bankszámla kezelés
+        let accounts = {
+            1: { balance: 0 },
+            2: { balance: 0 }
+        };
+
+        function updateBalance(accountId) {
+            const balanceElement = document.querySelector(`.account-box:nth-child(${accountId}) .balance span`);
+            balanceElement.textContent = accounts[accountId].balance;
+        }
+
+        function deposit(accountId) {
+            const input = document.querySelector(`.account-box:nth-child(${accountId}) input`);
+            const amount = parseInt(input.value);
+            const resultDiv = document.getElementById('bank-result');
+
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.textContent = 'Hiba: Érvénytelen összeg!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            accounts[accountId].balance += amount;
+            updateBalance(accountId);
+            input.value = '';
+
+            resultDiv.textContent = `Sikeres befizetés: ${amount} Ft`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function withdraw(accountId) {
+            const input = document.querySelector(`.account-box:nth-child(${accountId}) input`);
+            const amount = parseInt(input.value);
+            const resultDiv = document.getElementById('bank-result');
+
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.textContent = 'Hiba: Érvénytelen összeg!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            if (amount > accounts[accountId].balance) {
+                resultDiv.textContent = 'Hiba: Nincs elegendő fedezet!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            accounts[accountId].balance -= amount;
+            updateBalance(accountId);
+            input.value = '';
+
+            resultDiv.textContent = `Sikeres kifizetés: ${amount} Ft`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function transfer() {
+            const fromAccount = parseInt(document.getElementById('from-account').value);
+            const toAccount = parseInt(document.getElementById('to-account').value);
+            const amount = parseInt(document.getElementById('transfer-amount').value);
+            const resultDiv = document.getElementById('bank-result');
+
+            if (fromAccount === toAccount) {
+                resultDiv.textContent = 'Hiba: Nem utalhatsz ugyanarra a számlára!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.textContent = 'Hiba: Érvénytelen összeg!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            if (amount > accounts[fromAccount].balance) {
+                resultDiv.textContent = 'Hiba: Nincs elegendő fedezet!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            accounts[fromAccount].balance -= amount;
+            accounts[toAccount].balance += amount;
+            updateBalance(fromAccount);
+            updateBalance(toAccount);
+            document.getElementById('transfer-amount').value = '';
+
+            resultDiv.textContent = `Sikeres átutalás: ${amount} Ft`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        // Téglalap kezelés
+        function updateRectangle() {
+            const length = parseFloat(document.getElementById('length-input').value);
+            const width = parseFloat(document.getElementById('width-input').value);
+            const resultDiv = document.getElementById('rectangle-result');
+
+            if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+                resultDiv.textContent = 'Hiba: Érvénytelen méretek!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            // Terület és kerület számítása
+            const area = length * width;
+            const perimeter = 2 * (length + width);
+
+            // Értékek megjelenítése
+            document.getElementById('area-display').textContent = area;
+            document.getElementById('perimeter-display').textContent = perimeter;
+
+            // SVG téglalap frissítése
+            const shapeContainer = document.querySelector('.rectangle-shape');
+            const maxSize = Math.min(shapeContainer.clientWidth, shapeContainer.clientHeight);
+            const scale = maxSize / Math.max(length, width);
+
+            const scaledLength = length * scale * 0.8;
+            const scaledWidth = width * scale * 0.8;
+
+            shapeContainer.innerHTML = `
+                <svg width="${scaledLength}" height="${scaledWidth}" viewBox="0 0 ${scaledLength} ${scaledWidth}">
+                    <rect
+                        width="100%"
+                        height="100%"
+                        fill="none"
+                        stroke="var(--accent-primary)"
+                        stroke-width="2"
+                    />
+                    <text
+                        x="50%"
+                        y="50%"
+                        text-anchor="middle"
+                        dominant-baseline="middle"
+                        fill="var(--text-primary)"
+                        font-family="Fira Code, monospace"
+                    >
+                        ${length} × ${width}
+                    </text>
+                </svg>
+            `;
+
+            resultDiv.textContent = 'Téglalap frissítve!';
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function showResult(element) {
+            element.classList.remove('show');
+            void element.offsetWidth;
+            element.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.querySelectorAll('.account-box input').forEach((input, index) => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const accountId = Math.floor(index / 2) + 1;
+                    deposit(accountId);
+                }
+            });
+        });
+
+        document.getElementById('transfer-amount').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') transfer();
+        });
+
+        document.getElementById('length-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('width-input').focus();
+        });
+
+        document.getElementById('width-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') updateRectangle();
+        });
+
+        // Kezdeti téglalap megjelenítése
+        document.addEventListener('DOMContentLoaded', () => {
+            updateRectangle();
+        });
+    </script>
+</section>
+
+<!-- Öröklődés szekció -->
+<section id="oroklodes" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-sitemap"></i>
+        Öröklődés (Inheritance)
+    </h1>
+
+    <div class="card">
+        <h2>Mi az az öröklődés?</h2>
+        <p>Az öröklődés az objektumorientált programozás egyik alapvető koncepciója. Lehetővé teszi, hogy egy új osztályt hozzunk létre egy meglévő osztály alapján, megörökölve annak tulajdonságait és metódusait.</p>
+        <p>Képzeld el úgy, mint egy családfát: ahogy a gyerekek öröklik szüleik tulajdonságait, úgy örökli az új osztály (gyerekosztály) a szülőosztály jellemzőit.</p>
+
+        <div class="advantages">
+            <div class="advantage">
+                <i class="fas fa-recycle"></i>
+                <h3>Kód újrafelhasználás</h3>
+                <p>Nem kell ugyanazt a kódot többször megírni</p>
+            </div>
+            <div class="advantage">
+                <i class="fas fa-layer-group"></i>
+                <h3>Hierarchikus struktúra</h3>
+                <p>Logikus kapcsolat az osztályok között</p>
+            </div>
+            <div class="advantage">
+                <i class="fas fa-expand-arrows-alt"></i>
+                <h3>Bővíthetőség</h3>
+                <p>Könnyű új funkciókat hozzáadni</p>
+            </div>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="inheritance-basic">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Allat:
+    """Alap (szülő) osztály"""
+    def __init__(self, nev, kor):
+        self.nev = nev
+        self.kor = kor
+
+    def hang_ad(self):
+        return "Valamilyen hangot ad..."
+
+    def bemutatkozik(self):
+        return f"{self.nev} vagyok, {self.kor} éves."
+
+
+class Kutya(Allat):
+    """Származtatott (gyerek) osztály"""
+    def __init__(self, nev, kor, fajta):
+        # Szülőosztály konstruktorának hívása
+        super().__init__(nev, kor)
+        # Saját új tulajdonság
+        self.fajta = fajta
+
+    def hang_ad(self):
+        # Szülőosztály metódusának felülírása
+        return "Vau-vau!"
+
+    def porazzal_setalni(self):
+        # Saját új metódus
+        return f"{self.nev} pórázzal sétál."
+
+
+class Madar(Allat):
+    """Másik származtatott osztály"""
+    def __init__(self, nev, kor, szarny_meret):
+        super().__init__(nev, kor)
+        self.szarny_meret = szarny_meret
+
+    def hang_ad(self):
+        return "Csip-csirip!"
+
+    def repul(self):
+        return f"{self.nev} repül {self.szarny_meret}cm-es szárnyaival."</code></pre>
+        </div>
+
+        <div id="animals-demo" class="interactive-demo">
+            <h3>Állatok létrehozása</h3>
+            <div class="form-grid">
+                <div class="animal-form">
+                    <h4><i class="fas fa-dog"></i> Új kutya</h4>
+                    <input type="text" id="dog-name" class="input" placeholder="Név">
+                    <input type="number" id="dog-age" class="input" placeholder="Kor">
+                    <input type="text" id="dog-breed" class="input" placeholder="Fajta">
+                    <button class="btn" onclick="createDog()">
+                        <i class="fas fa-plus"></i> Kutya létrehozása
+                    </button>
+                </div>
+                <div class="animal-form">
+                    <h4><i class="fas fa-crow"></i> Új madár</h4>
+                    <input type="text" id="bird-name" class="input" placeholder="Név">
+                    <input type="number" id="bird-age" class="input" placeholder="Kor">
+                    <input type="number" id="bird-wingspan" class="input" placeholder="Szárnyfesztávolság (cm)">
+                    <button class="btn" onclick="createBird()">
+                        <i class="fas fa-plus"></i> Madár létrehozása
+                    </button>
+                </div>
+            </div>
+            <div class="animals-container">
+                <!-- Itt jelennek meg a létrehozott állatok -->
+            </div>
+            <div id="animals-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Többszörös öröklődés</h2>
+        <p>Pythonban egy osztály több szülőosztályból is örökölhet. Ez azt jelenti, hogy egy osztály több különböző osztály tulajdonságait és metódusait is megörökölheti.</p>
+        <p>Vigyázat! A többszörös öröklődés bonyolulttá teheti a kódot, ezért csak akkor használjuk, ha valóban szükséges!</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="multiple-inheritance">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Repulo:
+    """Első szülőosztály"""
+    def __init__(self):
+        self.repul = True
+
+    def felszall(self):
+        return "Felszállás..."
+
+    def leszall(self):
+        return "Leszállás..."
+
+
+class Robot:
+    """Második szülőosztály"""
+    def __init__(self):
+        self.elektromos = True
+
+    def toltottseg(self):
+        return "100%"
+
+    def tolt(self):
+        return "Töltés..."
+
+
+class DronRobot(Repulo, Robot):
+    """Osztály többszörös örökléssel"""
+    def __init__(self, nev):
+        # Mindkét szülő inicializálása
+        Repulo.__init__(self)
+        Robot.__init__(self)
+        self.nev = nev
+
+    def bemutatkozik(self):
+        return f"Én {self.nev} vagyok, egy repülő robot!"</code></pre>
+        </div>
+
+        <div id="drone-demo" class="interactive-demo">
+            <h3>Drón robot létrehozása</h3>
+            <div class="drone-container">
+                <div class="drone-controls">
+                    <input type="text" id="drone-name" class="input" placeholder="Drón neve">
+                    <button class="btn" onclick="createDrone()">
+                        <i class="fas fa-robot"></i> Drón létrehozása
+                    </button>
+                </div>
+                <div class="drone-actions">
+                    <button class="btn" onclick="droneTakeOff()" disabled>
+                        <i class="fas fa-arrow-up"></i> Felszállás
+                    </button>
+                    <button class="btn" onclick="droneLand()" disabled>
+                        <i class="fas fa-arrow-down"></i> Leszállás
+                    </button>
+                    <button class="btn" onclick="droneCharge()" disabled>
+                        <i class="fas fa-battery-three-quarters"></i> Töltés
+                    </button>
+                </div>
+                <div id="drone-status" class="drone-status">
+                    <!-- Itt jelenik meg a drón állapota -->
+                </div>
+            </div>
+            <div id="drone-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .advantages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .advantage {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .advantage:hover {
+            transform: translateY(-5px);
+        }
+
+        .advantage i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .animal-form {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .animal-form h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-primary);
+        }
+
+        .animals-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .animal-card {
+            background: var(--highlight);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--accent-primary);
+            animation: slideIn 0.3s ease;
+        }
+
+        .drone-container {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .drone-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .drone-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .drone-status {
+            padding: 1rem;
+            background: var(--highlight);
+            border-radius: 5px;
+            margin-top: 1rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .drone-controls,
+            .drone-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Állatok kezelése
+        let animals = [];
+        let animalId = 0;
+
+        function createDog() {
+            const name = document.getElementById('dog-name').value.trim();
+            const age = document.getElementById('dog-age').value;
+            const breed = document.getElementById('dog-breed').value.trim();
+            const resultDiv = document.getElementById('animals-result');
+
+            if (!name || !age || !breed) {
+                resultDiv.textContent = 'Hiba: Töltsd ki az összes mezőt!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const dog = {
+                id: ++animalId,
+                type: 'dog',
+                name: name,
+                age: parseInt(age),
+                breed: breed
+            };
+
+            animals.push(dog);
+            updateAnimals();
+            clearInputs(['dog-name', 'dog-age', 'dog-breed']);
+
+            resultDiv.textContent = 'Kutya sikeresen létrehozva!';
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function createBird() {
+            const name = document.getElementById('bird-name').value.trim();
+            const age = document.getElementById('bird-age').value;
+            const wingspan = document.getElementById('bird-wingspan').value;
+            const resultDiv = document.getElementById('animals-result');
+
+            if (!name || !age || !wingspan) {
+                resultDiv.textContent = 'Hiba: Töltsd ki az összes mezőt!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const bird = {
+                id: ++animalId,
+                type: 'bird',
+                name: name,
+                age: parseInt(age),
+                wingspan: parseInt(wingspan)
+            };
+
+            animals.push(bird);
+            updateAnimals();
+            clearInputs(['bird-name', 'bird-age', 'bird-wingspan']);
+
+            resultDiv.textContent = 'Madár sikeresen létrehozva!';
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function updateAnimals() {
+            const container = document.querySelector('.animals-container');
+            container.innerHTML = '';
+
+            animals.forEach(animal => {
+                const card = document.createElement('div');
+                card.className = 'animal-card';
+
+                if (animal.type === 'dog') {
+                    card.innerHTML = `
+                        <h4><i class="fas fa-dog"></i> ${animal.name}</h4>
+                        <p>Kor: ${animal.age} év</p>
+                        <p>Fajta: ${animal.breed}</p>
+                        <p>Hang: Vau-vau!</p>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <h4><i class="fas fa-crow"></i> ${animal.name}</h4>
+                        <p>Kor: ${animal.age} év</p>
+                        <p>Szárnyfesztáv: ${animal.wingspan} cm</p>
+                        <p>Hang: Csip-csirip!</p>
+                    `;
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        // Drón kezelés
+        let drone = null;
+
+        function createDrone() {
+            const name = document.getElementById('drone-name').value.trim();
+            const resultDiv = document.getElementById('drone-result');
+
+            if (!name) {
+                resultDiv.textContent = 'Hiba: Add meg a drón nevét!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            drone = {
+                name: name,
+                isFlying: false,
+                battery: 100
+            };
+
+            document.querySelectorAll('.drone-actions button').forEach(btn => btn.disabled = false);
+            updateDroneStatus();
+            document.getElementById('drone-name').value = '';
+
+            resultDiv.textContent = 'Drón sikeresen létrehozva!';
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function droneTakeOff() {
+            if (!drone.isFlying) {
+                drone.isFlying = true;
+                updateDroneStatus();
+                showDroneResult('Felszállás sikeres!');
+            }
+        }
+
+        function droneLand() {
+           if (drone.isFlying) {
+               drone.isFlying = false;
+               updateDroneStatus();
+               showDroneResult('Leszállás sikeres!');
+           }
+       }
+
+       function droneCharge() {
+           drone.battery = 100;
+           updateDroneStatus();
+           showDroneResult('Töltés befejezve!');
+       }
+
+       function updateDroneStatus() {
+           const statusDiv = document.getElementById('drone-status');
+           statusDiv.innerHTML = `
+               <div>Név: ${drone.name}</div>
+               <div>Állapot: ${drone.isFlying ? 'Repül' : 'Földön van'}</div>
+               <div>Akkumulátor: ${drone.battery}%</div>
+           `;
+       }
+
+       function showDroneResult(message) {
+           const resultDiv = document.getElementById('drone-result');
+           resultDiv.textContent = message;
+           resultDiv.style.borderColor = 'var(--success)';
+           showResult(resultDiv);
+       }
+
+       // Segédfüggvények
+       function clearInputs(ids) {
+           ids.forEach(id => {
+               document.getElementById(id).value = '';
+           });
+       }
+
+       function showResult(element) {
+           element.classList.remove('show');
+           void element.offsetWidth;
+           element.classList.add('show');
+       }
+
+       // Enter billentyű kezelése
+       document.getElementById('dog-name').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('dog-age').focus();
+       });
+       document.getElementById('dog-age').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('dog-breed').focus();
+       });
+       document.getElementById('dog-breed').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') createDog();
+       });
+
+       document.getElementById('bird-name').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('bird-age').focus();
+       });
+       document.getElementById('bird-age').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('bird-wingspan').focus();
+       });
+       document.getElementById('bird-wingspan').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') createBird();
+       });
+
+       document.getElementById('drone-name').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') createDrone();
+       });
+   </script>
+</section>
+
+<!-- Speciális metódusok szekció -->
+<section id="specialis" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-star"></i>
+        Speciális Metódusok
+    </h1>
+
+    <div class="card">
+        <h2>Mik azok a speciális metódusok?</h2>
+        <p>A speciális metódusok (más néven "magic methods" vagy "dunder methods") olyan előre definiált nevű metódusok a Pythonban, amelyek dupla aláhúzással kezdődnek és végződnek (pl. __init__).</p>
+        <p>Ezek lehetővé teszik, hogy testreszabjuk az osztályok viselkedését különböző Python műveletekhez és beépített függvényekhez.</p>
+        <p>A leggyakrabban használt speciális metódusok:</p>
+        <ul>
+            <li><code>__init__(self, ...)</code> - Objektum létrehozásakor fut le</li>
+            <li><code>__str__(self)</code> - Az objektum szöveges megjelenítése (str() függvény)</li>
+            <li><code>__repr__(self)</code> - Az objektum részletes reprezentációja (programozói nézet)</li>
+            <li><code>__len__(self)</code> - A len() függvény eredménye az objektumon</li>
+            <li><code>__add__(self, other)</code> - A + operátor viselkedése</li>
+            <li><code>__eq__(self, other)</code> - Az == operátor viselkedése</li>
+        </ul>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="special-methods">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Pontszam:
+    def __init__(self, pont):
+        self.pont = pont
+
+    def __str__(self):
+        """Felhasználóbarát szöveges megjelenítés"""
+        return f"{self.pont} pont"
+
+    def __repr__(self):
+        """Programozói részletes megjelenítés"""
+        return f"Pontszam(pont={self.pont})"
+
+    def __add__(self, other):
+        """+ operátor: két pontszám összege"""
+        if isinstance(other, Pontszam):
+            return Pontszam(self.pont + other.pont)
+        return Pontszam(self.pont + other)
+
+    def __eq__(self, other):
+        """== operátor: pontszámok összehasonlítása"""
+        if isinstance(other, Pontszam):
+            return self.pont == other.pont
+        return self.pont == other
+
+# Használat
+p1 = Pontszam(10)
+p2 = Pontszam(20)
+print(p1)          # 10 pont
+print(repr(p1))    # Pontszam(pont=10)
+print(p1 + p2)     # 30 pont
+print(p1 == 10)    # True</code></pre>
+        </div>
+
+        <div id="score-demo" class="interactive-demo">
+            <h3>Pontszámok kezelése</h3>
+            <div class="scores-container">
+                <div class="score-inputs">
+                    <div class="form-group">
+                        <label>Első pontszám:</label>
+                        <input type="number" id="score1" class="input" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Második pontszám:</label>
+                        <input type="number" id="score2" class="input" value="20">
+                    </div>
+                </div>
+                <div class="score-operations">
+                    <button class="btn" onclick="createScores()">
+                        <i class="fas fa-plus"></i> Pontszámok létrehozása
+                    </button>
+                    <button class="btn" onclick="addScores()">
+                        <i class="fas fa-plus-circle"></i> Összeadás
+                    </button>
+                    <button class="btn" onclick="compareScores()">
+                        <i class="fas fa-equals"></i> Összehasonlítás
+                    </button>
+                    <button class="btn" onclick="showScoreRepresentation()">
+                        <i class="fas fa-info-circle"></i> Reprezentációk
+                    </button>
+                </div>
+                <div id="score-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>További gyakori speciális metódusok</h2>
+        <p>Nézzünk egy példát egy olyan osztályra, amely több speciális metódust is használ:</p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="more-special">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Kosar:
+    def __init__(self):
+        self.termekek = []
+
+    def __len__(self):
+        """Termékek száma a kosárban"""
+        return len(self.termekek)
+
+    def __getitem__(self, index):
+        """[] operátor: termék lekérése index alapján"""
+        return self.termekek[index]
+
+    def __iter__(self):
+        """Kosár bejárhatóvá tétele (for ciklushoz)"""
+        return iter(self.termekek)
+
+    def __contains__(self, item):
+        """in operátor: termék keresése a kosárban"""
+        return item in self.termekek
+
+    def add(self, termek):
+        self.termekek.append(termek)
+
+# Használat
+kosar = Kosar()
+kosar.add("alma")
+kosar.add("körte")
+
+print(len(kosar))       # 2
+print(kosar[0])        # "alma"
+print("alma" in kosar)  # True
+
+for termek in kosar:
+    print(termek)</code></pre>
+        </div>
+
+        <div id="cart-demo" class="interactive-demo">
+            <h3>Bevásárlókosár kezelése</h3>
+            <div class="cart-container">
+                <div class="cart-controls">
+                    <input type="text" id="product-input" class="input" placeholder="Termék neve">
+                    <button class="btn" onclick="addToCart()">
+                        <i class="fas fa-cart-plus"></i> Kosárba
+                    </button>
+                </div>
+                <div class="cart-operations">
+                    <button class="btn" onclick="showCartLength()">
+                        <i class="fas fa-list"></i> Termékek száma
+                    </button>
+                    <button class="btn" onclick="checkProduct()">
+                        <i class="fas fa-search"></i> Termék keresése
+                    </button>
+                    <button class="btn" onclick="listProducts()">
+                        <i class="fas fa-shopping-basket"></i> Kosár tartalma
+                    </button>
+                </div>
+                <div class="cart-items">
+                    <!-- Itt jelennek meg a kosár elemei -->
+                </div>
+                <div id="cart-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .scores-container {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .score-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-operations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-container {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .cart-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-operations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item {
+            background: var(--highlight);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--accent-primary);
+            animation: slideIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .score-operations,
+            .cart-controls,
+            .cart-operations {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Pontszám kezelés
+        function createScores() {
+            const score1 = parseInt(document.getElementById('score1').value);
+            const score2 = parseInt(document.getElementById('score2').value);
+            const resultDiv = document.getElementById('score-result');
+
+            if (isNaN(score1) || isNaN(score2)) {
+                resultDiv.textContent = 'Hiba: Add meg mindkét pontszámot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                Pontszám 1: ${score1} pont<br>
+                Pontszám 2: ${score2} pont
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function addScores() {
+            const score1 = parseInt(document.getElementById('score1').value);
+            const score2 = parseInt(document.getElementById('score2').value);
+            const resultDiv = document.getElementById('score-result');
+
+            if (isNaN(score1) || isNaN(score2)) {
+                resultDiv.textContent = 'Hiba: Add meg mindkét pontszámot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const sum = score1 + score2;
+            resultDiv.innerHTML = `
+                ${score1} pont + ${score2} pont = ${sum} pont
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function compareScores() {
+            const score1 = parseInt(document.getElementById('score1').value);
+            const score2 = parseInt(document.getElementById('score2').value);
+            const resultDiv = document.getElementById('score-result');
+
+            if (isNaN(score1) || isNaN(score2)) {
+                resultDiv.textContent = 'Hiba: Add meg mindkét pontszámot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const comparison = score1 === score2 ? 'egyenlő' : (score1 > score2 ? 'nagyobb' : 'kisebb');
+            resultDiv.innerHTML = `${score1} pont ${comparison} mint ${score2} pont`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function showScoreRepresentation() {
+            const score1 = parseInt(document.getElementById('score1').value);
+            const resultDiv = document.getElementById('score-result');
+
+            if (isNaN(score1)) {
+                resultDiv.textContent = 'Hiba: Add meg az első pontszámot!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                str(): ${score1} pont<br>
+                repr(): Pontszam(pont=${score1})
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        // Kosár kezelés
+        let cartItems = [];
+
+        function addToCart() {
+            const productInput = document.getElementById('product-input');
+            const product = productInput.value.trim();
+            const resultDiv = document.getElementById('cart-result');
+
+            if (!product) {
+                resultDiv.textContent = 'Hiba: Add meg a termék nevét!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            cartItems.push(product);
+            updateCartDisplay();
+            productInput.value = '';
+
+            resultDiv.textContent = `${product} hozzáadva a kosárhoz!`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function showCartLength() {
+            const resultDiv = document.getElementById('cart-result');
+            resultDiv.textContent = `A kosárban ${cartItems.length} termék van.`;
+            resultDiv.style.borderColor = 'var(--info)';
+            showResult(resultDiv);
+        }
+
+        function checkProduct() {
+            const productInput = document.getElementById('product-input');
+            const product = productInput.value.trim();
+            const resultDiv = document.getElementById('cart-result');
+
+            if (!product) {
+                resultDiv.textContent = 'Hiba: Add meg a keresett termék nevét!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const isInCart = cartItems.includes(product);
+            resultDiv.textContent = isInCart ?
+                `${product} van a kosárban.` :
+                `${product} nincs a kosárban.`;
+            resultDiv.style.borderColor = isInCart ? 'var(--success)' : 'var(--warning)';
+            showResult(resultDiv);
+        }
+
+        function listProducts() {
+            const resultDiv = document.getElementById('cart-result');
+            if (cartItems.length === 0) {
+                resultDiv.textContent = 'A kosár üres.';
+                resultDiv.style.borderColor = 'var(--warning)';
+            } else {
+                resultDiv.innerHTML = 'Kosár tartalma:<br>' + cartItems.join(', ');
+                resultDiv.style.borderColor = 'var(--success)';
+            }
+            showResult(resultDiv);
+        }
+
+        function updateCartDisplay() {
+            const container = document.querySelector('.cart-items');
+            container.innerHTML = '';
+            cartItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.textContent = item;
+                container.appendChild(div);
+            });
+        }
+
+        // Segédfüggvények
+        function showResult(element) {
+            element.classList.remove('show');
+            void element.offsetWidth;
+            element.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('score1').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('score2').focus();
+        });
+
+        document.getElementById('score2').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addScores();
+        });
+
+        document.getElementById('product-input').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') addToCart();
+       });
+   </script>
+</section>
+
+<!-- Gyakorlatok szekció -->
+<section id="gyakorlatok" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-tasks"></i>
+        Gyakorló Feladatok
+    </h1>
+
+    <div class="card">
+        <h2>1. Feladat: Könyv osztály</h2>
+        <p class="task-description">
+            Írj egy Könyv osztályt, amely kezeli egy könyv adatait (cím, szerző, oldalszám).
+            A könyv objektumoknak legyen szöveges megjelenítése és legyenek összehasonlíthatók oldalszám alapján.
+        </p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="exercise-1">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Konyv:
+    def __init__(self, cim, szerzo, oldalszam):
+        self.cim = cim
+        self.szerzo = szerzo
+        self.oldalszam = oldalszam
+
+    def __str__(self):
+        return f"{self.szerzo}: {self.cim} ({self.oldalszam} oldal)"
+
+    def __eq__(self, other):
+        return self.oldalszam == other.oldalszam
+
+    def __lt__(self, other):
+        return self.oldalszam < other.oldalszam</code></pre>
+        </div>
+
+        <div id="book-exercise" class="interactive-demo">
+            <h3>Próbáld ki!</h3>
+            <div class="book-inputs">
+                <div class="form-group">
+                    <label>1. könyv:</label>
+                    <input type="text" id="book1-title" class="input" placeholder="Cím">
+                    <input type="text" id="book1-author" class="input" placeholder="Szerző">
+                    <input type="number" id="book1-pages" class="input" placeholder="Oldalszám">
+                </div>
+                <div class="form-group">
+                    <label>2. könyv:</label>
+                    <input type="text" id="book2-title" class="input" placeholder="Cím">
+                    <input type="text" id="book2-author" class="input" placeholder="Szerző">
+                    <input type="number" id="book2-pages" class="input" placeholder="Oldalszám">
+                </div>
+                <div class="button-group">
+                    <button class="btn" onclick="createBooks()">
+                        <i class="fas fa-book"></i> Könyvek létrehozása
+                    </button>
+                    <button class="btn" onclick="compareBooks()">
+                        <i class="fas fa-balance-scale"></i> Összehasonlítás
+                    </button>
+                </div>
+            </div>
+            <div id="book-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>2. Feladat: Hőmérséklet osztály</h2>
+        <p class="task-description">
+            Készíts egy Hőmérséklet osztályt, amely képes Celsius és Fahrenheit között átváltani.
+            Használj tulajdonságokat (property) a hőmérséklet lekérdezésére és beállítására.
+        </p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="exercise-2">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class Homerseklet:
+    def __init__(self, celsius=0):
+        self._celsius = celsius
+
+    @property
+    def celsius(self):
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, ertek):
+        self._celsius = ertek
+
+    @property
+    def fahrenheit(self):
+        return (self._celsius * 9/5) + 32
+
+    @fahrenheit.setter
+    def fahrenheit(self, ertek):
+        self._celsius = (ertek - 32) * 5/9</code></pre>
+        </div>
+
+        <div id="temp-exercise" class="interactive-demo">
+            <h3>Hőmérséklet átváltó</h3>
+            <div class="temp-converter">
+                <div class="temp-inputs">
+                    <div class="form-group">
+                        <label>Celsius:</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="celsius-input" class="input" placeholder="Celsius">
+                            <span>°C</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fahrenheit:</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="fahrenheit-input" class="input" placeholder="Fahrenheit">
+                            <span>°F</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn" onclick="convertToFahrenheit()">
+                        <i class="fas fa-arrow-right"></i> Celsius → Fahrenheit
+                    </button>
+                    <button class="btn" onclick="convertToCelsius()">
+                        <i class="fas fa-arrow-left"></i> Fahrenheit → Celsius
+                    </button>
+                </div>
+            </div>
+            <div id="temp-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>3. Feladat: Bankszámla hierarchia</h2>
+        <p class="task-description">
+            Hozz létre egy bankszámla osztályhierarchiát: egy alap BankSzamla osztályt, és ebből származtatott MegtakaritasiSzamla és HitelSzamla osztályokat.
+            Mindegyik típusnak legyen saját viselkedése a pénz kivételénél.
+        </p>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="exercise-3">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python">class BankSzamla:
+    def __init__(self, egyenleg=0):
+        self.egyenleg = egyenleg
+
+    def befizet(self, osszeg):
+        self.egyenleg += osszeg
+        return True
+
+    def kivesz(self, osszeg):
+        if osszeg <= self.egyenleg:
+            self.egyenleg -= osszeg
+            return True
+        return False
+
+class MegtakaritasiSzamla(BankSzamla):
+    def __init__(self, egyenleg=0, minimum_egyenleg=1000):
+        super().__init__(egyenleg)
+        self.minimum_egyenleg = minimum_egyenleg
+
+    def kivesz(self, osszeg):
+        if self.egyenleg - osszeg >= self.minimum_egyenleg:
+            return super().kivesz(osszeg)
+        return False
+
+class HitelSzamla(BankSzamla):
+    def __init__(self, egyenleg=0, hitelkeret=100000):
+        super().__init__(egyenleg)
+        self.hitelkeret = hitelkeret
+
+    def kivesz(self, osszeg):
+        if self.egyenleg - osszeg >= -self.hitelkeret:
+            self.egyenleg -= osszeg
+            return True
+        return False</code></pre>
+        </div>
+
+        <div id="bank-exercise" class="interactive-demo">
+            <h3>Bankszámlák kezelése</h3>
+            <div class="bank-accounts">
+                <!-- Számlák választó -->
+                <div class="account-selector">
+                    <label>Számla típusa:</label>
+                    <select id="account-type" class="input" onchange="updateAccountFields()">
+                        <option value="basic">Alap bankszámla</option>
+                        <option value="savings">Megtakarítási számla</option>
+                        <option value="credit">Hitelszámla</option>
+                    </select>
+                </div>
+
+                <!-- Számla műveletek -->
+                <div class="account-operations">
+                    <div class="operation-inputs">
+                        <input type="number" id="operation-amount" class="input" placeholder="Összeg">
+                        <button class="btn btn-success" onclick="deposit()">
+                            <i class="fas fa-plus"></i> Befizetés
+                        </button>
+                        <button class="btn btn-warning" onclick="withdraw()">
+                            <i class="fas fa-minus"></i> Kivétel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Számla információk -->
+                <div class="account-info">
+                    <div>Egyenleg: <span id="balance-display">0</span> Ft</div>
+                    <div id="extra-info"></div>
+                </div>
+            </div>
+            <div id="bank-exercise-result" class="result"></div>
+        </div>
+    </div>
+
+    <style>
+        .task-description {
+            background: var(--highlight);
+            padding: 1rem;
+            border-left: 4px solid var(--accent-primary);
+            margin-bottom: 2rem;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .book-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .temp-converter {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .temp-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-with-unit span {
+            color: var(--text-secondary);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .bank-accounts {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .account-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .account-operations {
+            margin-bottom: 1.5rem;
+        }
+
+        .operation-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .account-info {
+            font-family: 'Fira Code', monospace;
+            padding: 1rem;
+            background: var(--highlight);
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .operation-inputs {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Könyv feladat
+        function createBooks() {
+            const title1 = document.getElementById('book1-title').value.trim();
+            const author1 = document.getElementById('book1-author').value.trim();
+            const pages1 = document.getElementById('book1-pages').value;
+            const title2 = document.getElementById('book2-title').value.trim();
+            const author2 = document.getElementById('book2-author').value.trim();
+            const pages2 = document.getElementById('book2-pages').value;
+            const resultDiv = document.getElementById('book-result');
+
+            if (!title1 || !author1 || !pages1 || !title2 || !author2 || !pages2) {
+                resultDiv.textContent = 'Hiba: Töltsd ki az összes mezőt!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                1. könyv: ${author1}: ${title1} (${pages1} oldal)<br>
+                2. könyv: ${author2}: ${title2} (${pages2} oldal)
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function compareBooks() {
+            const pages1 = parseInt(document.getElementById('book1-pages').value);
+            const pages2 = parseInt(document.getElementById('book2-pages').value);
+            const resultDiv = document.getElementById('book-result');
+
+            if (isNaN(pages1) || isNaN(pages2)) {
+                resultDiv.textContent = 'Hiba: Add meg mindkét könyv oldalszámát!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            let comparison;
+            if (pages1 === pages2) {
+                comparison = 'A két könyv ugyanolyan hosszú.';
+            } else if (pages1 > pages2) {
+                comparison = 'Az első könyv hosszabb.';
+            } else {
+                comparison = 'A második könyv hosszabb.';
+            }
+
+            resultDiv.textContent = comparison;
+            resultDiv.style.borderColor = 'var(--info)';
+            showResult(resultDiv);
+        }
+
+        // Hőmérséklet feladat
+        function convertToFahrenheit() {
+            const celsius = parseFloat(document.getElementById('celsius-input').value);
+            const resultDiv = document.getElementById('temp-result');
+
+            if (isNaN(celsius)) {
+                resultDiv.textContent = 'Hiba: Add meg a Celsius értéket!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const fahrenheit = (celsius * 9/5) + 32;
+            document.getElementById('fahrenheit-input').value = fahrenheit.toFixed(1);
+
+            resultDiv.textContent = `${celsius}°C = ${fahrenheit.toFixed(1)}°F`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        function convertToCelsius() {
+            const fahrenheit = parseFloat(document.getElementById('fahrenheit-input').value);
+            const resultDiv = document.getElementById('temp-result');
+
+            if (isNaN(fahrenheit)) {
+                resultDiv.textContent = 'Hiba: Add meg a Fahrenheit értéket!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
+
+            const celsius = (fahrenheit - 32) * 5/9;
+            document.getElementById('celsius-input').value = celsius.toFixed(1);
+
+            resultDiv.textContent = `${fahrenheit}°F = ${celsius.toFixed(1)}°C`;
+            resultDiv.style.borderColor = 'var(--success)';
+            showResult(resultDiv);
+        }
+
+        // Bankszámla feladat
+        let currentAccount = {
+            type: 'basic',
+            balance: 0,
+            minimumBalance: 0,
+            creditLimit: 0
+        };
+
+        function updateAccountFields() {
+           const accountType = document.getElementById('account-type').value;
+           const extraInfo = document.getElementById('extra-info');
+
+           currentAccount.type = accountType;
+           currentAccount.balance = 0;
+
+           switch(accountType) {
+               case 'savings':
+                   currentAccount.minimumBalance = 1000;
+                   extraInfo.textContent = `Minimum egyenleg: ${currentAccount.minimumBalance} Ft`;
+                   break;
+               case 'credit':
+                   currentAccount.creditLimit = 100000;
+                   extraInfo.textContent = `Hitelkeret: ${currentAccount.creditLimit} Ft`;
+                   break;
+               default:
+                   extraInfo.textContent = '';
+           }
+
+           updateBalance();
+           showResult(document.getElementById('bank-exercise-result'));
+       }
+
+       function deposit() {
+           const amount = parseInt(document.getElementById('operation-amount').value);
+           const resultDiv = document.getElementById('bank-exercise-result');
+
+           if (isNaN(amount) || amount <= 0) {
+               resultDiv.textContent = 'Hiba: Érvénytelen összeg!';
+               resultDiv.style.borderColor = 'var(--error)';
+               return;
+           }
+
+           currentAccount.balance += amount;
+           updateBalance();
+
+           resultDiv.textContent = `Sikeres befizetés: ${amount} Ft`;
+           resultDiv.style.borderColor = 'var(--success)';
+           showResult(resultDiv);
+       }
+
+       function withdraw() {
+           const amount = parseInt(document.getElementById('operation-amount').value);
+           const resultDiv = document.getElementById('bank-exercise-result');
+
+           if (isNaN(amount) || amount <= 0) {
+               resultDiv.textContent = 'Hiba: Érvénytelen összeg!';
+               resultDiv.style.borderColor = 'var(--error)';
+               return;
+           }
+
+           let canWithdraw = false;
+           switch(currentAccount.type) {
+               case 'savings':
+                   canWithdraw = (currentAccount.balance - amount) >= currentAccount.minimumBalance;
+                   break;
+               case 'credit':
+                   canWithdraw = (currentAccount.balance - amount) >= -currentAccount.creditLimit;
+                   break;
+               default:
+                   canWithdraw = amount <= currentAccount.balance;
+           }
+
+           if (canWithdraw) {
+               currentAccount.balance -= amount;
+               updateBalance();
+               resultDiv.textContent = `Sikeres kifizetés: ${amount} Ft`;
+               resultDiv.style.borderColor = 'var(--success)';
+           } else {
+               resultDiv.textContent = 'Hiba: Nincs elegendő fedezet vagy túllépi a limitet!';
+               resultDiv.style.borderColor = 'var(--error)';
+           }
+
+           showResult(resultDiv);
+       }
+
+       function updateBalance() {
+           document.getElementById('balance-display').textContent = currentAccount.balance;
+       }
+
+       // Enter billentyű kezelése
+       // Könyv feladat
+       document.getElementById('book1-title').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('book1-author').focus();
+       });
+       document.getElementById('book1-author').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('book1-pages').focus();
+       });
+       document.getElementById('book1-pages').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('book2-title').focus();
+       });
+       document.getElementById('book2-title').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('book2-author').focus();
+       });
+       document.getElementById('book2-author').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') document.getElementById('book2-pages').focus();
+       });
+       document.getElementById('book2-pages').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') createBooks();
+       });
+
+       // Hőmérséklet feladat
+       document.getElementById('celsius-input').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') convertToFahrenheit();
+       });
+       document.getElementById('fahrenheit-input').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') convertToCelsius();
+       });
+
+       // Bankszámla feladat
+       document.getElementById('operation-amount').addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') deposit();
+       });
+
+       // Oldal betöltésekor
+       document.addEventListener('DOMContentLoaded', () => {
+           updateAccountFields();
+       });
+
+       function showResult(element) {
+           element.classList.remove('show');
+           void element.offsetWidth;
+           element.classList.add('show');
+       }
+   </script>
+</section>
+
+
+
+    </main>
+
+    <footer style="width: 100%; background: var(--bg-secondary); padding: 2rem 0; margin-top: 4rem; border-top: 1px solid var(--border-color);">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <div style="display: flex; flex-wrap: wrap; margin: 0 -15px; justify-content: space-between;">
+                <div style="flex: 0 0 calc(50% - 30px); padding: 0 15px; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem;">Kapcsolat</h3>
+                    <p style="margin-bottom: 0.5rem;">Email: <a href="mailto:infotanar@infotanar.eu" style="color: var(--accent-primary); text-decoration: none;">infotanar@infotanar.eu</a></p>
+                </div>
+                <div style="flex: 0 0 calc(50% - 30px); padding: 0 15px;">
+                    <h3 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem;">Információk</h3>
+                    <p style="margin-bottom: 0.5rem;">Utolsó frissítés: 2025.02.04.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color: var(--accent-primary); text-decoration: none;">GNU General Public License v3.0</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Prism újratöltése amikor új kód jelenik meg
+        function refreshPrism() {
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+        }
+
+        // Oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshPrism();
+
+            // Smooth scroll a navigációs linkekhez
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
