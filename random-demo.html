@@ -10,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 
     <!-- Külső scriptek -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -81,55 +82,11 @@
 }
 
         /* Navigáció stílusa */
-        .nav {
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            background: var(--bg-secondary);
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
 
-        .nav-logo {
-            font-size: 1.5rem;
-            color: var(--accent-primary);
-            text-decoration: none;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
 
-        .nav-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
 
-        .nav-link:hover {
-            color: var(--accent-primary);
-        }
 
         /* Alap kártya stílus */
         .card {
@@ -217,7 +174,7 @@
             position: relative;
             margin: 1rem 0;
             border-radius: 10px;
-            overflow: hidden;
+            overflow-x: auto;
         }
 
         /* Másolás gomb */
@@ -266,16 +223,7 @@
                 padding: 1rem;
             }
 
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
 
-            .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
 
             .section-title {
                 font-size: 1.5rem;
@@ -293,6 +241,7 @@
             <a href="#" class="nav-logo">
                 <i class="fas fa-random"></i> Python Random Modul
             </a>
+            <button class="nav-toggle"><i class="fas fa-bars"></i></button>
             <ul class="nav-links">
                 <li><a href="#bevezeto" class="nav-link"><i class="fas fa-book-open"></i> Bevezető</a></li>
                 <li><a href="#alapok" class="nav-link"><i class="fas fa-dice"></i> Alap függvények</a></li>
@@ -1316,5 +1265,6 @@ print(f"Gratulálok! Megtaláltad a kincset {probalkozasok} próbálkozás után
        });
    });
 </script>
+    <script src="js/menu.js"></script>
 </body>
 </html>
