@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Feltételes Utasítások Interaktív Bemutatása</title>
 
-    <!-- Külső stílusok -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- Külső scriptek -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -149,7 +147,7 @@
 <body>
     <nav class="nav">
         <div class="nav-container">
-            <a href="#" class="nav-logo">
+            <a href="index.html" class="nav-logo">
                 <i class="fab fa-python"></i> Python Feltételes Utasítások
             </a>
             <ul class="nav-links">
@@ -166,8 +164,7 @@
 
     <main class="container">
 
-        <!-- Bevezető szekció -->
-<section id="bevezeto" class="section">
+        <section id="bevezeto" class="section">
     <h1 class="section-title">
         <i class="fas fa-book-open"></i>
         Feltételes Utasítások a Pythonban
@@ -402,6 +399,25 @@ else:            # Különben
     color: var(--text-secondary);
 }
 
+.result {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+    border-left: 4px solid transparent;
+    display: none; /* Alapból rejtve */
+    background: var(--bg-primary);
+}
+
+.result.show {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
     @media (max-width: 768px) {
         .input-group {
             flex-direction: column;
@@ -418,6 +434,7 @@ else:            # Különben
         if (isNaN(age) || age < 0 || age > 150) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes életkort (0-150)!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
         } else {
             let result = '';
             if (age >= 18) {
@@ -427,6 +444,7 @@ else:            # Különben
             }
             resultDiv.textContent = `Eredmény: ${result}`;
             resultDiv.style.borderColor = 'var(--success)';
+            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -440,7 +458,6 @@ else:            # Különben
     });
 </script>
 
-<!-- IF szekció -->
 <section id="if" class="section">
     <h1 class="section-title">
         <i class="fas fa-code-branch"></i>
@@ -629,6 +646,7 @@ else:
         if (isNaN(number)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes egész számot!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
         } else {
             if (number % 2 === 0) {
                 resultDiv.textContent = 'A szám páros!';
@@ -636,6 +654,7 @@ else:
                 resultDiv.textContent = 'A szám páratlan!';
             }
             resultDiv.style.borderColor = 'var(--success)';
+            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -651,10 +670,12 @@ else:
         if (isNaN(number)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes számot!';
             resultDiv.style.borderColor = 'var(--error)';
+             resultDiv.style.color = 'var(--error)';
         } else {
             const absValue = number >= 0 ? number : -number;
             resultDiv.textContent = `A szám abszolút értéke: ${absValue}`;
             resultDiv.style.borderColor = 'var(--success)';
+             resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -672,7 +693,6 @@ else:
     });
 </script>
 
-<!-- ELSE szekció -->
 <section id="else" class="section">
     <h1 class="section-title">
         <i class="fas fa-reply-all"></i>
@@ -788,6 +808,22 @@ else:
 </section>
 
 <style>
+    .info-box {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(241, 196, 15, 0.1);
+        border-left: 4px solid var(--python-else);
+        border-radius: 0 5px 5px 0;
+        margin: 1rem 0;
+    }
+    
+    .info-box i {
+        color: var(--python-else);
+        font-size: 1.5rem;
+    }
+
     .flowchart {
         margin: 2rem 0;
         padding: 1rem;
@@ -888,9 +924,11 @@ else:
         if (username.length >= 3) {
             resultDiv.textContent = `Üdvözöllek, ${username}!`;
             resultDiv.style.borderColor = 'var(--success)';
+            resultDiv.style.color = 'var(--success)';
         } else {
             resultDiv.textContent = 'Hiba: A felhasználónév túl rövid! (minimum 3 karakter)';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
         }
 
         resultDiv.classList.remove('show');
@@ -904,7 +942,6 @@ else:
     });
 </script>
 
-<!-- Összetett feltételek szekció -->
 <section id="osszetett" class="section">
     <h1 class="section-title">
         <i class="fas fa-project-diagram"></i>
@@ -1022,8 +1059,8 @@ else:
                     <div class="condition">b + c > a</div>
                 </div>
             </div>
-            <div class="triangle-animation" id="triangle-animation">
-                <!-- Triangle will be drawn here -->
+            <div class="triangle-animation" id="triangle-animation" style="min-height: 200px; display: flex; justify-content: center; align-items: center;">
+                <p style="color: var(--text-secondary); font-style: italic;">Adj meg oldalhosszakat a rajzoláshoz!</p>
             </div>
         </div>
     </div>
@@ -1128,11 +1165,15 @@ else:
         const b = parseFloat(document.getElementById('side-b').value);
         const c = parseFloat(document.getElementById('side-c').value);
         const resultDiv = document.getElementById('triangle-result');
+        const animDiv = document.getElementById('triangle-animation');
 
         // Bemenet ellenőrzése
         if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg érvényes pozitív számokat!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
+            animDiv.innerHTML = '<p style="color: var(--error);">Érvénytelen bemenet</p>';
+            resultDiv.classList.add('show');
             return;
         }
 
@@ -1143,19 +1184,67 @@ else:
             const terulet = Math.sqrt(s * (s - a) * (s - b) * (s - c));
 
             resultDiv.innerHTML = `
-                <div>A háromszög szerkeszthető!</div>
+                <div style="margin-bottom: 0.5rem; font-weight: bold; color: var(--success);">A háromszög szerkeszthető!</div>
                 <div>Kerület: ${kerulet}</div>
                 <div>Terület: ${terulet.toFixed(2)}</div>
             `;
             resultDiv.style.borderColor = 'var(--success)';
+            
+            // Háromszög kirajzolása SVG-ben
+            drawTriangleSVG(a, b, c, animDiv);
+
         } else {
-            resultDiv.textContent = 'A háromszög NEM szerkeszthető!';
+            resultDiv.textContent = 'A háromszög NEM szerkeszthető! (Az oldalak hossza nem felel meg a háromszög-egyenlőtlenségnek)';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
+            animDiv.innerHTML = '<p style="color: var(--error);">Nem szerkeszthető háromszög</p>';
         }
 
         resultDiv.classList.remove('show');
         void resultDiv.offsetWidth;
         resultDiv.classList.add('show');
+    }
+
+    function drawTriangleSVG(a, b, c, container) {
+        // Koordináták kiszámítása koszinusz tétellel
+        // A pont: (0, 0), B pont: (c, 0), C pont: (x, y)
+        // b^2 = x^2 + y^2
+        // a^2 = (x-c)^2 + y^2
+        
+        // Skálázás, hogy beférjen a konténerbe (pl 200px magas, 300px széles)
+        const scale = 150 / Math.max(a, b, c);
+        
+        const A = { x: 0, y: 0 };
+        const B = { x: c * scale, y: 0 };
+        
+        // Koszinusz tételből C pont koordinátái
+        const cosAlpha = (b*b + c*c - a*a) / (2 * b * c);
+        const x = b * cosAlpha * scale;
+        const y = b * Math.sqrt(1 - cosAlpha * cosAlpha) * scale;
+        const C = { x: x, y: y };
+
+        // Eltolás, hogy középen legyen és ne lógjon ki (SVG koordináta rendszer: y lefelé nő)
+        // Margin hozzáadása
+        const offsetX = 20;
+        const offsetY = 180; // Flip Y miatt lentről indulunk
+
+        const svgContent = `
+            <svg width="100%" height="200" viewBox="-20 -20 ${B.x + 50} 220" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="var(--text-secondary)" />
+                    </marker>
+                </defs>
+                
+                <polygon points="${A.x + offsetX},${offsetY - A.y} ${B.x + offsetX},${offsetY - B.y} ${C.x + offsetX},${offsetY - C.y}" 
+                        fill="rgba(46, 204, 113, 0.2)" stroke="var(--accent-primary)" stroke-width="2" />
+                
+                <text x="${(A.x + B.x)/2 + offsetX}" y="${offsetY + 20}" fill="var(--text-primary)" text-anchor="middle">c=${c}</text>
+                <text x="${(A.x + C.x)/2 + offsetX - 15}" y="${(offsetY - A.y + offsetY - C.y)/2}" fill="var(--text-primary)" text-anchor="middle">b=${b}</text>
+                <text x="${(B.x + C.x)/2 + offsetX + 15}" y="${(offsetY - B.y + offsetY - C.y)/2}" fill="var(--text-primary)" text-anchor="middle">a=${a}</text>
+            </svg>
+        `;
+        container.innerHTML = svgContent;
     }
 
     // Enter billentyű kezelése
@@ -1178,7 +1267,6 @@ else:
     });
 </script>
 
-<!-- Gyakorló feladatok szekció -->
 <section id="gyakorlo" class="section">
     <h1 class="section-title">
         <i class="fas fa-tasks"></i>
@@ -1189,7 +1277,6 @@ else:
         <h2>Feladatok megoldása</h2>
         <p>Az alábbi feladatok segítenek a feltételes utasítások gyakorlásában. Minden feladatnál megtalálod a leírást, a példakódot, és ki is próbálhatod őket.</p>
 
-        <!-- 1. Feladat -->
         <div class="exercise">
             <div class="exercise-header" onclick="toggleExercise(1)">
                 <h3>1. Feladat: Egyszerű számbekérés és összehasonlítás</h3>
@@ -1239,7 +1326,6 @@ else:
             </div>
         </div>
 
-        <!-- 2. Feladat -->
         <div class="exercise">
             <div class="exercise-header" onclick="toggleExercise(2)">
                 <h3>2. Feladat: Kisebb vagy nagyobb?</h3>
@@ -1303,7 +1389,6 @@ print(f"A legnagyobb szám: {legnagyobb}")</code></pre>
             </div>
         </div>
 
-        <!-- 3. Feladat -->
         <div class="exercise">
             <div class="exercise-header" onclick="toggleExercise(3)">
                 <h3>3. Feladat: Belépési feltételek ellenőrzése</h3>
@@ -1335,7 +1420,7 @@ else:
                             <label>Életkor:</label>
                             <input type="number" id="ex3-age" class="input" placeholder="Pl.: 20" min="0" max="150">
                         </div>
-                        <button class="btn" onclick="checkAge()">
+                        <button class="btn" onclick="checkAgeTask()">
                             <i class="fas fa-door-open"></i> Ellenőrzés
                         </button>
                     </div>
@@ -1447,6 +1532,7 @@ else:
         if (isNaN(first) || isNaN(second)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg érvényes számokat!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
         } else {
             let result;
             if (first < second) {
@@ -1458,6 +1544,7 @@ else:
             }
             resultDiv.textContent = result;
             resultDiv.style.borderColor = 'var(--success)';
+            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -1474,6 +1561,8 @@ else:
         if (isNaN(a) || isNaN(b) || isNaN(c)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg minden számot!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
+            resultDiv.classList.add('show');
             return;
         }
 
@@ -1485,26 +1574,30 @@ else:
             <div>A legnagyobb szám: ${max}</div>
         `;
         resultDiv.style.borderColor = 'var(--success)';
+        resultDiv.style.color = 'var(--text-primary)'; // Reset color
 
         resultDiv.classList.remove('show');
         void resultDiv.offsetWidth;
         resultDiv.classList.add('show');
     }
 
-    function checkAge() {
+    function checkAgeTask() {
         const age = parseInt(document.getElementById('ex3-age').value);
         const resultDiv = document.getElementById('ex3-result');
 
         if (isNaN(age) || age < 0 || age > 150) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes életkort!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
         } else {
             if (age >= 18) {
                 resultDiv.textContent = 'Belépés engedélyezve! 🎉';
                 resultDiv.style.borderColor = 'var(--success)';
+                resultDiv.style.color = 'var(--success)';
             } else {
                 resultDiv.textContent = 'Sajnálom, nem léphetsz be! 🚫';
                 resultDiv.style.borderColor = 'var(--error)';
+                resultDiv.style.color = 'var(--error)';
             }
         }
 
@@ -1545,11 +1638,10 @@ else:
     });
 
     document.getElementById('ex3-age').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAge();
+        if (e.key === 'Enter') checkAgeTask();
     });
 </script>
 
-<!-- 4. Feladat -->
 <div class="exercise">
     <div class="exercise-header" onclick="toggleExercise(4)">
         <h3>4. Feladat: Oszthatóság vizsgálata</h3>
@@ -1594,7 +1686,6 @@ else:
     </div>
 </div>
 
-<!-- 5. Feladat -->
 <div class="exercise">
     <div class="exercise-header" onclick="toggleExercise(5)">
         <h3>5. Feladat: Évszak meghatározása</h3>
@@ -1656,7 +1747,6 @@ else:
     </div>
 </div>
 
-<!-- 6. Feladat -->
 <div class="exercise">
     <div class="exercise-header" onclick="toggleExercise(6)">
         <h3>6. Feladat: Egyszerű számológép</h3>
@@ -1775,6 +1865,8 @@ else:
         if (isNaN(number)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes egész számot!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
+            resultDiv.classList.add('show');
             return;
         }
 
@@ -1791,6 +1883,7 @@ else:
 
         resultDiv.textContent = message;
         resultDiv.style.borderColor = 'var(--success)';
+        resultDiv.style.color = 'var(--success)';
 
         resultDiv.classList.remove('show');
         void resultDiv.offsetWidth;
@@ -1806,7 +1899,9 @@ else:
         if (!month) {
             resultDiv.textContent = 'Kérlek válassz egy hónapot!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
             visDiv.innerHTML = '';
+            resultDiv.classList.add('show');
             return;
         }
 
@@ -1834,6 +1929,7 @@ else:
 
         resultDiv.textContent = `A ${month}. hónap évszaka: ${season}`;
         resultDiv.style.borderColor = 'var(--success)';
+        resultDiv.style.color = 'var(--text-primary)'; // Reset color
 
         visDiv.style.background = `linear-gradient(to right, transparent, ${color}22, transparent)`;
         visDiv.innerHTML = icons.split(' ').map((icon, i) =>
@@ -1860,6 +1956,8 @@ else:
         if (isNaN(num1) || isNaN(num2)) {
             resultDiv.textContent = 'Hiba: Kérlek add meg mindkét számot!';
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
+            resultDiv.classList.add('show');
             return;
         }
 
@@ -1889,9 +1987,11 @@ else:
         if (error) {
             resultDiv.textContent = result;
             resultDiv.style.borderColor = 'var(--error)';
+            resultDiv.style.color = 'var(--error)';
         } else {
             resultDiv.textContent = `${num1} ${operation} ${num2} = ${result}`;
             resultDiv.style.borderColor = 'var(--success)';
+            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -1919,7 +2019,6 @@ else:
     });
 </script>
 
-<!-- Kombinált példák szekció -->
 <section id="kombinalt" class="section">
     <h1 class="section-title">
         <i class="fas fa-puzzle-piece"></i>
@@ -2064,6 +2163,10 @@ else:
         letter-spacing: 0.5rem;
         font-size: 1.5rem;
         font-family: 'Fira Code', monospace;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
     }
 
     .numpad {
@@ -2175,7 +2278,7 @@ else:
 
     function updateScreen(message) {
         const screen = document.getElementById('atm-screen-content');
-        screen.innerHTML = message;
+        screen.innerHTML = message.replace(/\n/g, '<br>');
     }
 
     function addPin(digit) {
@@ -2220,6 +2323,10 @@ else:
                 break;
             case 2:
                 updateScreen(`Az Ön egyenlege: ${balance.toLocaleString()} Ft`);
+                // Automatikus visszatérés a menübe kis idő múlva
+                setTimeout(() => {
+                     showMenu();
+                }, 3000);
                 break;
             case 3:
                 updateScreen('Köszönjük, hogy szolgáltatásunkat választotta!\n\nViszontlátásra!');
@@ -2237,12 +2344,16 @@ else:
     function withdraw(amount) {
         if (amount <= balance) {
             balance -= amount;
-            updateScreen(`Sikeres készpénzfelvétel!\n\nFelvett összeg: ${amount.toLocaleString()} Ft\nÚj egyenleg: ${balance.toLocaleString()} Ft`);
+            // Szimulált feldolgozás
+            updateScreen('Feldolgozás...');
+            setTimeout(() => {
+                 updateScreen(`Sikeres készpénzfelvétel!\n\nFelvett összeg: ${amount.toLocaleString()} Ft\nÚj egyenleg: ${balance.toLocaleString()} Ft`);
+                 setTimeout(showMenu, 3000);
+            }, 1000);
         } else {
             updateScreen('Nincs elegendő fedezet a tranzakcióhoz!');
+            setTimeout(showMenu, 2000);
         }
-
-        setTimeout(showMenu, 3000);
     }
 </script>
     </main>
