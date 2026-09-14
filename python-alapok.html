@@ -83,6 +83,35 @@
             padding: 2rem;
         }
 
+        /* Szerkezeti és túlcsordulási javítások */
+        .page-content {
+            display: contents;
+        }
+
+        .section {
+            width: 75vw;
+            max-width: 100%;
+            scroll-margin-top: 5.5rem;
+        }
+
+        .section > .card {
+            width: 100%;
+        }
+
+        .input,
+        select,
+        textarea {
+            min-width: 0;
+        }
+
+        pre {
+            max-width: 100%;
+        }
+
+        pre[class*="language-"] {
+            overflow-x: auto;
+        }
+
         /* Navigáció stílusa */
         /* .nav {
             background: var(--bg-secondary);
@@ -327,15 +356,42 @@
                 padding: 1rem;
             }
 
+            body {
+                padding-top: 7.5rem;
+            }
+
+            .nav {
+                padding: 0.65rem 0;
+            }
+
             .nav-container {
                 flex-direction: column;
-                gap: 1rem;
+                align-items: stretch;
+                gap: 0.45rem;
+                padding: 0 0.75rem;
+            }
+
+            .nav-logo {
+                justify-content: center;
             }
 
             .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+                flex-direction: row;
+                gap: 0.5rem;
+                overflow-x: auto;
+                padding-bottom: 0.25rem;
+                scrollbar-width: thin;
+            }
+
+            .nav-link {
+                white-space: nowrap;
+                padding: 0.3rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .section {
+                width: 100%;
+                scroll-margin-top: 8rem;
             }
 
             .section-title {
@@ -343,7 +399,15 @@
             }
 
             .card {
+                width: 100%;
                 padding: 1rem;
+            }
+
+            .rules-grid,
+            .data-types-grid,
+            .conventions-grid,
+            .features {
+                grid-template-columns: minmax(0, 1fr);
             }
         }
     </style>
@@ -351,7 +415,7 @@
 <body>
     <nav class="nav">
         <div class="nav-container">
-            <a href="#" class="nav-logo">
+            <a href="#bevezeto" class="nav-logo">
                 <i class="fab fa-python"></i> Python Alapok
             </a>
             <ul class="nav-links">
@@ -365,9 +429,7 @@
         </div>
     </nav>
 
-    <main class="container">
-        <!-- Itt következnek majd a szekciók -->
-    </main>
+    <main class="page-content">
 
     <!-- Lezáró script az oldal végén -->
     <script>
@@ -378,26 +440,6 @@
             }
         }
 
-        // Oldal betöltésekor
-        document.addEventListener('DOMContentLoaded', () => {
-            refreshPrism();
-
-            // Smooth scroll a navigációs linkekhez
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        });
     </script>
 
     <!-- Bevezető szekció -->
@@ -507,6 +549,16 @@ print('Használhatunk szimpla idézőjelet is')</code></pre>
         </div>
     </div>
 
+    <div class="card">
+        <h2>Első órai gyors emlékeztető</h2>
+        <p>Három apróság, amely sok kezdő hibát megelőz:</p>
+        <ul class="first-lesson-tips">
+            <li>A Python megkülönbözteti a kis- és nagybetűket: <code>nev</code> és <code>Nev</code> két külön név.</li>
+            <li>Tizedes számnál pontot használunk: <code>3.14</code>, nem <code>3,14</code>.</li>
+            <li>A szöveget idézőjelek közé írjuk (<code>"alma"</code>), a számot általában nem (<code>42</code>).</li>
+        </ul>
+    </div>
+
     <style>
         .features {
             display: grid;
@@ -570,9 +622,96 @@ print('Használhatunk szimpla idézőjelet is')</code></pre>
             resize: vertical;
             min-height: 100px;
         }
+
+        .first-lesson-tips {
+            margin: 1rem 0 0 1.25rem;
+        }
+
+        .first-lesson-tips li + li {
+            margin-top: 0.6rem;
+        }
     </style>
 
     <script>
+        function parsePythonLikeValue(raw, allowBareString = true) {
+            const input = String(raw).trim();
+
+            if (!input) {
+                if (allowBareString) return { value: '', type: 'str' };
+                throw new Error('Üres érték.');
+            }
+
+            const first = input[0];
+            const last = input[input.length - 1];
+            if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+                return { value: input.slice(1, -1), type: 'str' };
+            }
+
+            if (input === 'True') return { value: true, type: 'bool' };
+            if (input === 'False') return { value: false, type: 'bool' };
+
+            if (/^[+-]?\d+$/.test(input)) {
+                return { value: Number(input), type: 'int' };
+            }
+
+            if (/^[+-]?(?:(?:\d+\.\d*)|(?:\.\d+)|(?:\d+[eE][+-]?\d+)|(?:\d+\.\d*[eE][+-]?\d+)|(?:\.\d+[eE][+-]?\d+))$/.test(input)) {
+                return { value: Number(input), type: 'float' };
+            }
+
+            if (allowBareString) {
+                return { value: input, type: 'str' };
+            }
+
+            throw new Error('Az érték nem felismerhető Python-literálként.');
+        }
+
+        function formatPythonLikeValue(item) {
+            if (item.type === 'bool') return item.value ? 'True' : 'False';
+            if (item.type === 'float' && Number.isInteger(item.value)) return item.value.toFixed(1);
+            return String(item.value);
+        }
+
+        function convertPythonLikeValue(source, targetType) {
+            switch (targetType) {
+                case 'str':
+                    return { value: formatPythonLikeValue(source), type: 'str' };
+                case 'int':
+                    if (source.type === 'bool') return { value: source.value ? 1 : 0, type: 'int' };
+                    if (source.type === 'int' || source.type === 'float') {
+                        return { value: Math.trunc(source.value), type: 'int' };
+                    }
+                    if (/^[+-]?\d+$/.test(source.value.trim())) {
+                        return { value: Number(source.value), type: 'int' };
+                    }
+                    throw new Error('Nem alakítható egész számmá!');
+                case 'float':
+                    if (source.type === 'bool') return { value: source.value ? 1 : 0, type: 'float' };
+                    if (source.type === 'int' || source.type === 'float') {
+                        return { value: Number(source.value), type: 'float' };
+                    }
+                    if (/^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[eE][+-]?\d+)?$/.test(source.value.trim())) {
+                        return { value: Number(source.value), type: 'float' };
+                    }
+                    throw new Error('Nem alakítható tizedes számmá!');
+                case 'bool':
+                    if (source.type === 'str') return { value: source.value.length > 0, type: 'bool' };
+                    return { value: source.value !== 0, type: 'bool' };
+                default:
+                    throw new Error('Ismeretlen céltípus.');
+            }
+        }
+
+        function setResultLines(element, lines) {
+            element.textContent = lines.join('\n');
+            element.style.whiteSpace = 'pre-line';
+        }
+
+        function decodeSimpleEscapes(value) {
+            return String(value)
+                .replace(/\\n/g, '\n')
+                .replace(/\\t/g, '\t');
+        }
+
         function validateComments() {
             const singleComment = document.getElementById('single-comment').value;
             const multiComment = document.getElementById('multi-comment').value;
@@ -618,34 +757,27 @@ print('Használhatunk szimpla idézőjelet is')</code></pre>
         }
 
         function runPrint() {
-            const input = document.getElementById('print-input').value;
+            const input = document.getElementById('print-input').value.trim();
             const resultDiv = document.getElementById('print-result');
 
-            if (!input.trim()) {
+            if (!input) {
                 resultDiv.textContent = 'Hiba: Írj be valamit a kiíratáshoz!';
                 resultDiv.style.borderColor = 'var(--error)';
             } else {
-                try {
-                    // A bevitt szöveget automatikusan idézőjelek közé tesszük, ha nincs
-                    let processedInput = input;
-                    if (!input.startsWith('"') && !input.startsWith("'")) {
-                        processedInput = `"${input}"`;
-                    }
-                    resultDiv.textContent = eval(`String(${processedInput})`);
-                    resultDiv.style.borderColor = 'var(--success)';
-                } catch (error) {
-                    resultDiv.textContent = `Hiba: ${error.message}`;
-                    resultDiv.style.borderColor = 'var(--error)';
-                }
+                const first = input[0];
+                const last = input[input.length - 1];
+                const hasMatchingQuotes = (first === '"' && last === '"') || (first === "'" && last === "'");
+                resultDiv.textContent = hasMatchingQuotes ? input.slice(1, -1) : input;
+                resultDiv.style.borderColor = 'var(--success)';
             }
 
             resultDiv.classList.remove('show');
-            void resultDiv.offsetWidth; // Reflow
+            void resultDiv.offsetWidth;
             resultDiv.classList.add('show');
         }
 
         // Enter billentyű kezelése
-        document.getElementById('print-input').addEventListener('keypress', (e) => {
+        document.getElementById('print-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') runPrint();
         });
     </script>
@@ -845,31 +977,19 @@ KeresztNev = "János"</code></pre>
     </style>
 
     <script>
-        // Python változónév validátor
-        function isValidPythonIdentifier(name) {
-            // Python kulcsszavak listája
-            const keywords = ['False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break',
+        // Python változónév validátor (az első órához szükséges szabályokkal)
+        const PYTHON_KEYWORDS = new Set(['False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break',
                             'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for',
                             'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 'not',
-                            'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'];
+                            'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield']);
 
-            // Üres név nem lehet
-            if (!name) return false;
-
-            // Kulcsszó nem lehet
-            if (keywords.includes(name)) return false;
-
-            // Első karakter csak betű vagy alulvonás lehet
-            if (!/^[a-zA-Z_]/.test(name)) return false;
-
-            // Többi karakter csak betű, szám vagy alulvonás lehet
-            if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) return false;
-
-            return true;
+        function isValidPythonIdentifier(name) {
+            if (!name || PYTHON_KEYWORDS.has(name)) return false;
+            return /^[\p{L}_][\p{L}\p{N}_]*$/u.test(name);
         }
 
         function createVariable() {
-            const name = document.getElementById('variable-name').value;
+            const name = document.getElementById('variable-name').value.trim();
             const value = document.getElementById('variable-value').value;
             const resultDiv = document.getElementById('variable-result');
 
@@ -880,21 +1000,13 @@ KeresztNev = "János"</code></pre>
                 resultDiv.textContent = 'Hiba: Add meg a változó értékét!';
                 resultDiv.style.borderColor = 'var(--error)';
             } else {
-                try {
-                    // Megpróbáljuk kiértékelni az értéket
-                    let processedValue = value;
-                    if (!value.startsWith('"') && !value.startsWith("'") && isNaN(value)) {
-                        processedValue = `"${value}"`;
-                    }
-                    const evalValue = eval(processedValue);
-                    resultDiv.innerHTML = `Változó létrehozva!<br>
-                                        ${name} = ${evalValue}<br>
-                                        Típusa: ${typeof evalValue}`;
-                    resultDiv.style.borderColor = 'var(--success)';
-                } catch (error) {
-                    resultDiv.textContent = `Hiba: ${error.message}`;
-                    resultDiv.style.borderColor = 'var(--error)';
-                }
+                const parsed = parsePythonLikeValue(value, true);
+                setResultLines(resultDiv, [
+                    'Változó létrehozva!',
+                    `${name} = ${formatPythonLikeValue(parsed)}`,
+                    `Típusa: ${parsed.type}`
+                ]);
+                resultDiv.style.borderColor = 'var(--success)';
             }
 
             resultDiv.classList.remove('show');
@@ -916,10 +1028,12 @@ KeresztNev = "János"</code></pre>
                     'Ez nem érvényes Python változónév!';
 
                 if (!isValid) {
-                    if (/^\d/.test(name)) {
+                    if (/^\p{N}/u.test(name)) {
                         message += ' Számmal nem kezdődhet!';
-                    } else if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
-                        message += ' Csak betűket, számokat és alulvonást használhatsz!';
+                    } else if (PYTHON_KEYWORDS.has(name)) {
+                        message += ' Ez egy foglalt Python-kulcsszó!';
+                    } else {
+                        message += ' Betűket, számokat és alulvonást használhatsz; az első karakter nem lehet szám.';
                     }
                 }
 
@@ -945,12 +1059,18 @@ KeresztNev = "János"</code></pre>
 
             // Először snake_case-re alakítjuk
             let words = input
-                .replace(/([A-Z])/g, ' $1') // Nagy betűk elé szóköz
+                .replace(/([\p{Ll}\p{N}])(\p{Lu})/gu, '$1 $2') // Nagybetűs szóhatár felismerése
                 .trim()
                 .toLowerCase()
-                .replace(/[^a-z0-9]+/g, ' ') // Nem alfanumerikus karakterek cseréje szóközre
-                .split(' ')
+                .replace(/[^\p{L}\p{N}]+/gu, ' ')
+                .split(/\s+/)
                 .filter(word => word.length > 0);
+
+            if (words.length === 0) {
+                resultDiv.textContent = 'Hiba: Nem találtam átalakítható karaktert.';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
+            }
 
             let result;
             switch(style) {
@@ -978,16 +1098,16 @@ KeresztNev = "János"</code></pre>
         }
 
         // Enter billentyű kezelése
-        document.getElementById('variable-name').addEventListener('keypress', (e) => {
+        document.getElementById('variable-name').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') document.getElementById('variable-value').focus();
         });
-        document.getElementById('variable-value').addEventListener('keypress', (e) => {
+        document.getElementById('variable-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') createVariable();
         });
-        document.getElementById('variable-name-check').addEventListener('keypress', (e) => {
+        document.getElementById('variable-name-check').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') checkVariableName();
         });
-        document.getElementById('style-input').addEventListener('keypress', (e) => {
+        document.getElementById('style-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') convertStyle();
         });
     </script>
@@ -1160,7 +1280,10 @@ szov_bool = bool("")   # False (üres string False)</code></pre>
         }
 
         @media (max-width: 768px) {
-            .type-input-group,
+            .type-input-group {
+                flex-direction: column;
+            }
+
             .converter-controls {
                 grid-template-columns: 1fr;
             }
@@ -1178,32 +1301,12 @@ szov_bool = bool("")   # False (üres string False)</code></pre>
                 return;
             }
 
-            try {
-                let value, type;
-
-                // Próbáljuk meg először számként értelmezni
-                if (!isNaN(input)) {
-                    value = input.includes('.') ? parseFloat(input) : parseInt(input);
-                    type = input.includes('.') ? 'float' : 'int';
-                }
-                // Ha logikai érték
-                else if (input.toLowerCase() === 'true' || input.toLowerCase() === 'false') {
-                    value = input.toLowerCase() === 'true';
-                    type = 'bool';
-                }
-                // Egyébként string
-                else {
-                    value = input.replace(/^["'](.*)["']$/, '$1');
-                    type = 'str';
-                }
-
-                resultDiv.innerHTML = `Érték: <code>${value}</code><br>
-                                     Típus: <code>${type}</code>`;
-                resultDiv.style.borderColor = 'var(--success)';
-            } catch (error) {
-                resultDiv.textContent = `Hiba: ${error.message}`;
-                resultDiv.style.borderColor = 'var(--error)';
-            }
+            const parsed = parsePythonLikeValue(input, true);
+            setResultLines(resultDiv, [
+                `Érték: ${formatPythonLikeValue(parsed)}`,
+                `Típus: ${parsed.type}`
+            ]);
+            resultDiv.style.borderColor = 'var(--success)';
 
             resultDiv.classList.remove('show');
             void resultDiv.offsetWidth;
@@ -1222,27 +1325,13 @@ szov_bool = bool("")   # False (üres string False)</code></pre>
             }
 
             try {
-                let result;
-                switch(targetType) {
-                    case 'str':
-                        result = String(eval(input));
-                        break;
-                    case 'int':
-                        result = parseInt(eval(input));
-                        if (isNaN(result)) throw new Error('Nem alakítható egész számmá!');
-                        break;
-                    case 'float':
-                        result = parseFloat(eval(input));
-                        if (isNaN(result)) throw new Error('Nem alakítható tizedes számmá!');
-                        break;
-                    case 'bool':
-                        result = Boolean(eval(input));
-                        break;
-                }
-
-                resultDiv.innerHTML = `Eredeti érték: <code>${input}</code><br>
-                                     Konvertált érték: <code>${result}</code><br>
-                                     Új típus: <code>${typeof result}</code>`;
+                const source = parsePythonLikeValue(input, true);
+                const result = convertPythonLikeValue(source, targetType);
+                setResultLines(resultDiv, [
+                    `Eredeti érték: ${formatPythonLikeValue(source)}`,
+                    `Konvertált érték: ${formatPythonLikeValue(result)}`,
+                    `Új típus: ${result.type}`
+                ]);
                 resultDiv.style.borderColor = 'var(--success)';
             } catch (error) {
                 resultDiv.textContent = `Hiba: ${error.message}`;
@@ -1255,11 +1344,11 @@ szov_bool = bool("")   # False (üres string False)</code></pre>
         }
 
         // Enter billentyű kezelése
-        document.getElementById('type-input').addEventListener('keypress', (e) => {
+        document.getElementById('type-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') checkType();
         });
 
-        document.getElementById('convert-input').addEventListener('keypress', (e) => {
+        document.getElementById('convert-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') convertValue();
         });
     </script>
@@ -1551,6 +1640,47 @@ print("\t\tMég jobban behúzott")</code></pre>
             });
         }
 
+        function resolveSimpleFStringExpression(expression, variables) {
+            const expr = expression.trim();
+
+            if (Object.prototype.hasOwnProperty.call(variables, expr)) {
+                return formatPythonLikeValue(parsePythonLikeValue(variables[expr], true));
+            }
+
+            const operand = String.raw`(?:[\p{L}_][\p{L}\p{N}_]*|[+-]?(?:\d+(?:\.\d*)?|\.\d+))`;
+            const match = expr.match(new RegExp(`^(${operand})\\s*([+\\-*/])\\s*(${operand})$`, 'u'));
+            if (!match) {
+                throw new Error(`Érvénytelen vagy túl összetett kifejezés: ${expr}`);
+            }
+
+            const readOperand = token => {
+                if (Object.prototype.hasOwnProperty.call(variables, token)) {
+                    return parsePythonLikeValue(variables[token], false);
+                }
+                return parsePythonLikeValue(token, false);
+            };
+
+            const left = readOperand(match[1]);
+            const right = readOperand(match[3]);
+            if (!['int', 'float'].includes(left.type) || !['int', 'float'].includes(right.type)) {
+                throw new Error('Ebben a gyakorlóban a műveletekhez számértékeket használj.');
+            }
+
+            let value;
+            switch (match[2]) {
+                case '+': value = left.value + right.value; break;
+                case '-': value = left.value - right.value; break;
+                case '*': value = left.value * right.value; break;
+                case '/':
+                    if (right.value === 0) throw new Error('Nullával nem lehet osztani.');
+                    value = left.value / right.value;
+                    break;
+            }
+
+            const type = match[2] === '/' || left.type === 'float' || right.type === 'float' ? 'float' : 'int';
+            return formatPythonLikeValue({ value, type });
+        }
+
         function generateFString() {
             const template = document.getElementById('fstring-template').value;
             const pairs = document.querySelectorAll('.variable-pair');
@@ -1573,21 +1703,11 @@ print("\t\tMég jobban behúzott")</code></pre>
             });
 
             try {
-                // Template feldolgozása
-                let result = template.replace(/\{([^}]+)\}/g, (match, expr) => {
-                    // Ha a kifejezés egy változónév
-                    if (variables[expr] !== undefined) {
-                        return variables[expr];
-                    }
-                    // Ha a kifejezés egy művelet
-                    try {
-                        return eval(expr.replace(/\b\w+\b/g, match => variables[match] || match));
-                    } catch {
-                        throw new Error(`Érvénytelen kifejezés: ${expr}`);
-                    }
-                });
+                const result = template.replace(/\{([^}]+)\}/g, (match, expr) =>
+                    resolveSimpleFStringExpression(expr, variables)
+                );
 
-                resultDiv.innerHTML = `Eredmény: <code>${result}</code>`;
+                resultDiv.textContent = `Eredmény: ${result}`;
                 resultDiv.style.borderColor = 'var(--success)';
             } catch (error) {
                 resultDiv.textContent = `Hiba: ${error.message}`;
@@ -1612,11 +1732,12 @@ print("\t\tMég jobban behúzott")</code></pre>
             }
 
             const wordList = words.split(',').map(w => w.trim());
-            const separator = sep || ' ';
-            const ending = end || '\n';
+            const separator = sep ? decodeSimpleEscapes(sep) : ' ';
+            const ending = end ? decodeSimpleEscapes(end) : '\n';
 
             const result = wordList.join(separator) + ending;
-            resultDiv.innerHTML = `Eredmény:<br><code>${result}</code>`;
+            resultDiv.textContent = `Eredmény:\n${result}`;
+            resultDiv.style.whiteSpace = 'pre-wrap';
             resultDiv.style.borderColor = 'var(--success)';
 
             resultDiv.classList.remove('show');
@@ -1639,7 +1760,8 @@ print("\t\tMég jobban behúzott")</code></pre>
                 .replace(/\\n/g, '\n')
                 .replace(/\\t/g, '\t');
 
-            resultDiv.innerHTML = `Megjelenítés:<br><pre><code>${result}</code></pre>`;
+            resultDiv.textContent = `Megjelenítés:\n${result}`;
+            resultDiv.style.whiteSpace = 'pre-wrap';
             resultDiv.style.borderColor = 'var(--success)';
 
             resultDiv.classList.remove('show');
@@ -1648,15 +1770,15 @@ print("\t\tMég jobban behúzott")</code></pre>
         }
 
         // Enter billentyű kezelése
-        document.getElementById('print-text').addEventListener('keypress', (e) => {
+        document.getElementById('print-text').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') basicPrint();
         });
 
-        document.getElementById('words-input').addEventListener('keypress', (e) => {
+        document.getElementById('words-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') printWithParams();
         });
 
-        document.getElementById('special-input').addEventListener('keypress', (e) => {
+        document.getElementById('special-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 showSpecialChars();
@@ -1674,7 +1796,7 @@ print("\t\tMég jobban behúzott")</code></pre>
 
     <div class="card">
         <h2>PEP 8 - A Python kódolási stílus útmutató</h2>
-        <p>A PEP 8 a Python hivatalos stílus útmutatója. Ez határozza meg, hogyan írjunk tiszta, olvasható Python kódot.</p>
+        <p>A PEP 8 a Python hivatalos stílusútmutatója. Ajánlásokat ad arra, hogyan írjunk tiszta, olvasható és egységes Python-kódot.</p>
 
         <div class="conventions-grid">
             <div class="convention-card">
@@ -1751,7 +1873,7 @@ hosszabb magyarázathoz
             <h3>Stílus Ellenőrző</h3>
             <div class="form-group">
                 <label>Írd be a Python kódot:</label>
-                <textarea id="style-input" class="input code-input" rows="5"
+                <textarea id="style-code-input" class="input code-input" rows="5"
                     placeholder="Ide írd a Python kódot a stílus ellenőrzéshez..."></textarea>
                 <button class="btn" onclick="checkStyle()">
                     <i class="fas fa-check"></i> Stílus Ellenőrzése
@@ -1891,52 +2013,46 @@ felhasznaloEmail = "anna@email.com"</code></pre>
 
     <script>
         function checkStyle() {
-            const code = document.getElementById('style-input').value;
+            const code = document.getElementById('style-code-input').value;
             const resultDiv = document.getElementById('style-analysis');
 
             if (!code.trim()) {
-                resultDiv.innerHTML = 'Hiba: Írj be Python kódot az ellenőrzéshez!';
+                resultDiv.textContent = 'Hiba: Írj be Python kódot az ellenőrzéshez!';
                 resultDiv.style.borderColor = 'var(--error)';
                 return;
             }
 
             const issues = [];
-
-            // Indentálás ellenőrzése
             const lines = code.split('\n');
+
             lines.forEach((line, index) => {
-                if (line.startsWith(' ') && line.match(/^ +/)[0].length % 4 !== 0) {
-                    issues.push(`${index + 1}. sor: Az indentálás nem 4 szóköz többszöröse`);
+                if (line.includes('\t')) {
+                    issues.push(`${index + 1}. sor: Behúzáshoz inkább 4 szóközt használj tabulátor helyett.`);
+                }
+
+                const leadingSpaces = line.match(/^ +/);
+                if (leadingSpaces && leadingSpaces[0].length % 4 !== 0) {
+                    issues.push(`${index + 1}. sor: A behúzás legyen 4 szóköz többszöröse.`);
+                }
+
+                const codePart = line.split('#')[0];
+                const assignment = codePart.match(/^\s*([\p{L}_][\p{L}\p{N}_]*)\s*=\s*(?!=)/u);
+                if (assignment) {
+                    const varName = assignment[1];
+                    if (varName !== varName.toLowerCase()) {
+                        issues.push(`${index + 1}. sor: A „${varName}” változónévhez Pythonban a kisbetűs snake_case ajánlott.`);
+                    }
+                    if (!/^\s*[\p{L}_][\p{L}\p{N}_]*\s+=\s+/u.test(codePart)) {
+                        issues.push(`${index + 1}. sor: Az = operátor körül használj szóközt.`);
+                    }
                 }
             });
 
-            // Változónevek ellenőrzése
-            const variablePattern = /\b[a-zA-Z_][a-zA-Z0-9_]*\s*=/g;
-            let match;
-            while ((match = variablePattern.exec(code)) !== null) {
-                const varName = match[0].replace('=', '').trim();
-                if (varName !== varName.toLowerCase()) {
-                    issues.push(`Változónév "${varName}": Használj kisbetűs snake_case formátumot`);
-                }
-                if (varName.length < 2) {
-                    issues.push(`Változónév "${varName}": Túl rövid, használj beszédesebb nevet`);
-                }
-            }
-
-            // Térközök ellenőrzése
-            if (code.includes('=+') || code.includes('=-') || code.includes('=*') || code.includes('=/')) {
-                issues.push('Operátorok körül hiányoznak a szóközök');
-            }
-            if (code.includes('  ')) {
-                issues.push('Többszörös szóközök találhatók a kódban');
-            }
-
-            // Eredmény megjelenítése
             if (issues.length === 0) {
-                resultDiv.innerHTML = '<i class="fas fa-check-circle"></i> A kód megfelel a PEP 8 ajánlásoknak!';
+                resultDiv.textContent = 'Az egyszerű ellenőrzés nem talált stílusproblémát.';
                 resultDiv.style.borderColor = 'var(--success)';
             } else {
-                resultDiv.innerHTML = '<strong>Talált problémák:</strong><br>' + issues.join('<br>');
+                setResultLines(resultDiv, ['Talált javaslatok:', ...issues]);
                 resultDiv.style.borderColor = 'var(--warning)';
             }
 
@@ -2022,7 +2138,7 @@ print(25)</code></pre>
                         <h4>Próbáld ki!</h4>
                         <div class="input-group">
                             <input type="text" id="exercise-2-name" class="input" placeholder="Neved">
-                            <input type="number" id="exercise-2-age" class="input" placeholder="Életkorod">
+                            <input type="number" min="0" id="exercise-2-age" class="input" placeholder="Életkorod">
                         </div>
                         <button class="btn" onclick="runExercise2()">
                             <i class="fas fa-play"></i> Futtatás
@@ -2271,7 +2387,7 @@ print(osszeg)</code></pre>
                 resultDiv.textContent = 'Hiba: Töltsd ki mindkét mezőt!';
                 resultDiv.style.borderColor = 'var(--error)';
             } else {
-                resultDiv.innerHTML = `${name}<br>${age}`;
+                setResultLines(resultDiv, [name, age]);
                 resultDiv.style.borderColor = 'var(--success)';
             }
 
@@ -2290,7 +2406,7 @@ print(osszeg)</code></pre>
                 resultDiv.style.borderColor = 'var(--error)';
             } else {
                 const num = parseFloat(number);
-                resultDiv.innerHTML = `Érték: ${num}<br>Típus: ${Number.isInteger(num) ? 'int' : 'float'}`;
+                setResultLines(resultDiv, [`Érték: ${num}`, `Típus: ${/[.eE]/.test(number) ? 'float' : 'int'}`]);
                 resultDiv.style.borderColor = 'var(--success)';
             }
 
@@ -2329,7 +2445,7 @@ function runExercise5() {
        resultDiv.style.borderColor = 'var(--error)';
    } else {
        const sum = parseFloat(num1) + parseFloat(num2);
-       resultDiv.innerHTML = `${num1} + ${num2} = ${sum}`;
+       resultDiv.textContent = `${num1} + ${num2} = ${sum}`;
        resultDiv.style.borderColor = 'var(--success)';
    }
 
@@ -2349,7 +2465,7 @@ function runExercise6() {
         resultDiv.style.borderColor = 'var(--error)';
     } else {
         const sum = parseFloat(num1) + parseFloat(num2);
-        resultDiv.innerHTML = `A két szám összege: ${sum}`;
+        resultDiv.textContent = `A két szám összege: ${sum}`;
         resultDiv.style.borderColor = 'var(--success)';
     }
 
@@ -2370,7 +2486,7 @@ function runExercise7() {
         resultDiv.textContent = 'Hiba: Tölts ki minden mezőt!';
         resultDiv.style.borderColor = 'var(--error)';
     } else {
-        resultDiv.innerHTML = `${lastname} ${firstname}, ${age} éves<br>Kedvenc szín: ${color}`;
+        setResultLines(resultDiv, [`${lastname} ${firstname}, ${age} éves`, `Kedvenc szín: ${color}`]);
         resultDiv.style.borderColor = 'var(--success)';
     }
 
@@ -2391,7 +2507,8 @@ function runExercise8() {
         const processedText = text
             .replace(/\\n/g, '\n')
             .replace(/\\t/g, '\t');
-        resultDiv.innerHTML = `<pre>${processedText}</pre>`;
+        resultDiv.textContent = processedText;
+        resultDiv.style.whiteSpace = 'pre-wrap';
         resultDiv.style.borderColor = 'var(--success)';
     }
 
@@ -2454,9 +2571,9 @@ function runExercise10() {
     }
 
     // Stílus ellenőrzése
-    const isSnakeCase = /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/.test(snakeCase);
-    const isCamelCase = /^[a-z][a-zA-Z0-9]*$/.test(camelCase);
-    const isPascalCase = /^[A-Z][a-zA-Z0-9]*$/.test(pascalCase);
+    const isSnakeCase = /^[\p{Ll}][\p{Ll}\p{N}]*(?:_[\p{Ll}\p{N}]+)*$/u.test(snakeCase);
+    const isCamelCase = /^[\p{Ll}][\p{L}\p{N}]*$/u.test(camelCase) && !camelCase.includes('_');
+    const isPascalCase = /^[\p{Lu}][\p{L}\p{N}]*$/u.test(pascalCase) && !pascalCase.includes('_');
 
     if (!isSnakeCase || !isCamelCase || !isPascalCase) {
         let errors = [];
@@ -2467,7 +2584,7 @@ function runExercise10() {
         resultDiv.textContent = `Hiba: A következő változónevek nem megfelelő stílusúak: ${errors.join(', ')}`;
         resultDiv.style.borderColor = 'var(--error)';
     } else {
-        resultDiv.innerHTML = `${snakeCase} (${pascalCase})<br>Tulajdonos: ${camelCase}`;
+        setResultLines(resultDiv, [`${snakeCase} (${pascalCase})`, `Tulajdonos: ${camelCase}`]);
         resultDiv.style.borderColor = 'var(--success)';
     }
 
@@ -2476,68 +2593,34 @@ function runExercise10() {
     resultDiv.classList.add('show');
 }
 
-// Enter billentyű kezelésének kiegészítése a 6-10. feladatokhoz
-document.querySelectorAll('.input').forEach(input => {
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const exerciseId = input.id.split('-')[1];
-            switch(exerciseId) {
-                case '6':
-                    if (input.id.includes('num2')) runExercise6();
-                    else document.getElementById('exercise-6-num2').focus();
-                    break;
-                case '7':
-                    const inputs = ['lastname', 'firstname', 'age', 'color'];
-                    const currentIndex = inputs.findIndex(i => input.id.includes(i));
-                    if (currentIndex < inputs.length - 1) {
-                        document.getElementById(`exercise-7-${inputs[currentIndex + 1]}`).focus();
-                    } else {
-                        runExercise7();
-                    }
-                    break;
-                case '8':
-                    runExercise8();
-                    break;
-                case '9':
-                    runExercise9();
-                    break;
-                case '10':
-                    if (input.id.includes('pascal')) runExercise10();
-                    else if (input.id.includes('snake')) document.getElementById('camel-input').focus();
-                    else if (input.id.includes('camel')) document.getElementById('pascal-input').focus();
-                    break;
-            }
-        }
-    });
-});
+// Enter billentyű kezelése a gyakorló feladatokban.
+// Eseménydelegálást használunk, így a később létrejövő dinamikus mezők is működnek.
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
 
-// Enter billentyű kezelése
-document.querySelectorAll('.input').forEach(input => {
-   input.addEventListener('keypress', (e) => {
-       if (e.key === 'Enter') {
-           const exerciseId = input.id.split('-')[1]; // pl. "exercise-2-name" -> "2"
-           switch(exerciseId) {
-               case '1':
-                   checkExercise1();
-                   break;
-               case '2':
-                   if (input.id.includes('age')) runExercise2();
-                   else document.getElementById('exercise-2-age').focus();
-                   break;
-               case '3':
-                   runExercise3();
-                   break;
-               case '4':
-                   if (input.id.includes('color')) runExercise4();
-                   else document.getElementById('exercise-4-color').focus();
-                   break;
-               case '5':
-                   if (input.id.includes('num2')) runExercise5();
-                   else document.getElementById('exercise-5-num2').focus();
-                   break;
-           }
-       }
-   });
+    const target = e.target;
+    if (!(target instanceof HTMLInputElement) || !target.closest('#gyakorlatok')) return;
+
+    const id = target.id;
+    const focus = nextId => document.getElementById(nextId)?.focus();
+
+    if (id === 'exercise-2-name') focus('exercise-2-age');
+    else if (id === 'exercise-2-age') runExercise2();
+    else if (id === 'exercise-3-number') runExercise3();
+    else if (id === 'exercise-4-fruit') focus('exercise-4-color');
+    else if (id === 'exercise-4-color') runExercise4();
+    else if (id === 'exercise-5-num1') focus('exercise-5-num2');
+    else if (id === 'exercise-5-num2') runExercise5();
+    else if (id === 'exercise-6-num1') focus('exercise-6-num2');
+    else if (id === 'exercise-6-num2') runExercise6();
+    else if (id === 'exercise-7-lastname') focus('exercise-7-firstname');
+    else if (id === 'exercise-7-firstname') focus('exercise-7-age');
+    else if (id === 'exercise-7-age') focus('exercise-7-color');
+    else if (id === 'exercise-7-color') runExercise7();
+    else if (id === 'separator-input') runExercise9();
+    else if (id === 'snake-input') focus('camel-input');
+    else if (id === 'camel-input') focus('pascal-input');
+    else if (id === 'pascal-input') runExercise10();
 });
 
 // Oldal betöltésekor az első feladat kinyitása
@@ -2615,7 +2698,7 @@ print(f"Kedvenc színe: {kedvenc_szin}")</code></pre>
             <div class="form-grid">
                 <input type="text" id="exercise-7-lastname" class="input" placeholder="Vezetéknév">
                 <input type="text" id="exercise-7-firstname" class="input" placeholder="Keresztnév">
-                <input type="number" id="exercise-7-age" class="input" placeholder="Életkor">
+                <input type="number" min="0" id="exercise-7-age" class="input" placeholder="Életkor">
                 <input type="text" id="exercise-7-color" class="input" placeholder="Kedvenc szín">
             </div>
             <button class="btn" onclick="runExercise7()">
@@ -2713,6 +2796,7 @@ print("Audi", "BMW", "Mercedes", sep=", ")</code></pre>
         <p class="task-description">
             Hozz létre három változót az autód típusának, tulajdonosának és gyártási évének tárolására.
             Használd a snake_case, camelCase és PascalCase kódolási stílusokat a változók elnevezésénél.
+            <br><small>Megjegyzés: valódi Python-kódban a változókhoz a <strong>snake_case</strong> az ajánlott; itt a három stílus felismerését gyakoroljuk.</small>
         </p>
 
         <div class="code-container">
@@ -2750,6 +2834,9 @@ print(f"Tulajdonos: {autoTulajdonos}")</code></pre>
     </div>
 </div>
 
+</section>
+</main>
+
 <footer>
     <div class="container">
         <div class="row">
@@ -2759,8 +2846,8 @@ print(f"Tulajdonos: {autoTulajdonos}")</code></pre>
             </div>
             <div class="col-md-6">
                 <h3 class="h5 mb-3">Információk</h3>
-                <p class="mb-2">Utolsó frissítés: 2025.01.18.</p>
-                <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                <p class="mb-2">Utolsó frissítés: 2026.09.14.</p>
+                <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer" class="footer-link">GNU General Public License v3.0</a></p>
             </div>
         </div>
     </div>
@@ -2769,6 +2856,7 @@ print(f"Tulajdonos: {autoTulajdonos}")</code></pre>
 <style>
     /* Footer stílusok */
     footer {
+        width: 100%;
         background: var(--bg-secondary);
         padding: 2rem 0;
         margin-top: 4rem;
@@ -2838,11 +2926,12 @@ print(f"Tulajdonos: {autoTulajdonos}")</code></pre>
         // Smooth scroll a navigációs linkekhez
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
                 const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+                if (!targetId || targetId === '#') return;
 
+                const targetElement = document.querySelector(targetId);
                 if (targetElement) {
+                    e.preventDefault();
                     targetElement.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
@@ -2858,7 +2947,19 @@ print(f"Tulajdonos: {autoTulajdonos}")</code></pre>
                 const code = codeBlock.textContent;
 
                 try {
-                    await navigator.clipboard.writeText(code);
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(code);
+                    } else {
+                        const helper = document.createElement('textarea');
+                        helper.value = code;
+                        helper.setAttribute('readonly', '');
+                        helper.style.position = 'fixed';
+                        helper.style.opacity = '0';
+                        document.body.appendChild(helper);
+                        helper.select();
+                        document.execCommand('copy');
+                        helper.remove();
+                    }
 
                     // Visszajelzés
                     const originalContent = button.innerHTML;
