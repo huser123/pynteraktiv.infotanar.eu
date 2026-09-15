@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Feltételes Utasítások Interaktív Bemutatása</title>
 
+    <!-- Külső stílusok -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
+    <!-- Külső scriptek -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <style>
         :root {
@@ -126,20 +126,154 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
+        .section {
+            width: 100%;
+            scroll-margin-top: 6rem;
+        }
+
+        .section-title {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            margin: 2rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            flex: 0 0 auto;
+        }
+
+        .card,
+        .code-container,
+        pre,
+        code {
+            max-width: 100%;
+        }
+
+        pre {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        pre code {
+            white-space: pre;
+        }
+
+        .interactive-demo {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .result {
+            background: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            margin: 1rem 0 0;
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transform: translateX(-8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            overflow-wrap: anywhere;
+        }
+
+        .result:empty {
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--info);
+            border-radius: 0 6px 6px 0;
+        }
+
+        .info-box i {
+            color: var(--info);
+            margin-top: 0.25rem;
+            flex: 0 0 auto;
+        }
+
+        .nav-container,
+        .nav-links {
+            min-width: 0;
+        }
+
+        .nav-container {
+            gap: 1rem;
+        }
+
+        .nav-links {
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-link {
+            white-space: nowrap;
+        }
+
+        .input-group > .input {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
 
+            .nav {
+                padding: 0.75rem 0;
+            }
+
             .nav-container {
                 flex-direction: column;
-                gap: 1rem;
+                align-items: stretch;
+                gap: 0.65rem;
+                padding: 0 1rem;
+            }
+
+            .nav-logo {
+                font-size: 1.15rem;
             }
 
             .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 0.85rem;
+                padding-bottom: 0.35rem;
+                scrollbar-width: thin;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+            }
+
+            .section {
+                scroll-margin-top: 7.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                margin-top: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
             }
         }
     </style>
@@ -147,7 +281,7 @@
 <body>
     <nav class="nav">
         <div class="nav-container">
-            <a href="index.html" class="nav-logo">
+            <a href="#" class="nav-logo">
                 <i class="fab fa-python"></i> Python Feltételes Utasítások
             </a>
             <ul class="nav-links">
@@ -164,7 +298,8 @@
 
     <main class="container">
 
-        <section id="bevezeto" class="section">
+        <!-- Bevezető szekció -->
+<section id="bevezeto" class="section">
     <h1 class="section-title">
         <i class="fas fa-book-open"></i>
         Feltételes Utasítások a Pythonban
@@ -189,6 +324,11 @@
             </div>
         </div>
 
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <p><strong>Fontos:</strong> Pythonban a kulcsszavakat kisbetűvel írjuk: <code>if</code>, <code>elif</code>, <code>else</code>. A Python megkülönbözteti a kis- és nagybetűket.</p>
+        </div>
+
         <div class="code-container">
             <button class="copy-btn" data-code="basic-condition">
                 <i class="fas fa-copy"></i>
@@ -208,7 +348,7 @@ else:            # Különben
                 <label>Add meg az életkort:</label>
                 <div class="input-group">
                     <input type="number" id="age-input" class="input" placeholder="Pl.: 18" min="0" max="150">
-                    <button class="btn" onclick="checkAge()">
+                    <button class="btn" onclick="checkIntroAge()">
                         <i class="fas fa-play"></i> Futtatás
                     </button>
                 </div>
@@ -231,7 +371,7 @@ else:            # Különben
                 <i class="fas fa-check"></i>
                 <div class="use-case-content">
                     <h4>Adatok validálása</h4>
-                    <p>Bemeneti adatok ellenőrzése, hibakezelés.</p>
+                    <p>Bemeneti adatok ellenőrzése és az érvénytelen esetek kezelése.</p>
                 </div>
             </div>
             <div class="use-case">
@@ -399,25 +539,6 @@ else:            # Különben
     color: var(--text-secondary);
 }
 
-.result {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-top: 1rem;
-    border-left: 4px solid transparent;
-    display: none; /* Alapból rejtve */
-    background: var(--bg-primary);
-}
-
-.result.show {
-    display: block;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
     @media (max-width: 768px) {
         .input-group {
             flex-direction: column;
@@ -426,15 +547,14 @@ else:            # Különben
 </style>
 
 <script>
-    function checkAge() {
+    function checkIntroAge() {
         const ageInput = document.getElementById('age-input');
         const resultDiv = document.getElementById('age-result');
-        const age = parseInt(ageInput.value);
+        const age = Number(ageInput.value);
 
-        if (isNaN(age) || age < 0 || age > 150) {
+        if (!Number.isInteger(age) || age < 0 || age > 150) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes életkort (0-150)!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
         } else {
             let result = '';
             if (age >= 18) {
@@ -444,7 +564,6 @@ else:            # Különben
             }
             resultDiv.textContent = `Eredmény: ${result}`;
             resultDiv.style.borderColor = 'var(--success)';
-            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -453,11 +572,12 @@ else:            # Különben
     }
 
     // Enter billentyű kezelése
-    document.getElementById('age-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAge();
+    document.getElementById('age-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkIntroAge();
     });
 </script>
 
+<!-- IF szekció -->
 <section id="if" class="section">
     <h1 class="section-title">
         <i class="fas fa-code-branch"></i>
@@ -475,9 +595,8 @@ else:            # Különben
                     <i class="fas fa-copy"></i>
                 </button>
                 <pre><code class="language-python">if feltétel:     # A feltétel után kettőspont!
-    # Behúzott kódrészlet
-    # Ez csak akkor fut le, ha a feltétel igaz
-    utasítások...</code></pre>
+    # A behúzott kódrészlet csak akkor fut le, ha a feltétel igaz
+    print("A feltétel igaz")</code></pre>
             </div>
         </div>
 
@@ -641,12 +760,11 @@ else:
     function checkEvenOdd() {
         const numberInput = document.getElementById('number-input');
         const resultDiv = document.getElementById('number-result');
-        const number = parseInt(numberInput.value);
+        const number = Number(numberInput.value);
 
-        if (isNaN(number)) {
+        if (!Number.isInteger(number)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes egész számot!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
         } else {
             if (number % 2 === 0) {
                 resultDiv.textContent = 'A szám páros!';
@@ -654,7 +772,6 @@ else:
                 resultDiv.textContent = 'A szám páratlan!';
             }
             resultDiv.style.borderColor = 'var(--success)';
-            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -670,12 +787,10 @@ else:
         if (isNaN(number)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes számot!';
             resultDiv.style.borderColor = 'var(--error)';
-             resultDiv.style.color = 'var(--error)';
         } else {
             const absValue = number >= 0 ? number : -number;
             resultDiv.textContent = `A szám abszolút értéke: ${absValue}`;
             resultDiv.style.borderColor = 'var(--success)';
-             resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -684,15 +799,70 @@ else:
     }
 
     // Enter billentyű kezelése
-    document.getElementById('number-input').addEventListener('keypress', (e) => {
+    document.getElementById('number-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') checkEvenOdd();
     });
 
-    document.getElementById('abs-input').addEventListener('keypress', (e) => {
+    document.getElementById('abs-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') calculateAbsolute();
     });
 </script>
 
+
+<!-- ELIF szekció -->
+<section id="elif" class="section">
+    <h1 class="section-title">
+        <i class="fas fa-share-alt"></i>
+        ELIF ág
+    </h1>
+
+    <div class="card">
+        <h2>Az ELIF szerepe</h2>
+        <p>Az <code>elif</code> segítségével több, egymást követő esetet vizsgálhatunk. Ha az <code>if</code> feltétele hamis, a Python sorban ellenőrzi az <code>elif</code> feltételeket. Amint egy feltétel igaz, annak az ága lefut, a további ágakat pedig már nem vizsgálja.</p>
+
+        <div class="syntax-box">
+            <h3>Szintaxis</h3>
+            <div class="code-container">
+                <button class="copy-btn" data-code="elif-syntax">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <pre><code class="language-python">if első_feltétel:
+    # Ha az első feltétel igaz
+    utasítások
+elif második_feltétel:
+    # Ha az első hamis, de a második igaz
+    utasítások
+else:
+    # Ha egyik feltétel sem igaz
+    utasítások</code></pre>
+            </div>
+        </div>
+
+        <div class="code-container">
+            <button class="copy-btn" data-code="elif-example">
+                <i class="fas fa-copy"></i>
+            </button>
+            <pre><code class="language-python"># Több eset vizsgálata
+pontszam = 78
+
+if pontszam >= 90:
+    print("Kiváló")
+elif pontszam >= 75:
+    print("Jó")
+elif pontszam >= 50:
+    print("Megfelelt")
+else:
+    print("Nem felelt meg")</code></pre>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <p>A feltételek sorrendje számít. A fenti példában ezért haladunk a nagyobb pontszámtól a kisebb felé.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ELSE szekció -->
 <section id="else" class="section">
     <h1 class="section-title">
         <i class="fas fa-reply-all"></i>
@@ -710,23 +880,23 @@ else:
                     <i class="fas fa-copy"></i>
                 </button>
                 <pre><code class="language-python">if feltétel:
-    # Ez fut, ha a feltétel igaz
+    print("A feltétel igaz")
 else:
-    # Ez fut, ha a feltétel hamis
+    print("A feltétel hamis")
 
 # Több feltétel esetén:
 if első_feltétel:
-    # Ez fut, ha az első feltétel igaz
+    print("Az első feltétel igaz")
 elif második_feltétel:
-    # Ez fut, ha a második feltétel igaz
+    print("A második feltétel igaz")
 else:
-    # Ez fut, ha egyik feltétel sem igaz</code></pre>
+    print("Egyik feltétel sem igaz")</code></pre>
             </div>
         </div>
 
         <div class="info-box">
             <i class="fas fa-lightbulb"></i>
-            <p>Az ELSE ágat nem kötelező használni. Ha nincs szükség alapértelmezett esetre, elhagyható. Az ELSE mindig az utolsó ág, nem követheti több feltétel!</p>
+            <p>Az ELSE ágat nem kötelező használni. Ha nincs szükség alapértelmezett esetre, elhagyható. Az ELSE mindig az utolsó ág, és nem tartozik hozzá feltétel!</p>
         </div>
     </div>
 
@@ -808,22 +978,6 @@ else:
 </section>
 
 <style>
-    .info-box {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: rgba(241, 196, 15, 0.1);
-        border-left: 4px solid var(--python-else);
-        border-radius: 0 5px 5px 0;
-        margin: 1rem 0;
-    }
-    
-    .info-box i {
-        color: var(--python-else);
-        font-size: 1.5rem;
-    }
-
     .flowchart {
         margin: 2rem 0;
         padding: 1rem;
@@ -924,11 +1078,9 @@ else:
         if (username.length >= 3) {
             resultDiv.textContent = `Üdvözöllek, ${username}!`;
             resultDiv.style.borderColor = 'var(--success)';
-            resultDiv.style.color = 'var(--success)';
         } else {
             resultDiv.textContent = 'Hiba: A felhasználónév túl rövid! (minimum 3 karakter)';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
         }
 
         resultDiv.classList.remove('show');
@@ -937,11 +1089,12 @@ else:
     }
 
     // Enter billentyű kezelése
-    document.getElementById('username-input').addEventListener('keypress', (e) => {
+    document.getElementById('username-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') checkUsername();
     });
 </script>
 
+<!-- Összetett feltételek szekció -->
 <section id="osszetett" class="section">
     <h1 class="section-title">
         <i class="fas fa-project-diagram"></i>
@@ -1059,8 +1212,8 @@ else:
                     <div class="condition">b + c > a</div>
                 </div>
             </div>
-            <div class="triangle-animation" id="triangle-animation" style="min-height: 200px; display: flex; justify-content: center; align-items: center;">
-                <p style="color: var(--text-secondary); font-style: italic;">Adj meg oldalhosszakat a rajzoláshoz!</p>
+            <div class="triangle-animation" id="triangle-animation">
+                <!-- Triangle will be drawn here -->
             </div>
         </div>
     </div>
@@ -1165,15 +1318,11 @@ else:
         const b = parseFloat(document.getElementById('side-b').value);
         const c = parseFloat(document.getElementById('side-c').value);
         const resultDiv = document.getElementById('triangle-result');
-        const animDiv = document.getElementById('triangle-animation');
 
         // Bemenet ellenőrzése
         if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg érvényes pozitív számokat!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
-            animDiv.innerHTML = '<p style="color: var(--error);">Érvénytelen bemenet</p>';
-            resultDiv.classList.add('show');
             return;
         }
 
@@ -1184,20 +1333,14 @@ else:
             const terulet = Math.sqrt(s * (s - a) * (s - b) * (s - c));
 
             resultDiv.innerHTML = `
-                <div style="margin-bottom: 0.5rem; font-weight: bold; color: var(--success);">A háromszög szerkeszthető!</div>
+                <div>A háromszög szerkeszthető!</div>
                 <div>Kerület: ${kerulet}</div>
                 <div>Terület: ${terulet.toFixed(2)}</div>
             `;
             resultDiv.style.borderColor = 'var(--success)';
-            
-            // Háromszög kirajzolása SVG-ben
-            drawTriangleSVG(a, b, c, animDiv);
-
         } else {
-            resultDiv.textContent = 'A háromszög NEM szerkeszthető! (Az oldalak hossza nem felel meg a háromszög-egyenlőtlenségnek)';
+            resultDiv.textContent = 'A háromszög NEM szerkeszthető!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
-            animDiv.innerHTML = '<p style="color: var(--error);">Nem szerkeszthető háromszög</p>';
         }
 
         resultDiv.classList.remove('show');
@@ -1205,51 +1348,9 @@ else:
         resultDiv.classList.add('show');
     }
 
-    function drawTriangleSVG(a, b, c, container) {
-        // Koordináták kiszámítása koszinusz tétellel
-        // A pont: (0, 0), B pont: (c, 0), C pont: (x, y)
-        // b^2 = x^2 + y^2
-        // a^2 = (x-c)^2 + y^2
-        
-        // Skálázás, hogy beférjen a konténerbe (pl 200px magas, 300px széles)
-        const scale = 150 / Math.max(a, b, c);
-        
-        const A = { x: 0, y: 0 };
-        const B = { x: c * scale, y: 0 };
-        
-        // Koszinusz tételből C pont koordinátái
-        const cosAlpha = (b*b + c*c - a*a) / (2 * b * c);
-        const x = b * cosAlpha * scale;
-        const y = b * Math.sqrt(1 - cosAlpha * cosAlpha) * scale;
-        const C = { x: x, y: y };
-
-        // Eltolás, hogy középen legyen és ne lógjon ki (SVG koordináta rendszer: y lefelé nő)
-        // Margin hozzáadása
-        const offsetX = 20;
-        const offsetY = 180; // Flip Y miatt lentről indulunk
-
-        const svgContent = `
-            <svg width="100%" height="200" viewBox="-20 -20 ${B.x + 50} 220" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="var(--text-secondary)" />
-                    </marker>
-                </defs>
-                
-                <polygon points="${A.x + offsetX},${offsetY - A.y} ${B.x + offsetX},${offsetY - B.y} ${C.x + offsetX},${offsetY - C.y}" 
-                        fill="rgba(46, 204, 113, 0.2)" stroke="var(--accent-primary)" stroke-width="2" />
-                
-                <text x="${(A.x + B.x)/2 + offsetX}" y="${offsetY + 20}" fill="var(--text-primary)" text-anchor="middle">c=${c}</text>
-                <text x="${(A.x + C.x)/2 + offsetX - 15}" y="${(offsetY - A.y + offsetY - C.y)/2}" fill="var(--text-primary)" text-anchor="middle">b=${b}</text>
-                <text x="${(B.x + C.x)/2 + offsetX + 15}" y="${(offsetY - B.y + offsetY - C.y)/2}" fill="var(--text-primary)" text-anchor="middle">a=${a}</text>
-            </svg>
-        `;
-        container.innerHTML = svgContent;
-    }
-
     // Enter billentyű kezelése
     document.querySelectorAll('#side-a, #side-b, #side-c').forEach(input => {
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const nextId = {
                     'side-a': 'side-b',
@@ -1267,6 +1368,7 @@ else:
     });
 </script>
 
+<!-- Gyakorló feladatok szekció -->
 <section id="gyakorlo" class="section">
     <h1 class="section-title">
         <i class="fas fa-tasks"></i>
@@ -1277,6 +1379,7 @@ else:
         <h2>Feladatok megoldása</h2>
         <p>Az alábbi feladatok segítenek a feltételes utasítások gyakorlásában. Minden feladatnál megtalálod a leírást, a példakódot, és ki is próbálhatod őket.</p>
 
+        <!-- 1. Feladat -->
         <div class="exercise">
             <div class="exercise-header" onclick="toggleExercise(1)">
                 <h3>1. Feladat: Egyszerű számbekérés és összehasonlítás</h3>
@@ -1326,6 +1429,7 @@ else:
             </div>
         </div>
 
+        <!-- 2. Feladat -->
         <div class="exercise">
             <div class="exercise-header" onclick="toggleExercise(2)">
                 <h3>2. Feladat: Kisebb vagy nagyobb?</h3>
@@ -1389,6 +1493,7 @@ print(f"A legnagyobb szám: {legnagyobb}")</code></pre>
             </div>
         </div>
 
+        <!-- 3. Feladat -->
         <div class="exercise">
             <div class="exercise-header" onclick="toggleExercise(3)">
                 <h3>3. Feladat: Belépési feltételek ellenőrzése</h3>
@@ -1420,7 +1525,7 @@ else:
                             <label>Életkor:</label>
                             <input type="number" id="ex3-age" class="input" placeholder="Pl.: 20" min="0" max="150">
                         </div>
-                        <button class="btn" onclick="checkAgeTask()">
+                        <button class="btn" onclick="checkEntryAge()">
                             <i class="fas fa-door-open"></i> Ellenőrzés
                         </button>
                     </div>
@@ -1428,7 +1533,6 @@ else:
                 </div>
             </div>
         </div>
-</div>
 
 <style>
     .exercise {
@@ -1532,7 +1636,6 @@ else:
         if (isNaN(first) || isNaN(second)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg érvényes számokat!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
         } else {
             let result;
             if (first < second) {
@@ -1544,7 +1647,6 @@ else:
             }
             resultDiv.textContent = result;
             resultDiv.style.borderColor = 'var(--success)';
-            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -1561,8 +1663,6 @@ else:
         if (isNaN(a) || isNaN(b) || isNaN(c)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg minden számot!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
-            resultDiv.classList.add('show');
             return;
         }
 
@@ -1574,30 +1674,26 @@ else:
             <div>A legnagyobb szám: ${max}</div>
         `;
         resultDiv.style.borderColor = 'var(--success)';
-        resultDiv.style.color = 'var(--text-primary)'; // Reset color
 
         resultDiv.classList.remove('show');
         void resultDiv.offsetWidth;
         resultDiv.classList.add('show');
     }
 
-    function checkAgeTask() {
-        const age = parseInt(document.getElementById('ex3-age').value);
+    function checkEntryAge() {
+        const age = Number(document.getElementById('ex3-age').value);
         const resultDiv = document.getElementById('ex3-result');
 
-        if (isNaN(age) || age < 0 || age > 150) {
+        if (!Number.isInteger(age) || age < 0 || age > 150) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes életkort!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
         } else {
             if (age >= 18) {
                 resultDiv.textContent = 'Belépés engedélyezve! 🎉';
                 resultDiv.style.borderColor = 'var(--success)';
-                resultDiv.style.color = 'var(--success)';
             } else {
                 resultDiv.textContent = 'Sajnálom, nem léphetsz be! 🚫';
                 resultDiv.style.borderColor = 'var(--error)';
-                resultDiv.style.color = 'var(--error)';
             }
         }
 
@@ -1608,7 +1704,7 @@ else:
 
     // Enter billentyű kezelése
     document.querySelectorAll('#ex1-first, #ex1-second').forEach(input => {
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (input.id === 'ex1-first') {
                     document.getElementById('ex1-second').focus();
@@ -1620,7 +1716,7 @@ else:
     });
 
     document.querySelectorAll('#ex2-first, #ex2-second, #ex2-third').forEach(input => {
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const nextInputs = {
                     'ex2-first': 'ex2-second',
@@ -1637,11 +1733,12 @@ else:
         });
     });
 
-    document.getElementById('ex3-age').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAgeTask();
+    document.getElementById('ex3-age').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkEntryAge();
     });
 </script>
 
+<!-- 4. Feladat -->
 <div class="exercise">
     <div class="exercise-header" onclick="toggleExercise(4)">
         <h3>4. Feladat: Oszthatóság vizsgálata</h3>
@@ -1686,6 +1783,7 @@ else:
     </div>
 </div>
 
+<!-- 5. Feladat -->
 <div class="exercise">
     <div class="exercise-header" onclick="toggleExercise(5)">
         <h3>5. Feladat: Évszak meghatározása</h3>
@@ -1747,6 +1845,7 @@ else:
     </div>
 </div>
 
+<!-- 6. Feladat -->
 <div class="exercise">
     <div class="exercise-header" onclick="toggleExercise(6)">
         <h3>6. Feladat: Egyszerű számológép</h3>
@@ -1768,14 +1867,14 @@ művelet = input("Művelet (+, -, *, /): ")
 
 # Művelet végrehajtása
 if művelet == '+':
-    eredmeny = szam1 + szam2
+    print(f"Eredmény: {szam1 + szam2}")
 elif művelet == '-':
-    eredmeny = szam1 - szam2
+    print(f"Eredmény: {szam1 - szam2}")
 elif művelet == '*':
-    eredmeny = szam1 * szam2
+    print(f"Eredmény: {szam1 * szam2}")
 elif művelet == '/':
     if szam2 != 0:
-        eredmeny = szam1 / szam2
+        print(f"Eredmény: {szam1 / szam2}")
     else:
         print("Nullával nem lehet osztani!")
 else:
@@ -1803,6 +1902,8 @@ else:
         </div>
     </div>
 </div>
+    </div>
+</section>
 
 <style>
     /* Évszak szekcióhoz tartozó stílusok */
@@ -1859,14 +1960,12 @@ else:
 <script>
     // 4. Feladat - Oszthatóság vizsgálata
     function checkDivisibility() {
-        const number = parseInt(document.getElementById('ex4-number').value);
+        const number = Number(document.getElementById('ex4-number').value);
         const resultDiv = document.getElementById('ex4-result');
 
-        if (isNaN(number)) {
+        if (!Number.isInteger(number)) {
             resultDiv.textContent = 'Hiba: Kérlek adj meg egy érvényes egész számot!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
-            resultDiv.classList.add('show');
             return;
         }
 
@@ -1883,7 +1982,6 @@ else:
 
         resultDiv.textContent = message;
         resultDiv.style.borderColor = 'var(--success)';
-        resultDiv.style.color = 'var(--success)';
 
         resultDiv.classList.remove('show');
         void resultDiv.offsetWidth;
@@ -1899,9 +1997,7 @@ else:
         if (!month) {
             resultDiv.textContent = 'Kérlek válassz egy hónapot!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
             visDiv.innerHTML = '';
-            resultDiv.classList.add('show');
             return;
         }
 
@@ -1929,7 +2025,6 @@ else:
 
         resultDiv.textContent = `A ${month}. hónap évszaka: ${season}`;
         resultDiv.style.borderColor = 'var(--success)';
-        resultDiv.style.color = 'var(--text-primary)'; // Reset color
 
         visDiv.style.background = `linear-gradient(to right, transparent, ${color}22, transparent)`;
         visDiv.innerHTML = icons.split(' ').map((icon, i) =>
@@ -1956,8 +2051,6 @@ else:
         if (isNaN(num1) || isNaN(num2)) {
             resultDiv.textContent = 'Hiba: Kérlek add meg mindkét számot!';
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
-            resultDiv.classList.add('show');
             return;
         }
 
@@ -1987,11 +2080,9 @@ else:
         if (error) {
             resultDiv.textContent = result;
             resultDiv.style.borderColor = 'var(--error)';
-            resultDiv.style.color = 'var(--error)';
         } else {
             resultDiv.textContent = `${num1} ${operation} ${num2} = ${result}`;
             resultDiv.style.borderColor = 'var(--success)';
-            resultDiv.style.color = 'var(--success)';
         }
 
         resultDiv.classList.remove('show');
@@ -2000,14 +2091,14 @@ else:
     }
 
     // Enter billentyű kezelése a feladatokhoz
-    document.getElementById('ex4-number').addEventListener('keypress', (e) => {
+    document.getElementById('ex4-number').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') checkDivisibility();
     });
 
     document.getElementById('ex5-month').addEventListener('change', checkSeason);
 
     document.querySelectorAll('#ex6-num1, #ex6-num2').forEach(input => {
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (input.id === 'ex6-num1') {
                     document.getElementById('ex6-num2').focus();
@@ -2019,6 +2110,7 @@ else:
     });
 </script>
 
+<!-- Kombinált példák szekció -->
 <section id="kombinalt" class="section">
     <h1 class="section-title">
         <i class="fas fa-puzzle-piece"></i>
@@ -2053,7 +2145,9 @@ if bevitt_pin == PIN:
 
     if valasztas == "1":
         osszeg = int(input("Kérem adja meg az összeget: "))
-        if osszeg <= egyenleg:
+        if osszeg <= 0:
+            print("Az összegnek pozitívnak kell lennie!")
+        elif osszeg <= egyenleg:
             egyenleg -= osszeg
             print(f"Sikeres felvétel! Új egyenleg: {egyenleg} Ft")
         else:
@@ -2144,6 +2238,8 @@ else:
         font-family: 'Fira Code', monospace;
         text-align: center;
         line-height: 1.6;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
     }
 
     .atm-keypad {
@@ -2163,10 +2259,6 @@ else:
         letter-spacing: 0.5rem;
         font-size: 1.5rem;
         font-family: 'Fira Code', monospace;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 5px;
     }
 
     .numpad {
@@ -2278,7 +2370,7 @@ else:
 
     function updateScreen(message) {
         const screen = document.getElementById('atm-screen-content');
-        screen.innerHTML = message.replace(/\n/g, '<br>');
+        screen.textContent = message;
     }
 
     function addPin(digit) {
@@ -2323,10 +2415,6 @@ else:
                 break;
             case 2:
                 updateScreen(`Az Ön egyenlege: ${balance.toLocaleString()} Ft`);
-                // Automatikus visszatérés a menübe kis idő múlva
-                setTimeout(() => {
-                     showMenu();
-                }, 3000);
                 break;
             case 3:
                 updateScreen('Köszönjük, hogy szolgáltatásunkat választotta!\n\nViszontlátásra!');
@@ -2342,18 +2430,16 @@ else:
     }
 
     function withdraw(amount) {
-        if (amount <= balance) {
+        if (amount > 0 && amount <= balance) {
             balance -= amount;
-            // Szimulált feldolgozás
-            updateScreen('Feldolgozás...');
-            setTimeout(() => {
-                 updateScreen(`Sikeres készpénzfelvétel!\n\nFelvett összeg: ${amount.toLocaleString()} Ft\nÚj egyenleg: ${balance.toLocaleString()} Ft`);
-                 setTimeout(showMenu, 3000);
-            }, 1000);
+            updateScreen(`Sikeres készpénzfelvétel!\n\nFelvett összeg: ${amount.toLocaleString()} Ft\nÚj egyenleg: ${balance.toLocaleString()} Ft`);
+        } else if (amount <= 0) {
+            updateScreen('Az összegnek pozitívnak kell lennie!');
         } else {
             updateScreen('Nincs elegendő fedezet a tranzakcióhoz!');
-            setTimeout(showMenu, 2000);
         }
+
+        setTimeout(showMenu, 3000);
     }
 </script>
     </main>
@@ -2367,8 +2453,8 @@ else:
                 </div>
                 <div class="col-md-6">
                     <h3 class="h5 mb-3">Információk</h3>
-                    <p class="mb-2">Utolsó frissítés: 2025.01.19.</p>
-                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                    <p class="mb-2">Utolsó frissítés: 2026.09.15.</p>
+                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer" class="footer-link">GNU General Public License v3.0</a></p>
                 </div>
             </div>
         </div>
@@ -2435,6 +2521,68 @@ else:
             }
         }
     </style>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.setAttribute('type', 'button');
+                button.setAttribute('title', 'Kód másolása');
+                button.setAttribute('aria-label', 'Kód másolása');
+
+                button.addEventListener('click', async () => {
+                    const code = button.closest('.code-container')?.querySelector('code');
+                    if (!code) return;
+
+                    const originalHtml = button.innerHTML;
+                    const copiedText = code.textContent;
+                    let copied = false;
+
+                    try {
+                        if (navigator.clipboard && window.isSecureContext) {
+                            await navigator.clipboard.writeText(copiedText);
+                            copied = true;
+                        }
+                    } catch (_) {
+                        copied = false;
+                    }
+
+                    if (!copied) {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = copiedText;
+                        textarea.setAttribute('readonly', '');
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        copied = document.execCommand('copy');
+                        textarea.remove();
+                    }
+
+                    button.innerHTML = copied
+                        ? '<i class="fas fa-check"></i>'
+                        : '<i class="fas fa-times"></i>';
+                    button.setAttribute('aria-label', copied ? 'Kód kimásolva' : 'A másolás nem sikerült');
+
+                    setTimeout(() => {
+                        button.innerHTML = originalHtml;
+                        button.setAttribute('aria-label', 'Kód másolása');
+                    }, 1200);
+                });
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    link.blur();
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
