@@ -8,15 +8,12 @@
     <!-- Külső stílusok -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.css" rel="stylesheet">
 
     <!-- Külső scriptek -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
 
     <style>
@@ -166,6 +163,41 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
+        /* Stabil elrendezés és túlcsordulás-kezelés */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .section {
+            width: 100%;
+            min-width: 0;
+            scroll-margin-top: 6rem;
+        }
+
+        .card, .structure, .operation-card, .use-case-card {
+            min-width: 0;
+        }
+
+        .code-container {
+            max-width: 100%;
+        }
+
+        .code-container pre {
+            margin: 0;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .code-container code {
+            white-space: pre;
+        }
+
+        .result, .structure-content, .stats-item {
+            overflow-wrap: anywhere;
+        }
+
+
         /* Eredmény megjelenítés */
         .result {
             background: var(--highlight);
@@ -256,8 +288,11 @@
 
     .nav-links {
         display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
         gap: 1rem;
         list-style: none;
+        min-width: 0;
     }
 
     .nav-link {
@@ -282,18 +317,37 @@
     @media (max-width: 768px) {
         .nav-container {
             flex-direction: column;
-            gap: 1rem;
+            align-items: stretch;
+            gap: 0.75rem;
+            padding: 0 1rem;
+        }
+
+        .nav-logo {
+            justify-content: center;
         }
 
         .nav-links {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            gap: 0.75rem;
             width: 100%;
+            overflow-x: auto;
+            padding-bottom: 0.35rem;
+            scrollbar-width: thin;
+        }
+
+        .nav-links li {
+            flex: 0 0 auto;
         }
 
         .nav-link {
             justify-content: center;
+            white-space: nowrap;
+        }
+
+        .section {
+            scroll-margin-top: 8.5rem;
         }
     }
 </style>
@@ -308,7 +362,7 @@
 
     <div class="card">
         <h2>Miért fontosak az adatszerkezetek?</h2>
-        <p>Az adatszerkezetek a programozás alapvető építőkövei, amelyek segítenek az adatok hatékony tárolásában és kezelésében. A Python három alapvető beépített adatszerkezetet kínál: a listát, a tuple-t és a halmazt.</p>
+        <p>Az adatszerkezetek a programozás alapvető építőkövei, amelyek segítenek az adatok hatékony tárolásában és kezelésében. Ebben az anyagban három gyakran használt beépített adatszerkezetet vizsgálunk: a listát, a tuple-t és a halmazt. A Python más beépített adatszerkezeteket is kínál, például a szótárat (dict).</p>
 
         <div class="data-structures">
             <div class="structure">
@@ -326,7 +380,7 @@ szamok[0] = 10      # [10, 2, 3, 4]</code></pre>
             <div class="structure">
                 <i class="fas fa-layer-group" style="color: var(--tuple-color);"></i>
                 <h3>Tuple</h3>
-                <p>Nem módosítható, rendezett adatszerkezet. Tökéletes választás, amikor az adatok nem változhatnak.</p>
+                <p>Nem módosítható, rendezett adatszerkezet. Jó választás, amikor az adatoknak változatlanul kell maradniuk.</p>
                 <div class="code-container">
 
                     <pre><code class="language-python">koordinatak = (10, 20)
@@ -342,7 +396,7 @@ x, y = koordinatak  # Kicsomagolás
                 <div class="code-container">
 
                     <pre><code class="language-python">szinek = {"piros", "kék", "piros"}
-print(szinek)  # {"piros", "kék"}
+print(szinek)  # A két egyedi elem jelenik meg; a sorrend nem garantált
 szinek.add("zöld")</code></pre>
                 </div>
             </div>
@@ -423,6 +477,38 @@ szinek.add("zöld")</code></pre>
 </style>
 
 <script>
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function parseSimplePythonValue(raw) {
+        const value = String(raw).trim();
+        if ((value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))) {
+            return value.slice(1, -1);
+        }
+        if (value === 'True') return true;
+        if (value === 'False') return false;
+        if (value === 'None') return null;
+        if (/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(value)) {
+            return Number(value);
+        }
+        return value;
+    }
+
+    function formatPythonValue(value) {
+        if (value === null) return 'None';
+        if (value === true) return 'True';
+        if (value === false) return 'False';
+        if (typeof value === 'string') return JSON.stringify(value);
+        return String(value);
+    }
+
     function createStructure() {
         const type = document.getElementById('structure-type').value;
         const input = document.getElementById('element-input').value;
@@ -435,27 +521,28 @@ szinek.add("zöld")</code></pre>
         }
 
         try {
-            const elements = input.split(',').map(e => e.trim());
+            const elements = input.split(',').map(parseSimplePythonValue);
             let result = '';
             let structureStr = '';
 
             switch(type) {
                 case 'list':
-                    structureStr = `[${elements.join(', ')}]`;
+                    structureStr = `[${elements.map(formatPythonValue).join(', ')}]`;
                     result = `Lista létrehozva: ${structureStr}\nMódosítható: Igen\nRendezett: Igen`;
                     break;
                 case 'tuple':
-                    structureStr = `(${elements.join(', ')})`;
+                    structureStr = `(${elements.map(formatPythonValue).join(', ')})`;
                     result = `Tuple létrehozva: ${structureStr}\nMódosítható: Nem\nRendezett: Igen`;
                     break;
                 case 'set':
                     const uniqueElements = [...new Set(elements)];
-                    structureStr = `{${uniqueElements.join(', ')}}`;
+                    structureStr = `{${uniqueElements.map(formatPythonValue).join(', ')}}`;
                     result = `Halmaz létrehozva: ${structureStr}\nMódosítható: Igen\nRendezett: Nem\nEgyedi elemek száma: ${uniqueElements.length}`;
                     break;
             }
 
-            resultDiv.innerHTML = `<pre>${result}</pre>`;
+            resultDiv.textContent = result;
+            resultDiv.style.whiteSpace = 'pre-wrap';
             resultDiv.style.borderColor = 'var(--success)';
         } catch (error) {
             resultDiv.textContent = `Hiba: ${error.message}`;
@@ -468,31 +555,42 @@ szinek.add("zöld")</code></pre>
     }
 
     // Enter billentyű kezelése
-    document.getElementById('element-input').addEventListener('keypress', (e) => {
+    document.getElementById('element-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') createStructure();
     });
 
-    // Másolás gomb funkcionalitás
-    document.querySelectorAll('.copy-btn').forEach(button => {
-        button.addEventListener('click', async () => {
-            const codeBlock = button.nextElementSibling;
-            const code = codeBlock.textContent;
+    // Másolás gombok: eseménydelegálással a később következő kódblokkokon is működik
+    document.addEventListener('click', async (event) => {
+        const button = event.target.closest('.copy-btn');
+        if (!button) return;
 
-            try {
-                await navigator.clipboard.writeText(code);
+        const codeBlock = button.closest('.code-container')?.querySelector('pre code');
+        if (!codeBlock) return;
 
-                const originalContent = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i>';
-                button.style.color = 'var(--success)';
-
-                setTimeout(() => {
-                    button.innerHTML = originalContent;
-                    button.style.color = '';
-                }, 2000);
-            } catch (err) {
-                console.error('Sikertelen másolás:', err);
+        try {
+            const codeText = codeBlock.textContent;
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(codeText);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = codeText;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                textarea.remove();
             }
-        });
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.style.color = 'var(--success)';
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.style.color = '';
+            }, 1400);
+        } catch (err) {
+            button.title = 'A másolás nem sikerült';
+        }
     });
 </script>
 
@@ -644,6 +742,7 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
         </div>
     </div>
 </div>
+    </div>
 
 <style>
     .operations-grid {
@@ -680,7 +779,7 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
     }
 </style>
 
-<!-- javítani! -->
+
 
 <script>
     // Aktuális lista állapotának tárolása
@@ -694,10 +793,12 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
         currentList.forEach((item, index) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'list-item';
-            itemDiv.innerHTML = `
-                <span class="list-index">${index}</span>
-                ${item}
-            `;
+            const indexSpan = document.createElement('span');
+            indexSpan.className = 'list-index';
+            indexSpan.textContent = index;
+            const valueSpan = document.createElement('span');
+            valueSpan.textContent = item;
+            itemDiv.append(indexSpan, valueSpan);
             visualDiv.appendChild(itemDiv);
         });
 
@@ -718,9 +819,10 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
                 throw new Error('Az index kívül esik a lista határain!');
             }
 
-            const element = currentList[index];
+            const actualIndex = index < 0 ? currentList.length + index : index;
+            const element = currentList[actualIndex];
             resultDiv.innerHTML = `
-                <div>Elem a(z) ${index}. indexen: ${element}</div>
+                <div>Elem a(z) ${index}. indexen: ${escapeHtml(element)}</div>
                 ${updateListVisualization().outerHTML}
             `;
             resultDiv.style.borderColor = 'var(--success)';
@@ -794,10 +896,11 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
                 case 'del':
                     const delIndex = parseInt(value);
                     if (isNaN(delIndex)) throw new Error('Érvényes indexet adj meg!');
-                    if (delIndex < 0 || delIndex >= currentList.length) {
+                    if (delIndex < -currentList.length || delIndex >= currentList.length) {
                         throw new Error('Az index kívül esik a lista határain!');
                     }
-                    currentList.splice(delIndex, 1);
+                    const actualDelIndex = delIndex < 0 ? currentList.length + delIndex : delIndex;
+                    currentList.splice(actualDelIndex, 1);
                     break;
                 case 'pop':
                     if (currentList.length === 0) throw new Error('A lista üres!');
@@ -835,14 +938,18 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
                         ${updateListVisualization().outerHTML}
                     `;
                     break;
-                case 'sort':
-                    currentList.sort((a, b) => {
-                        if (typeof a === 'string' && typeof b === 'string') {
-                            return a.localeCompare(b);
-                        }
-                        return a - b;
-                    });
+                case 'sort': {
+                    const types = new Set(currentList.map(item => typeof item));
+                    if (types.size > 1) {
+                        throw new Error('Pythonban a számok és szövegek vegyes listája nem rendezhető közvetlenül.');
+                    }
+                    if (types.has('string')) {
+                        currentList.sort((a, b) => a.localeCompare(b));
+                    } else {
+                        currentList.sort((a, b) => a - b);
+                    }
                     break;
+                }
                 case 'reverse':
                     currentList.reverse();
                     break;
@@ -894,23 +1001,23 @@ print(lista.count(1)) # 1-esek száma: 2</code></pre>
         });
 
         // Enter billentyű kezelése
-        document.getElementById('list-index').addEventListener('keypress', (e) => {
+        document.getElementById('list-index').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') accessListElement();
         });
 
-        document.getElementById('add-value').addEventListener('keypress', (e) => {
+        document.getElementById('add-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') addToList();
         });
 
-        document.getElementById('add-index').addEventListener('keypress', (e) => {
+        document.getElementById('add-index').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') addToList();
         });
 
-        document.getElementById('mod-value').addEventListener('keypress', (e) => {
+        document.getElementById('mod-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') modifyList();
         });
 
-        document.getElementById('count-value').addEventListener('keypress', (e) => {
+        document.getElementById('count-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') performListOperation();
         });
     });
@@ -1174,7 +1281,6 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
             margin-bottom: 1rem;
         }
     }
-    }
 </style>
 
 <script>
@@ -1189,10 +1295,12 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
         tuple.forEach((item, index) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'tuple-item';
-            itemDiv.innerHTML = `
-                <span class="tuple-index">${index}</span>
-                ${item}
-            `;
+            const indexSpan = document.createElement('span');
+            indexSpan.className = 'tuple-index';
+            indexSpan.textContent = index;
+            const valueSpan = document.createElement('span');
+            valueSpan.textContent = item;
+            itemDiv.append(indexSpan, valueSpan);
             visualDiv.appendChild(itemDiv);
         });
 
@@ -1213,9 +1321,10 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
                 throw new Error('Az index kívül esik a tuple határain!');
             }
 
-            const element = currentTuple[index];
+            const actualIndex = index < 0 ? currentTuple.length + index : index;
+            const element = currentTuple[actualIndex];
             resultDiv.innerHTML = `
-                <div>Elem a(z) ${index}. indexen: ${element}</div>
+                <div>Elem a(z) ${index}. indexen: ${escapeHtml(element)}</div>
                 ${updateTupleVisualization(currentTuple).outerHTML}
             `;
             resultDiv.style.borderColor = 'var(--success)';
@@ -1248,8 +1357,8 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
                 const [x, y] = items;
                 resultDiv.innerHTML = `
                     <div>Kicsomagolt értékek:</div>
-                    <div>x = ${x}</div>
-                    <div>y = ${y}</div>
+                    <div>x = ${escapeHtml(x)}</div>
+                    <div>y = ${escapeHtml(y)}</div>
                 `;
             } else {
                 if (items.length < 3) {
@@ -1259,9 +1368,9 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
                 const last = middle.pop();
                 resultDiv.innerHTML = `
                     <div>Kicsomagolt értékek:</div>
-                    <div>Első: ${first}</div>
-                    <div>Középső elemek: ${middle.join(', ')}</div>
-                    <div>Utolsó: ${last}</div>
+                    <div>Első: ${escapeHtml(first)}</div>
+                    <div>Középső elemek: ${middle.map(escapeHtml).join(', ')}</div>
+                    <div>Utolsó: ${escapeHtml(last)}</div>
                 `;
             }
             resultDiv.style.borderColor = 'var(--success)';
@@ -1291,7 +1400,7 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
                     break;
                 case 'repeat':
                     const count = parseInt(value);
-                    if (isNaN(count) || count < 0) throw new Error('Adj meg egy pozitív számot!');
+                    if (isNaN(count) || count < 0) throw new Error('Adj meg egy 0 vagy annál nagyobb egész számot!');
                     result = Array(count).fill(currentTuple).flat();
                     break;
                 case 'length':
@@ -1334,39 +1443,41 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
             switch(type) {
                 case 'list_to_tuple':
                     if (!input.trim()) throw new Error('Adj meg értékeket vesszővel elválasztva!');
-                    result = input.split(',').map(v => v.trim());
+                    result = input.split(',').map(parseSimplePythonValue);
                     resultDiv.innerHTML = `
-                        <div>Lista: [${result.join(', ')}]</div>
-                        <div>Tuple: (${result.join(', ')})</div>
+                        <div>Lista: [${result.map(formatPythonValue).join(', ')}]</div>
+                        <div>Tuple: (${result.map(formatPythonValue).join(', ')})</div>
                     `;
                     break;
                 case 'string_to_tuple':
                     if (!input.trim()) throw new Error('Adj meg egy szöveget!');
                     result = Array.from(input);
                     resultDiv.innerHTML = `
-                        <div>Szöveg: "${input}"</div>
-                        <div>Tuple: (${result.map(c => `'${c}'`).join(', ')})</div>
+                        <div>Szöveg: "${escapeHtml(input)}"</div>
+                        <div>Tuple: (${result.map(formatPythonValue).join(', ')})</div>
                     `;
                     break;
                 case 'tuple_to_list':
                     if (!input.trim()) throw new Error('Adj meg értékeket vesszővel elválasztva!');
-                    result = input.split(',').map(v => v.trim());
+                    result = input.split(',').map(parseSimplePythonValue);
                     resultDiv.innerHTML = `
-                        <div>Tuple: (${result.join(', ')})</div>
-                        <div>Lista: [${result.join(', ')}]</div>
+                        <div>Tuple: (${result.map(formatPythonValue).join(', ')})</div>
+                        <div>Lista: [${result.map(formatPythonValue).join(', ')}]</div>
                     `;
                     break;
                 case 'sort_tuple':
                     if (!input.trim()) throw new Error('Adj meg értékeket vesszővel elválasztva!');
-                    result = input.split(',').map(v => v.trim());
-                    const sorted = [...result].sort((a, b) => {
-                        const numA = parseFloat(a);
-                        const numB = parseFloat(b);
-                        return isNaN(numA) || isNaN(numB) ? a.localeCompare(b) : numA - numB;
-                    });
+                    result = input.split(',').map(parseSimplePythonValue);
+                    const sortableTypes = new Set(result.map(v => typeof v));
+                    if (sortableTypes.size > 1) {
+                        throw new Error('Pythonban eltérő típusú elemek nem rendezhetők közvetlenül egymással.');
+                    }
+                    const sorted = [...result].sort((a, b) =>
+                        typeof a === 'number' ? a - b : String(a).localeCompare(String(b))
+                    );
                     resultDiv.innerHTML = `
-                        <div>Eredeti tuple: (${result.join(', ')})</div>
-                        <div>Rendezett tuple: (${sorted.join(', ')})</div>
+                        <div>Eredeti tuple: (${result.map(formatPythonValue).join(', ')})</div>
+                        <div>Rendezett tuple: (${sorted.map(formatPythonValue).join(', ')})</div>
                     `;
                     break;
             }
@@ -1406,19 +1517,19 @@ t4 = tuple(sorted(t3))  # Rendezett tuple</code></pre>
         });
 
         // Enter billentyű kezelése
-        document.getElementById('tuple-index').addEventListener('keypress', (e) => {
+        document.getElementById('tuple-index').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') accessTupleElement();
         });
 
-        document.getElementById('tuple-values').addEventListener('keypress', (e) => {
+        document.getElementById('tuple-values').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') unpackTuple();
         });
 
-        document.getElementById('tuple-op-value').addEventListener('keypress', (e) => {
+        document.getElementById('tuple-op-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') performTupleOperation();
         });
 
-        document.getElementById('conversion-input').addEventListener('keypress', (e) => {
+        document.getElementById('conversion-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') convertType();
         });
     });
@@ -1456,6 +1567,10 @@ halmaz4 = set([1, 2, 2, 3, 3])  # Lista átalakítása halmazzá: {1, 2, 3}</cod
                 <div class="note">
                     <i class="fas fa-info-circle"></i>
                     <span>A halmaz automatikusan eltávolítja az ismétlődő elemeket.</span>
+                </div>
+                <div class="note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>A halmaz nem indexelhető, és az elemek sorrendje nem garantált.</span>
                 </div>
             </div>
         </div>
@@ -1717,11 +1832,13 @@ print(len(B))             # 3 (elemszám)</code></pre>
         const resultDiv = document.getElementById('element-result');
 
         try {
+            if (operation !== 'clear' && !value.trim()) {
+                throw new Error('Adj meg egy értéket!');
+            }
             const parsedValue = isNaN(value) ? value : parseFloat(value);
 
             switch(operation) {
                 case 'add':
-                    if (!value.trim()) throw new Error('Adj meg egy értéket!');
                     currentSet.add(parsedValue);
                     break;
                 case 'remove':
@@ -1820,11 +1937,11 @@ print(len(B))             # 3 (elemszám)</code></pre>
                 <div>A művelet eredménye:</div>
                 <div class="set-operation-visual">
                     <div class="set-operation-diagram">
-                        <div class="set-circle">A: {${[...setA].join(', ')}}</div>
+                        <div class="set-circle">A: {${[...setA].map(escapeHtml).join(', ')}}</div>
                         <div class="operator-symbol">${getOperatorSymbol(operation)}</div>
-                        <div class="set-circle">B: {${[...setB].join(', ')}}</div>
+                        <div class="set-circle">B: {${[...setB].map(escapeHtml).join(', ')}}</div>
                     </div>
-                    <div>Eredmény: {${[...result].join(', ')}}</div>
+                    <div>Eredmény: {${[...result].map(escapeHtml).join(', ')}}</div>
                     ${updateSetVisualization(result).outerHTML}
                 </div>
             `;
@@ -1868,8 +1985,8 @@ print(len(B))             # 3 (elemszám)</code></pre>
             }
 
             resultDiv.innerHTML = `
-                <div>A: {${[...setA].join(', ')}}</div>
-                <div>B: {${[...setB].join(', ')}}</div>
+                <div>A: {${[...setA].map(escapeHtml).join(', ')}}</div>
+                <div>B: {${[...setB].map(escapeHtml).join(', ')}}</div>
                 <div>${getSubsetMessage(operation, result)}</div>
             `;
             resultDiv.style.borderColor = result ? 'var(--success)' : 'var(--error)';
@@ -1912,27 +2029,27 @@ print(len(B))             # 3 (elemszám)</code></pre>
         });
 
         // Enter billentyű kezelése
-        document.getElementById('element-value').addEventListener('keypress', (e) => {
+        document.getElementById('element-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') modifySet();
         });
 
-        document.getElementById('search-value').addEventListener('keypress', (e) => {
+        document.getElementById('search-value').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') checkMembership();
         });
 
-        document.getElementById('set-a').addEventListener('keypress', (e) => {
+        document.getElementById('set-a').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') document.getElementById('set-b').focus();
         });
 
-        document.getElementById('set-b').addEventListener('keypress', (e) => {
+        document.getElementById('set-b').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') performSetOperation();
         });
 
-        document.getElementById('subset-a').addEventListener('keypress', (e) => {
+        document.getElementById('subset-a').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') document.getElementById('subset-b').focus();
         });
 
-        document.getElementById('subset-b').addEventListener('keypress', (e) => {
+        document.getElementById('subset-b').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') checkSubset();
         });
     });
@@ -2022,13 +2139,13 @@ print(len(B))             # 3 (elemszám)</code></pre>
                         </tr>
                         <tr>
                             <td>Teljesítmény*</td>
-                            <td class="list-col">Átlagos</td>
-                            <td class="tuple-col">Gyors</td>
-                            <td class="set-col">Nagyon gyors keresés</td>
+                            <td class="list-col">Művelettől függ</td>
+                            <td class="tuple-col">Művelettől függ</td>
+                            <td class="set-col">Gyors tagságvizsgálat (átlagosan)</td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="table-note">* A teljesítmény az adott művelet típusától függ</p>
+                <p class="table-note">* A teljesítmény mindig a konkrét művelettől és az adatmennyiségtől függ.</p>
             </div>
         </div>
 
@@ -2252,6 +2369,7 @@ print(len(B))             # 3 (elemszám)</code></pre>
 
 <script>
    // Mermaid inicializálása
+   if (typeof mermaid !== 'undefined') {
    mermaid.initialize({
        theme: 'dark',
        themeVariables: {
@@ -2264,6 +2382,7 @@ print(len(B))             # 3 (elemszám)</code></pre>
            tertiaryColor: '#e74c3c'
        }
    });
+   }
 
    // Adatszerkezetek összehasonlítása
    function compareStructures() {
@@ -2276,7 +2395,7 @@ print(len(B))             # 3 (elemszám)</code></pre>
            }
 
            // Értékek feldolgozása
-           const values = input.split(',').map(v => v.trim());
+           const values = input.split(',').map(parseSimplePythonValue);
 
            // Lista létrehozása
            const list = [...values];
@@ -2295,7 +2414,7 @@ print(len(B))             # 3 (elemszám)</code></pre>
                            <i class="fas fa-list"></i> Lista
                        </div>
                        <div class="structure-content">
-                           [${list.join(', ')}]
+                           [${list.map(formatPythonValue).map(escapeHtml).join(', ')}]
                        </div>
                        <div class="structure-info">
                            <small>Hossz: ${list.length}</small><br>
@@ -2309,7 +2428,7 @@ print(len(B))             # 3 (elemszám)</code></pre>
                            <i class="fas fa-layer-group"></i> Tuple
                        </div>
                        <div class="structure-content">
-                           (${tuple.join(', ')})
+                           (${tuple.map(formatPythonValue).map(escapeHtml).join(', ')})
                        </div>
                        <div class="structure-info">
                            <small>Hossz: ${tuple.length}</small><br>
@@ -2323,7 +2442,7 @@ print(len(B))             # 3 (elemszám)</code></pre>
                            <i class="fas fa-object-group"></i> Halmaz
                        </div>
                        <div class="structure-content">
-                           {${Array.from(set).join(', ')}}
+                           {${Array.from(set).map(formatPythonValue).map(escapeHtml).join(', ')}}
                        </div>
                        <div class="structure-info">
                            <small>Elemszám: ${set.size}</small><br>
@@ -2357,10 +2476,8 @@ print(len(B))             # 3 (elemszám)</code></pre>
            analysis.push('Ismétlődő elemeket tartalmaz!');
        }
 
-       // Rendezettség jelentősége
-       if (list.some(x => !isNaN(x))) {
-           analysis.push('Számokat tartalmaz - a halmaz nem őrzi meg a sorrendet!');
-       }
+       // A halmaz sorrendje nem garantált
+       analysis.push('A lista és a tuple megőrzi az elemek sorrendjét; a halmaz sorrendje nem garantált.');
 
        // Memória használat
        if (set.size < list.length) {
@@ -2373,14 +2490,14 @@ print(len(B))             # 3 (elemszám)</code></pre>
    }
 
    // Enter billentyű kezelése
-   document.getElementById('compare-input').addEventListener('keypress', (e) => {
+   document.getElementById('compare-input').addEventListener('keydown', (e) => {
        if (e.key === 'Enter') compareStructures();
    });
 </script>
 
 </section>
 
-<!-- új kódokat ide -->
+
 
 <section id="gyakorlo" class="section">
     <h1 class="section-title">
@@ -2544,6 +2661,7 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
                 </div>
             </div>
         </div>
+    </div>
 
         <style>
    .exercise {
@@ -2694,10 +2812,7 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
     const input = document.getElementById('list-numbers').value;
     const operationElement = document.getElementById('list-operation-2');
     const operation = operationElement.options[operationElement.selectedIndex].value; // Pontos érték lekérdezése
-    const resultDiv = document.getElementById('list-result');
-
-    console.log('Element:', operationElement); // Ellenőrzés
-    console.log('Value:', operation); // Ellenőrzés
+    const resultDiv = document.getElementById('list-result'); // Ellenőrzés // Ellenőrzés
 
     try {
         if (!input.trim()) {
@@ -2731,8 +2846,7 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
             case 'double':
                 result = numbers.map(n => n * 2);
                 break;
-            default:
-                console.error(`Ismeretlen művelet: "${operation}"`); // Hibakereséshez
+            default: // Hibakereséshez
                 throw new Error('Ismeretlen művelet! Kérlek válassz egyet a listából.');
         }
 
@@ -2829,16 +2943,9 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
     const resultDiv = document.getElementById('sets-result');
     const vennDiv = document.getElementById('venn-diagram');
 
-    console.log('Bemeneti értékek:');
-    console.log('setAInput:', setAInput);
-    console.log('setBInput:', setBInput);
-
     try {
         // Ellenőrizd, hogy van-e megadott érték mindkét mezőben
         if (!setAInput.trim() || !setBInput.trim()) {
-            console.log('Üres vagy whitespace-only bemenet észlelve.');
-            console.log('setAInput:', setAInput.trim());
-            console.log('setBInput:', setBInput.trim());
             throw new Error('Kérlek add meg mindkét halmaz elemeit!');
         }
 
@@ -2850,12 +2957,7 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
             setBInput.split(',').map(x => x.trim()).filter(x => x !== '')
         );
 
-        console.log('Tisztított halmazok:');
-        console.log('setA:', [...setA]);
-        console.log('setB:', [...setB]);
-
         if (setA.size === 0 || setB.size === 0) {
-            console.log('Üres halmaz észlelve.');
             throw new Error('Mindkét halmaznak tartalmaznia kell legalább egy elemet!');
         }
 
@@ -2866,29 +2968,23 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
         );
         const union = new Set([...setA, ...setB]);
 
-        console.log('Halmazműveletek eredménye:');
-        console.log('Közös elemek:', [...intersection]);
-        console.log('Egyedi elemek:', [...symmetricDiff]);
-        console.log('Összes elem:', [...union]);
-
         // Venn diagram frissítése
         vennDiv.innerHTML = `
             <div class="set-circle set-a">
-                A<br>${[...setA].join(', ')}
+                A<br>${[...setA].map(escapeHtml).join(', ')}
             </div>
             <div class="set-circle set-b">
-                B<br>${[...setB].join(', ')}
+                B<br>${[...setB].map(escapeHtml).join(', ')}
             </div>
         `;
 
         resultDiv.innerHTML = `
-            <div>Közös elemek: {${[...intersection].join(', ') || '-'}}</div>
-            <div>Egyedi elemek: {${[...symmetricDiff].join(', ') || '-'}}</div>
-            <div>Összes elem: {${[...union].join(', ') || '-'}}</div>
+            <div>Közös elemek: {${[...intersection].map(escapeHtml).join(', ') || '-'}}</div>
+            <div>Egyedi elemek: {${[...symmetricDiff].map(escapeHtml).join(', ') || '-'}}</div>
+            <div>Összes elem: {${[...union].map(escapeHtml).join(', ') || '-'}}</div>
         `;
         resultDiv.style.borderColor = 'var(--success)';
     } catch (error) {
-        console.log('Hiba történt:', error.message);
         resultDiv.textContent = `Hiba: ${error.message}`;
         resultDiv.style.borderColor = 'var(--error)';
     }
@@ -2903,23 +2999,23 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
 
    // Enter billentyű kezelése
    document.addEventListener('DOMContentLoaded', () => {
-       document.getElementById('list-numbers').addEventListener('keypress', (e) => {
+       document.getElementById('list-numbers').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') processListOperation();
        });
 
-       document.getElementById('point1').addEventListener('keypress', (e) => {
+       document.getElementById('point1').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') document.getElementById('point2').focus();
        });
 
-       document.getElementById('point2').addEventListener('keypress', (e) => {
+       document.getElementById('point2').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') calculateDistance();
        });
 
-       document.getElementById('set-a').addEventListener('keypress', (e) => {
-           if (e.key === 'Enter') document.getElementById('set-b').focus();
+       document.getElementById('set-a-2').addEventListener('keydown', (e) => {
+           if (e.key === 'Enter') document.getElementById('set-b-2').focus();
        });
 
-       document.getElementById('set-b').addEventListener('keypress', (e) => {
+       document.getElementById('set-b-2').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') analyzeSets();
        });
 
@@ -2930,7 +3026,7 @@ osszes = A | B             # {1, 2, 3, 4, 5, 6, 7, 8}</code></pre>
 
 </section>
 
-<!-- új kódokat ide -->
+
 
 <section id="kombinalt" class="section">
     <h1 class="section-title">
@@ -2951,7 +3047,7 @@ jatekosok = ["Anna", "Béla", "Csaba"]              # Lista a játékosoknak
 pontszamok = (100, 150, 80)                        # Tuple a pontszámoknak
 teljesitmenyek = {"győzelem", "vereség", "döntetlen"}  # Halmaz az egyedi teljesítményeknek
 
-def jatekos_statisztika(jatekos, pont, teljesitmeny):
+def jatekos_statisztika(jatekos, teljesitmeny):
     """Játékos statisztikájának kezelése"""
     if jatekos in jatekosok:
         index = jatekosok.index(jatekos)
@@ -2963,7 +3059,7 @@ def jatekos_statisztika(jatekos, pont, teljesitmeny):
         print("Játékos nem található!")
 
 # Példa használat
-jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
+jatekos_statisztika("Anna", "győzelem")</code></pre>
         </div>
 
         <div class="game-demo">
@@ -3125,6 +3221,7 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
    // Játék állapot
    let gamePlayers = [];
    let gameScores = [];
+   let gamePerformanceHistory = [];
    let gamePerformances = new Set();
 
    function addPlayerStats() {
@@ -3142,14 +3239,15 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
            }
 
            // Adatok hozzáadása
-           gamePlayers.push(name);
+           gamePlayers.push(name.trim());
            gameScores.push(score);
+           gamePerformanceHistory.push(performance);
            gamePerformances.add(performance);
 
            // Listák frissítése
            updateStatsDisplay();
 
-           resultDiv.innerHTML = `Játékos sikeresen hozzáadva: ${name} (${score} pont, ${performance})`;
+           resultDiv.innerHTML = `Játékos sikeresen hozzáadva: ${escapeHtml(name.trim())} (${score} pont, ${escapeHtml(performance)})`;
            resultDiv.style.borderColor = 'var(--success)';
 
            // Input mezők törlése
@@ -3170,7 +3268,7 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
        const playersList = document.getElementById('players-list');
        playersList.innerHTML = gamePlayers.map((player, index) => `
            <div class="stats-item stats-item-player">
-               <span>${player}</span>
+               <span>${escapeHtml(player)}</span>
                <small>#${index + 1}</small>
            </div>
        `).join('');
@@ -3179,7 +3277,7 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
        const scoresList = document.getElementById('scores-list');
        scoresList.innerHTML = gameScores.map((score, index) => `
            <div class="stats-item stats-item-score">
-               <span>${gamePlayers[index]}</span>
+               <span>${escapeHtml(gamePlayers[index])}</span>
                <strong>${score} pont</strong>
            </div>
        `).join('');
@@ -3188,14 +3286,14 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
        const performancesList = document.getElementById('performances-list');
        performancesList.innerHTML = Array.from(gamePerformances).map(perf => `
            <div class="stats-item stats-item-performance">
-               <span>${perf}</span>
+               <span>${escapeHtml(perf)}</span>
                <small>${countPerformance(perf)}x</small>
            </div>
        `).join('');
    }
 
    function countPerformance(performance) {
-       return gamePlayers.length;
+       return gamePerformanceHistory.filter(item => item === performance).length;
    }
 
    function searchStats() {
@@ -3204,18 +3302,24 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
        const resultDiv = document.getElementById('game-result');
 
        try {
+           if (!searchTerm.trim()) {
+               throw new Error('Adj meg keresési értéket!');
+           }
            let results = [];
            switch(searchType) {
                case 'player':
                    results = gamePlayers
-                       .filter(player => player.toLowerCase().includes(searchTerm))
                        .map((player, index) => ({
                            name: player,
                            score: gameScores[index]
-                       }));
+                       }))
+                       .filter(item => item.name.toLowerCase().includes(searchTerm));
                    break;
                case 'score':
-                   const searchScore = parseInt(searchTerm);
+                   if (!/^-?\d+$/.test(searchTerm.trim())) {
+                       throw new Error('Pontszám szerinti kereséshez egész számot adj meg!');
+                   }
+                   const searchScore = Number(searchTerm);
                    results = gameScores
                        .map((score, index) => ({
                            name: gamePlayers[index],
@@ -3241,8 +3345,8 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
                    <div>Találatok (${results.length}):</div>
                    ${results.map(result => `
                        <div class="stats-item">
-                           <span>${result.name}</span>
-                           <span>${result.score || result.count}</span>
+                           <span>${escapeHtml(result.name)}</span>
+                           <span>${result.score ?? result.count}</span>
                        </div>
                    `).join('')}
                `;
@@ -3260,15 +3364,15 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
 
    // Enter billentyű kezelése
    document.addEventListener('DOMContentLoaded', () => {
-       document.getElementById('player-name').addEventListener('keypress', (e) => {
+       document.getElementById('player-name').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') document.getElementById('player-score').focus();
        });
 
-       document.getElementById('player-score').addEventListener('keypress', (e) => {
+       document.getElementById('player-score').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') addPlayerStats();
        });
 
-       document.getElementById('search-term').addEventListener('keypress', (e) => {
+       document.getElementById('search-term').addEventListener('keydown', (e) => {
            if (e.key === 'Enter') searchStats();
        });
    });
@@ -3276,7 +3380,7 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
 
 </section>
 
-<!-- új kódokat ide -->
+
 
 </main>
 <!-- Footer -->
@@ -3289,7 +3393,7 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
                </div>
                <div class="col-md-6">
                    <h3 class="h5 mb-3">Információk</h3>
-                   <p class="mb-2">Utolsó frissítés: 2025.01.19.</p>
+                   <p class="mb-2">Utolsó frissítés: 2026.09.18.</p>
                    <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
                </div>
            </div>
@@ -3378,7 +3482,5 @@ jatekos_statisztika("Anna", 100, "győzelem")</code></pre>
            });
        });
    </script>
-
-</main>
 </body>
 </html>
