@@ -1,21 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Ciklusok Interaktív Bemutatása</title>
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Python Ciklusok Interaktív Bemutatása</title>
+<!-- Külső stílusok -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Külső scriptek -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<style>
         :root {
             /* Alap színek */
             --bg-primary: #0a1914;
@@ -105,9 +104,6 @@
             text-decoration: none;
             transition: color 0.3s ease;
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .nav-link:hover {
@@ -130,91 +126,73 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Gombok alapstílusa */
-        .btn {
-            background: var(--accent-primary);
-            color: var(--bg-primary);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* Alapstílusok kiegészítése a head-ben lévő style részhez: */
 
-        .btn:hover {
-            background: var(--accent-secondary);
-            transform: translateY(-2px);
-        }
 
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-            background: var(--text-secondary);
-        }
 
-        .btn-danger {
-            background: var(--error);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c0392b;
-        }
 
-        /* Input mezők alapstílusa */
-        .input {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: 5px;
-            width: 100%;
-            margin: 0.5rem 0;
-            transition: border-color 0.3s ease;
-        }
+/* Gombok alapstílusa */
+.btn {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-        .input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-        }
+.btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+}
 
-        .input::placeholder {
-            color: var(--text-secondary);
-        }
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
 
-        /* Kód blokk stílus */
-        .code-container {
-            margin: 1rem 0;
-            border-radius: 5px;
-            overflow: hidden;
-        }
+/* Input mezők alapstílusa */
+.input {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 5px;
+    width: 100%;
+    margin: 0.5rem 0;
+    transition: border-color 0.3s ease;
+}
 
-        /* Eredmény doboz stílus */
-        .result {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-left: 4px solid var(--accent-primary);
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 0 5px 5px 0;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
+.input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
 
-        .result.show {
-            display: block;
-            opacity: 1;
-        }
+.input::placeholder {
+    color: var(--text-secondary);
+}
 
-        .monospace {
-            font-family: 'Fira Code', monospace;
-            white-space: pre-wrap;
-        }
+.nav-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link i {
+    font-size: 1rem;
+}
+
+
 
         @media (max-width: 768px) {
             .container {
@@ -233,439 +211,937 @@
             }
         }
     </style>
-</head>
+<style>
+/* Közös, javított megjelenés – az eredeti dizájn megtartásával */
+html { scroll-padding-top: 5.5rem; }
+body { overflow-x: hidden; }
+.section { width: 100%; scroll-margin-top: 5.5rem; }
+.section-title {
+    color: var(--accent-primary);
+    font-size: 2rem;
+    margin: 2.5rem 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.section-title i { font-size: 1.6rem; }
+.card h2 { margin-bottom: 1rem; }
+.card p + p { margin-top: 0.75rem; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.4rem; color: var(--text-secondary); }
+.interactive-demo { margin-top: 1.75rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.interactive-demo h3, .demo-area h3 { margin-bottom: 0.75rem; }
+.code-container { position: relative; margin: 1rem 0; border-radius: 10px; overflow: hidden; min-width: 0; }
+.code-container pre { margin: 0 !important; overflow-x: auto; max-width: 100%; padding-top: 2.4rem !important; }
+.code-container code { white-space: pre; }
+.copy-btn {
+    position: absolute; top: 0.45rem; right: 0.45rem; z-index: 10;
+    background: var(--bg-secondary); color: var(--text-secondary);
+    border: 1px solid var(--border-color); border-radius: 4px;
+    padding: 0.3rem 0.55rem; cursor: pointer; transition: all .2s ease;
+}
+.copy-btn:hover, .copy-btn.copied { color: var(--accent-primary); border-color: var(--accent-primary); }
+.result {
+    margin-top: 1rem; padding: 1rem; border-left: 4px solid var(--accent-primary);
+    background: var(--highlight); border-radius: 0 6px 6px 0;
+    opacity: 0; transform: translateY(-4px); transition: opacity .2s ease, transform .2s ease;
+    overflow-wrap: anywhere;
+}
+.result.show { opacity: 1; transform: translateY(0); }
+.result pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.btn-secondary { background: transparent; color: var(--accent-primary); border: 1px solid var(--accent-primary); }
+.btn-secondary:hover { background: var(--accent-primary); color: var(--bg-primary); }
+.quick-reminder-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.quick-reminder { display: flex; gap: .8rem; align-items: flex-start; padding: 1rem; background: var(--bg-primary); border-radius: 8px; }
+.quick-reminder i { color: var(--accent-primary); margin-top: .2rem; }
+.quick-reminder strong { color: var(--text-primary); }
+.quick-reminder p { color: var(--text-secondary); margin-top: .3rem; }
+.nav-logo { display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.nav-links { flex-wrap: wrap; justify-content: flex-end; }
+.game-screen, .example-card, .cycle-type, .card { min-width: 0; }
+.game-stats, .number-entry { min-width: 0; }
+#guessed-numbers { overflow-wrap: anywhere; }
+@media (max-width: 900px) {
+    .nav-container { align-items: flex-start; gap: .75rem; }
+    .nav-links { gap: .5rem 1rem; justify-content: flex-start; }
+    .quick-reminder-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+    html { scroll-padding-top: 10rem; }
+    .section { scroll-margin-top: 10rem; }
+    .nav-container { flex-direction: column; align-items: stretch; padding: 0 1rem; }
+    .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: .55rem 1rem; }
+    .nav-logo { justify-content: center; }
+    .section-title { font-size: 1.5rem; margin-top: 2rem; }
+    .card { padding: 1.15rem; }
+    .cycle-types, .examples-grid { grid-template-columns: minmax(0, 1fr); }
+    .game-demo, .game-screen { padding: 1rem; }
+    .number-entry { align-items: flex-start; gap: .5rem; flex-direction: column; }
+}
+@media (max-width: 480px) {
+    .container { padding: .75rem; }
+    .nav-links { font-size: .9rem; }
+    .btn { width: 100%; justify-content: center; }
+}
+</style></head>
 <body>
-    <nav class="nav">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <i class="fab fa-python"></i> Python Ciklusok
+<nav class="nav">
+<div class="nav-container">
+<a class="nav-logo" href="#">
+<i class="fab fa-python"></i> Python Ciklusok
             </a>
-            <ul class="nav-links">
-                <li><a href="#bevezeto" class="nav-link"><i class="fas fa-book-open"></i> Bevezető</a></li>
-                <li><a href="#for" class="nav-link"><i class="fas fa-redo"></i> For Ciklus</a></li>
-                <li><a href="#while" class="nav-link"><i class="fas fa-sync"></i> While Ciklus</a></li>
-                <li><a href="#gyakorlo" class="nav-link"><i class="fas fa-tasks"></i> Gyakorló feladatok</a></li>
-                <li><a href="#kombinalt" class="nav-link"><i class="fas fa-code"></i> Kombinált példák</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="container">
-
-    <section id="bevezeto" class="section">
-        <h1 class="section-title">
-            <i class="fas fa-book-open"></i>
-            Ciklusok a Pythonban
-        </h1>
-
-        <div class="card">
-            <h2>Mi az a ciklus?</h2>
-            <p>A ciklus egy olyan programozási szerkezet, amely lehetővé teszi, hogy ugyanazt a kódrészt többször végrehajtsuk anélkül, hogy többször leírnánk. Ez különösen hasznos, amikor ugyanazt a műveletet szeretnénk végrehajtani többször, vagy végig akarunk menni egy sorozaton.</p>
-
-            <div class="cycle-types">
-                <div class="cycle-type">
-                    <i class="fas fa-redo"></i>
-                    <h3>For ciklus</h3>
-                    <p>Akkor használjuk, amikor előre tudjuk, hányszor szeretnénk ismételni valamit.</p>
-                    <div class="code-container">
-                        <pre><code class="language-python"># For ciklus példa
+<!-- A nav-links részt módosítom: -->
+<ul class="nav-links">
+<li><a class="nav-link" href="#bevezeto"><i class="fas fa-book-open"></i> Bevezető</a></li>
+<li><a class="nav-link" href="#for"><i class="fas fa-redo"></i> For Ciklus</a></li>
+<li><a class="nav-link" href="#while"><i class="fas fa-sync"></i> While Ciklus</a></li>
+<li><a class="nav-link" href="#gyakorlo"><i class="fas fa-tasks"></i> Gyakorló feladatok</a></li>
+<li><a class="nav-link" href="#kombinalt"><i class="fas fa-code"></i> Kombinált példák</a></li>
+</ul>
+</div>
+</nav>
+<main class="container">
+<!-- Bevezető szekció -->
+<section class="section" id="bevezeto">
+<h1 class="section-title">
+<i class="fas fa-book-open"></i>
+        Ciklusok a Pythonban
+    </h1>
+<div class="card">
+<h2>Mi az a ciklus?</h2>
+<p>A ciklus egy olyan programozási szerkezet, amely lehetővé teszi, hogy ugyanazt a kódrészt többször végrehajtsuk anélkül, hogy többször leírnánk. Ez különösen hasznos, amikor ugyanazt a műveletet szeretnénk végrehajtani többször, vagy végig akarunk menni egy sorozaton.</p>
+<div class="cycle-types">
+<div class="cycle-type">
+<i class="fas fa-redo"></i>
+<h3>For ciklus</h3>
+<p>Akkor használjuk, amikor egy sorozat, tartomány vagy más iterálható objektum elemein szeretnénk végighaladni.</p>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># For ciklus példa
 for i in range(5):
     print(i)  # 0-tól 4-ig kiírja a számokat</code></pre>
-                    </div>
-                </div>
-
-                <div class="cycle-type">
-                    <i class="fas fa-sync"></i>
-                    <h3>While ciklus</h3>
-                    <p>Akkor használjuk, amikor egy feltétel teljesüléséig szeretnénk ismételni valamit.</p>
-                    <div class="code-container">
-                        <pre><code class="language-python"># While ciklus példa
+</div>
+</div>
+<div class="cycle-type">
+<i class="fas fa-sync"></i>
+<h3>While ciklus</h3>
+<p>Akkor használjuk, amikor egy feltétel teljesüléséig szeretnénk ismételni valamit.</p>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># While ciklus példa
 szam = 1
-while szam <= 5:
+while szam &lt;= 5:
     print(szam)  # 1-től 5-ig kiírja a számokat
     szam += 1</code></pre>
-                    </div>
-                </div>
-            </div>
+</div>
+</div>
+</div>
+<div class="interactive-demo" id="intro-demo">
+<h3>Próbáld ki!</h3>
+<div class="form-group">
+<label>Válassz egy ciklustípust és írd be, hányszor szeretnéd ismételni:</label>
+<div class="input-group">
+<select class="input" id="cycle-type">
+<option value="for">For ciklus</option>
+<option value="while">While ciklus</option>
+</select>
+<input class="input" id="repeat-count" max="10" min="1" placeholder="Ismétlések száma" type="number"/>
+<button class="btn" onclick="runCycle()">
+<i class="fas fa-play"></i> Futtatás
+                    </button>
+</div>
+</div>
+<div class="result" id="cycle-result"></div>
+</div>
+</div>
+<div class="card">
+<h2>Mikor használjunk ciklust?</h2>
+<div class="use-cases">
+<div class="use-case">
+<i class="fas fa-list"></i>
+<div class="use-case-content">
+<h4>Sorozatok feldolgozása</h4>
+<p>Amikor listákon, szövegeken vagy más sorozatokon szeretnénk végigmenni.</p>
+</div>
+</div>
+<div class="use-case">
+<i class="fas fa-tasks"></i>
+<div class="use-case-content">
+<h4>Ismétlődő műveletek</h4>
+<p>Amikor ugyanazt a műveletet többször kell végrehajtani.</p>
+</div>
+</div>
+<div class="use-case">
+<i class="fas fa-check-circle"></i>
+<div class="use-case-content">
+<h4>Feltételes ismétlés</h4>
+<p>Amikor addig kell ismételni valamit, amíg egy feltétel teljesül.</p>
+</div>
+</div>
+</div>
+</div><div class="card" id="cycle-reminder">
+<h2>Gyors emlékeztető</h2>
+<div class="quick-reminder-grid">
+<div class="quick-reminder"><i class="fas fa-list-ol"></i><div><strong>range() felső határa</strong><p>A felső határ már nem része a sorozatnak: <code>range(5)</code> → 0, 1, 2, 3, 4.</p></div></div>
+<div class="quick-reminder"><i class="fas fa-indent"></i><div><strong>Behúzás</strong><p>A ciklushoz tartozó utasításokat beljebb kell kezdeni.</p></div></div>
+<div class="quick-reminder"><i class="fas fa-infinity"></i><div><strong>while feltétel</strong><p>Figyelj arra, hogy a feltétel egyszer hamissá tudjon válni.</p></div></div>
+</div>
+</div>
+</section>
+<style>
+    .cycle-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
 
-            <div id="intro-demo" class="interactive-demo">
-                <h3>Próbáld ki!</h3>
-                <div class="form-group">
-                    <label>Válassz egy ciklustípust és írd be, hányszor szeretnéd ismételni:</label>
-                    <div class="input-group">
-                        <select id="cycle-type" class="input">
-                            <option value="for">For ciklus</option>
-                            <option value="while">While ciklus</option>
-                        </select>
-                        <input type="number" id="repeat-count" class="input" placeholder="Ismétlések száma" min="1" max="10">
-                        <button class="btn" onclick="runCycle()">
-                            <i class="fas fa-play"></i> Futtatás
-                        </button>
-                    </div>
-                </div>
-                <div id="cycle-result" class="result"></div>
-            </div>
-        </div>
-    </section>
+    .cycle-type {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
 
-    <style>
-        .cycle-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
+    .cycle-type:hover {
+        transform: translateY(-5px);
+    }
 
-        .cycle-type {
-            background: var(--bg-primary);
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: transform 0.3s ease;
-        }
+    .cycle-type i {
+        font-size: 2rem;
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
 
-        .cycle-type:hover {
-            transform: translateY(-5px);
-        }
+    .cycle-type h3 {
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
 
-        .cycle-type i {
-            font-size: 2rem;
-            color: var(--accent-primary);
-            margin-bottom: 1rem;
-        }
+    .use-cases {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
 
+    .use-case {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--bg-primary);
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .use-case:hover {
+        transform: translateY(-5px);
+    }
+
+    .use-case i {
+        color: var(--accent-primary);
+        font-size: 1.25rem;
+        margin-top: 0.25rem;
+    }
+
+    .use-case-content h4 {
+        margin-bottom: 0.5rem;
+        color: var(--accent-primary);
+    }
+
+    .input-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+
+    @media (max-width: 768px) {
         .input-group {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            flex-direction: column;
+        }
+    }
+</style>
+<script>
+    function runCycle() {
+        const cycleType = document.getElementById('cycle-type').value;
+        const repeatCount = Number(document.getElementById('repeat-count').value);
+        const resultDiv = document.getElementById('cycle-result');
+
+        if (!Number.isInteger(repeatCount) || repeatCount < 1 || repeatCount > 10) {
+            resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 10 között!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
         }
 
-        @media (max-width: 768px) {
-            .input-group {
-                flex-direction: column;
+        let output = '';
+        if (cycleType === 'for') {
+            for (let i = 1; i <= repeatCount; i++) {
+                output += `${i}. ismétlés\n`;
+            }
+        } else {
+            let count = 1;
+            while (count <= repeatCount) {
+                output += `${count}. ismétlés\n`;
+                count++;
             }
         }
-    </style>
 
-    <script>
-        // Segédfüggvény a késleltetéshez (Animált végrehajtás)
-        const delay = ms => new Promise(res => setTimeout(res, ms));
+        resultDiv.innerHTML = `<pre>${output}</pre>`;
+        resultDiv.style.borderColor = 'var(--success)';
 
-        async function runCycle() {
-            const cycleType = document.getElementById('cycle-type').value;
-            const repeatCount = parseInt(document.getElementById('repeat-count').value);
-            const resultDiv = document.getElementById('cycle-result');
-            const btn = document.querySelector('#intro-demo .btn');
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth; // Reflow trigger
+        resultDiv.classList.add('show');
+    }
 
-            if (isNaN(repeatCount) || repeatCount < 1 || repeatCount > 10) {
-                resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 10 között!';
-                resultDiv.style.borderColor = 'var(--error)';
-                resultDiv.classList.add('show');
-                return;
-            }
+    // Enter billentyű kezelése
+    document.getElementById('repeat-count').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') runCycle();
+    });
+</script>
+<!-- For ciklus szekció -->
+<section class="section" id="for">
+<h1 class="section-title">
+<i class="fas fa-redo"></i>
+        For Ciklus
+    </h1>
+<div class="card">
+<h2>A For ciklus működése</h2>
+<p>A For ciklus egy iteráló ciklus: egy sorozat vagy más iterálható objektum elemein halad végig. Pythonban gyakran használjuk listák, sztringek, illetve a range() által előállított számsorozatok bejárására.</p>
+<div class="syntax-box">
+<h3>Szintaxis</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python">for változó in sorozat:
+    # Végrehajtandó utasítások
+    pass  # Ide kerülnek a ciklus utasításai</code></pre>
+</div>
+<div class="syntax-notes">
+<div class="note">
+<i class="fas fa-info-circle"></i>
+<span>A <code>változó</code> minden körben felveszi a sorozat következő értékét.</span>
+</div>
+<div class="note">
+<i class="fas fa-info-circle"></i>
+<span>A <code>sorozat</code> lehet lista, string, range() vagy bármilyen iterálható objektum.</span>
+</div>
+</div>
+</div>
+<div class="examples-grid">
+<div class="example-card">
+<h3>Csillagok rajzolása</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Csillagok rajzolása a képernyőre
+darab = int(input("Hány sornyi csillagot akarsz? "))
 
-            // Gomb tiltása futás közben
-            btn.disabled = true;
-            resultDiv.innerHTML = ''; // Törlés
-            resultDiv.style.borderColor = 'var(--info)';
-            resultDiv.classList.add('show');
-            let content = '';
-
-            if (cycleType === 'for') {
-                for (let i = 0; i < repeatCount; i++) {
-                    content += `${i}. ismétlés... `;
-                    resultDiv.innerHTML = `<pre>${content}</pre>`;
-                    await delay(300); // 300ms szünet
-                    content += `Kész<br>`;
-                    resultDiv.innerHTML = `<pre>${content}</pre>`;
-                    await delay(100);
-                }
-            } else {
-                let count = 1;
-                while (count <= repeatCount) {
-                    content += `${count}. ismétlés (feltétel: ${count} <= ${repeatCount})... <br>`;
-                    resultDiv.innerHTML = `<pre>${content}</pre>`;
-                    await delay(400);
-                    count++;
-                }
-            }
-
-            resultDiv.style.borderColor = 'var(--success)';
-            btn.disabled = false;
-        }
-
-        // Enter billentyű kezelése
-        document.getElementById('repeat-count').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') runCycle();
-        });
-    </script>
-
-    <section id="for" class="section">
-        <h1 class="section-title">
-            <i class="fas fa-redo"></i>
-            For Ciklus
-        </h1>
-
-        <div class="card">
-            <h2>A For ciklus működése</h2>
-            <p>A For ciklus egy számlálós ciklus, amely előre meghatározott számú ismétlést hajt végre. Pythonban a <code>range()</code> függvényt gyakran használjuk vele.</p>
-
-            <div class="examples-grid">
-                <div class="example-card">
-                    <h3>Csillagok rajzolása</h3>
-                    <div class="code-container">
-                        <pre><code class="language-python">darab = int(input("Hány sornyi csillagot akarsz? "))
-
-# 1-től indulunk, hogy ne legyen üres sor!
 for sor in range(1, darab + 1):
     print("*" * sor)</code></pre>
-                    </div>
-                    <div class="demo-area">
-                        <div class="form-group">
-                            <label>Add meg a sorok számát:</label>
-                            <div class="input-group">
-                                <input type="number" id="stars-input" class="input" placeholder="Pl.: 5" min="1" max="10">
-                                <button class="btn" onclick="drawStars()">
-                                    <i class="fas fa-star"></i> Rajzolás
-                                </button>
-                            </div>
-                        </div>
-                        <div id="stars-result" class="result monospace"></div>
-                    </div>
-                </div>
-
-                <div class="example-card">
-                    <h3>Karakterek kiírása</h3>
-                    <div class="code-container">
-                        <pre><code class="language-python">szoveg = input("Add meg a szöveget: ")
+</div>
+<div class="demo-area">
+<div class="form-group">
+<label>Add meg a sorok számát:</label>
+<div class="input-group">
+<input class="input" id="stars-input" max="10" min="1" placeholder="Pl.: 5" type="number"/>
+<button class="btn" onclick="drawStars()">
+<i class="fas fa-star"></i> Rajzolás
+                            </button>
+</div>
+</div>
+<div class="result monospace" id="stars-result"></div>
+</div>
+</div>
+<div class="example-card">
+<h3>Karakterek kiírása egyesével</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Karakterek kiíratása egyesével
+szoveg = input("Add meg a szöveget: ")
 
 for karakter in szoveg:
     print(karakter)</code></pre>
-                    </div>
-                    <div class="demo-area">
-                        <div class="form-group">
-                            <label>Írd be a szöveget:</label>
-                            <div class="input-group">
-                                <input type="text" id="text-input" class="input" placeholder="Pl.: Python">
-                                <button class="btn" onclick="printChars()">
-                                    <i class="fas fa-font"></i> Kiírás
-                                </button>
-                            </div>
-                        </div>
-                        <div id="chars-result" class="result monospace"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+</div>
+<div class="demo-area">
+<div class="form-group">
+<label>Írd be a szöveget:</label>
+<div class="input-group">
+<input class="input" id="text-input" placeholder="Pl.: Python" type="text"/>
+<button class="btn" onclick="printChars()">
+<i class="fas fa-font"></i> Kiírás
+                            </button>
+</div>
+</div>
+<div class="result monospace" id="chars-result"></div>
+</div>
+</div>
+<div class="example-card">
+<h3>Számok összege</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Számok összege
+bekert_szam = int(input("Adja meg, hogy meddig szeretné összeadni a számokat: "))
 
-    <style>
+osszeg = 0
+for szam in range(bekert_szam+1):
+    osszeg += szam
+
+print(f"Az összeg: {osszeg}")</code></pre>
+</div>
+<div class="demo-area">
+<div class="form-group">
+<label>Add meg a számot:</label>
+<div class="input-group">
+<input class="input" id="sum-input" max="100" min="1" placeholder="Pl.: 5" type="number"/>
+<button class="btn" onclick="calculateSum()">
+<i class="fas fa-plus"></i> Számolás
+                            </button>
+</div>
+</div>
+<div class="result" id="sum-result"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<style>
+    .syntax-box {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .syntax-box h3 {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    .syntax-notes {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .note {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+    }
+
+    .note i {
+        color: var(--info);
+    }
+
+    .examples-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .example-card {
+        background: var(--bg-primary);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .example-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .example-card h3 {
+        color: var(--python-for);
+        margin-bottom: 1rem;
+    }
+
+    .demo-area {
+        margin-top: 1.5rem;
+    }
+
+    .monospace {
+        font-family: 'Fira Code', monospace;
+        white-space: pre;
+    }
+
+    @media (max-width: 768px) {
         .examples-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<script>
+    function drawStars() {
+        const count = Number(document.getElementById('stars-input').value);
+        const resultDiv = document.getElementById('stars-result');
+
+        if (!Number.isInteger(count) || count < 1 || count > 10) {
+            resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 10 között!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
         }
 
-        .example-card {
-            background: var(--bg-primary);
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-    </style>
-
-    <script>
-        async function drawStars() {
-            const count = parseInt(document.getElementById('stars-input').value);
-            const resultDiv = document.getElementById('stars-result');
-            const btn = document.querySelector('#stars-input + .btn');
-
-            if (isNaN(count) || count < 1 || count > 10) {
-                resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 10 között!';
-                resultDiv.style.borderColor = 'var(--error)';
-                resultDiv.classList.add('show');
-                return;
-            }
-
-            btn.disabled = true;
-            resultDiv.textContent = '';
-            resultDiv.classList.add('show');
-            resultDiv.style.borderColor = 'var(--info)';
-
-            let output = '';
-            // JAVÍTVA: Ciklus 1-től indul
-            for (let i = 1; i <= count; i++) {
-                output += '*'.repeat(i) + '\n';
-                resultDiv.textContent = output;
-                await delay(200); // Animáció
-            }
-            
-            resultDiv.style.borderColor = 'var(--success)';
-            btn.disabled = false;
+        let output = '';
+        for (let i = 1; i <= count; i++) {
+            output += '*'.repeat(i) + '\n';
         }
 
-        async function printChars() {
-            const text = document.getElementById('text-input').value;
-            const resultDiv = document.getElementById('chars-result');
-            const btn = document.querySelector('#text-input + .btn');
+        resultDiv.textContent = output;
+        resultDiv.style.borderColor = 'var(--success)';
 
-            if (!text.trim()) {
-                resultDiv.textContent = 'Kérlek adj meg egy szöveget!';
-                resultDiv.style.borderColor = 'var(--error)';
-                resultDiv.classList.add('show');
-                return;
-            }
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
 
-            btn.disabled = true;
-            resultDiv.textContent = '';
-            resultDiv.classList.add('show');
-            resultDiv.style.borderColor = 'var(--info)';
+    function printChars() {
+        const text = document.getElementById('text-input').value;
+        const resultDiv = document.getElementById('chars-result');
 
-            let output = '';
-            for (const char of text) {
-                output += char + '\n';
-                resultDiv.textContent = output;
-                await delay(150); // Animáció
-            }
-
-            resultDiv.style.borderColor = 'var(--success)';
-            btn.disabled = false;
+        if (!text.trim()) {
+            resultDiv.textContent = 'Kérlek adj meg egy szöveget!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
         }
 
-        // Enter események
-        document.getElementById('stars-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') drawStars(); });
-        document.getElementById('text-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') printChars(); });
-    </script>
+        let output = '';
+        for (const char of text) {
+            output += char + '\n';
+        }
 
-    <section id="while" class="section">
-        <h1 class="section-title">
-            <i class="fas fa-sync"></i>
-            While Ciklus
-        </h1>
+        resultDiv.textContent = output;
+        resultDiv.style.borderColor = 'var(--success)';
 
-        <div class="card">
-            <h2>A While ciklus működése</h2>
-            <p>A While ciklus addig fut, amíg a feltétel igaz. Vigyázni kell vele!</p>
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
 
-            <div class="examples-grid">
-                <div class="example-card">
-                    <h3>Számláló</h3>
-                    <div class="code-container">
-                        <pre><code class="language-python">szam = 1
-while szam <= 10:
+    function calculateSum() {
+        const num = Number(document.getElementById('sum-input').value);
+        const resultDiv = document.getElementById('sum-result');
+
+        if (!Number.isInteger(num) || num < 1 || num > 100) {
+            resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 100 között!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        let sum = 0;
+        for (let i = 0; i <= num; i++) {
+            sum += i;
+        }
+
+        const steps = [];
+        let currentSum = 0;
+        for (let i = 0; i <= num; i++) {
+            currentSum += i;
+            steps.push(`${i}: ${currentSum}`);
+        }
+
+        resultDiv.innerHTML = `
+            <div>Számítás lépései:</div>
+            <div class="calculation-steps">${steps.join('<br>')}</div>
+            <div class="final-result">Végeredmény: ${sum}</div>
+        `;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.getElementById('stars-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') drawStars();
+    });
+
+    document.getElementById('text-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') printChars();
+    });
+
+    document.getElementById('sum-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') calculateSum();
+    });
+</script>
+<!-- While ciklus szekció -->
+<section class="section" id="while">
+<h1 class="section-title">
+<i class="fas fa-sync"></i>
+        While Ciklus
+    </h1>
+<div class="card">
+<h2>A While ciklus működése</h2>
+<p>A While ciklus egy feltételes ciklus, amely addig ismétli a benne lévő utasításokat, amíg a megadott feltétel igaz. Ez különösen hasznos olyan esetekben, amikor nem tudjuk előre, hány ismétlésre lesz szükség.</p>
+<div class="syntax-box">
+<h3>Szintaxis</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python">while feltétel:
+    # Végrehajtandó utasítások
+    pass  # Ide kerülnek a ciklus utasításai</code></pre>
+</div>
+<div class="syntax-notes">
+<div class="note warning">
+<i class="fas fa-exclamation-triangle"></i>
+<span>Vigyázz! A feltételnek valamikor hamissá kell válnia, különben végtelen ciklusba kerülsz!</span>
+</div>
+<div class="note">
+<i class="fas fa-info-circle"></i>
+<span>A <code>feltétel</code> bármilyen logikai kifejezés lehet, ami True vagy False értéket ad.</span>
+</div>
+</div>
+</div>
+<div class="examples-grid">
+<div class="example-card">
+<h3>Számok kiírása amíg el nem éri a 10-et</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Számláló while ciklussal
+szam = 1
+while szam &lt;= 10:
     print(szam)
     szam += 1</code></pre>
-                    </div>
-                    <div class="demo-area">
-                        <div class="form-group">
-                            <label>Kezdőszám (1-9):</label>
-                            <div class="input-group">
-                                <input type="number" id="counter-input" class="input" placeholder="Pl.: 1" min="1" max="9">
-                                <button class="btn" onclick="countToTen()">
-                                    <i class="fas fa-play"></i> Számolás
-                                </button>
-                            </div>
-                        </div>
-                        <div id="counter-result" class="result monospace"></div>
-                    </div>
-                </div>
+</div>
+<div class="demo-area">
+<div class="form-group">
+<label>Add meg a kezdőszámot (1-9):</label>
+<div class="input-group">
+<input class="input" id="counter-input" max="9" min="1" placeholder="Pl.: 1" type="number"/>
+<button class="btn" onclick="countToTen()">
+<i class="fas fa-play"></i> Számolás
+                            </button>
+</div>
+</div>
+<div class="result monospace" id="counter-result"></div>
+</div>
+</div>
+<div class="example-card">
+<h3>Jelszavas belépés</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Jelszavas belépés
+jelszo = ""
+while jelszo != "titok":
+    jelszo = input("Írd be a jelszót: ")
 
-                <div class="example-card" style="border: 2px solid var(--error);">
-                    <h3 style="color: var(--error);"><i class="fas fa-skull-crossbones"></i> Végtelen Ciklus</h3>
-                    <p style="font-size: 0.9em; margin-bottom: 0.5rem;">Ha elfelejted növelni a változót, a ciklus sosem áll le!</p>
-                    <div class="code-container">
-                        <pre><code class="language-python">i = 0
-while i < 5:
-    print("Fut...")
-    # NINCS i += 1 !!!</code></pre>
-                    </div>
-                    <div class="demo-area">
-                        <button class="btn btn-danger" onclick="simulateInfiniteLoop()">
-                            <i class="fas fa-radiation"></i> Próbáld ki (Biztonságos)
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+print("Helyes jelszó!")</code></pre>
+</div>
+<div class="demo-area">
+<div class="form-group">
+<label>Próbáld kitalálni a jelszót (titok):</label>
+<div class="input-group">
+<input class="input" id="password-input" placeholder="Jelszó" type="password"/>
+<button class="btn" onclick="checkPassword()">
+<i class="fas fa-key"></i> Ellenőrzés
+                            </button>
+</div>
+</div>
+<div class="password-attempts" id="password-attempts"></div>
+<div class="result" id="password-result"></div>
+</div>
+</div>
+<div class="example-card">
+<h3>Számok visszaírása nulláig</h3>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Számok visszaírása amíg nem nulla
+bekert_szam = 1
+while bekert_szam != 0:
+    bekert_szam = int(input("Kérem adjon meg egy számot. A kilépéshez adjon 0-t: "))
+    print(f"Az általad adott szám: {bekert_szam}")</code></pre>
+</div>
+<div class="demo-area">
+<div class="form-group">
+<label>Adj meg számokat (0 = kilépés):</label>
+<div class="input-group">
+<input class="input" id="number-input" placeholder="Szám" type="number"/>
+<button class="btn" id="number-submit" onclick="processNumber()">
+<i class="fas fa-arrow-right"></i> Beküldés
+                            </button>
+</div>
+</div>
+<div class="numbers-list" id="numbers-history"></div>
+<div class="result" id="numbers-result"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<style>
+    .note.warning {
+        color: var(--warning);
+    }
 
-    <script>
-        async function countToTen() {
-            const startNum = parseInt(document.getElementById('counter-input').value);
-            const resultDiv = document.getElementById('counter-result');
-            const btn = document.querySelector('#counter-input + .btn');
+    .note.warning i {
+        color: var(--warning);
+    }
 
-            if (isNaN(startNum) || startNum < 1 || startNum > 9) {
-                resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 9 között!';
-                resultDiv.style.borderColor = 'var(--error)';
-                resultDiv.classList.add('show');
-                return;
-            }
+    .password-attempts {
+        margin: 1rem 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
 
-            btn.disabled = true;
-            resultDiv.textContent = '';
-            resultDiv.classList.add('show');
-            resultDiv.style.borderColor = 'var(--info)';
+    .attempt {
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+    }
 
-            let num = startNum;
-            let output = '';
-            while (num <= 10) {
-                output += `${num}\n`;
-                resultDiv.textContent = output;
-                await delay(200);
-                num++;
-            }
+    .attempt.wrong {
+        background: rgba(231, 76, 60, 0.2);
+        color: var(--error);
+    }
 
+    .attempt.correct {
+        background: rgba(46, 204, 113, 0.2);
+        color: var(--success);
+    }
+
+    .numbers-list {
+        margin: 1rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .number-entry {
+        padding: 0.5rem;
+        background: var(--bg-secondary);
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .number-entry .timestamp {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+    }
+</style>
+<script>
+    function countToTen() {
+        const startNum = Number(document.getElementById('counter-input').value);
+        const resultDiv = document.getElementById('counter-result');
+
+        if (!Number.isInteger(startNum) || startNum < 1 || startNum > 9) {
+            resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 9 között!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        let output = '';
+        let num = startNum;
+        while (num <= 10) {
+            output += `${num}\n`;
+            num++;
+        }
+
+        resultDiv.textContent = output;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    const attempts = [];
+    function checkPassword() {
+        const password = document.getElementById('password-input').value;
+        const resultDiv = document.getElementById('password-result');
+        const attemptsDiv = document.getElementById('password-attempts');
+
+        if (!password) {
+            resultDiv.textContent = 'Kérlek adj meg egy jelszót!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        const isCorrect = password === 'titok';
+        attempts.push({ password, isCorrect });
+
+        attemptsDiv.innerHTML = attempts.map(attempt => `
+            <span class="attempt ${attempt.isCorrect ? 'correct' : 'wrong'}">
+                ${'*'.repeat(attempt.password.length)}
+            </span>
+        `).join('');
+
+        if (isCorrect) {
+            resultDiv.textContent = 'Helyes jelszó!';
             resultDiv.style.borderColor = 'var(--success)';
-            btn.disabled = false;
+        } else {
+            resultDiv.textContent = 'Helytelen jelszó! Próbáld újra!';
+            resultDiv.style.borderColor = 'var(--error)';
         }
 
-        // Végtelen ciklus szimuláció
-        function simulateInfiniteLoop() {
-            alert("⚠️ RENDSZER HIBA! ⚠️\n\nA böngésző érzékelte, hogy ez a ciklus a végtelenségig futna!\nValós környezetben ez lefagyasztaná a programodat.");
+        document.getElementById('password-input').value = '';
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    const numbers = [];
+    function processNumber() {
+        const num = Number(document.getElementById('number-input').value);
+        const resultDiv = document.getElementById('numbers-result');
+        const historyDiv = document.getElementById('numbers-history');
+
+        if (!Number.isInteger(num)) {
+            resultDiv.textContent = 'Kérlek adj meg egy érvényes számot!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
         }
 
-        document.getElementById('counter-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') countToTen(); });
-    </script>
+        numbers.push({
+            value: num,
+            timestamp: new Date().toLocaleTimeString()
+        });
 
-    <section id="gyakorlo" class="section">
-        <h1 class="section-title">
-            <i class="fas fa-tasks"></i>
-            Gyakorló feladatok
-        </h1>
-
-        <div class="card">
-            <h2>Feladatok</h2>
-            
-            <div class="exercise">
-                <div class="exercise-header" onclick="toggleExercise(1)">
-                    <h3>1. Feladat: Szorzótábla</h3>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="exercise-content" id="exercise-1">
-                    <div class="task-description">
-                        <p>Készíts egy programot, amely kiírja egy szám szorzótábláját 1-től 10-ig!</p>
-                    </div>
-                    <div class="code-container">
-                        <pre><code class="language-python">bekert_szam = int(input("Melyik szám szorzótábláját szeretnéd? "))
-
-for i in range(1, 11): # 1-től 11-ig megy (a 11 már nem fut le)
-    print(f"{i}*{bekert_szam}={i*bekert_szam}")</code></pre>
-                    </div>
-                    <div class="practice-area">
-                        <div class="form-group">
-                            <label>Szám:</label>
-                            <input type="number" id="multi-input" class="input" placeholder="Pl.: 7">
-                            <button class="btn" onclick="showMultiTable()">Számolás</button>
-                        </div>
-                        <div id="multi-result" class="result monospace"></div>
-                    </div>
-                </div>
+        historyDiv.innerHTML = numbers.map(entry => `
+            <div class="number-entry">
+                <span>Az általad adott szám: ${entry.value}</span>
+                <span class="timestamp">${entry.timestamp}</span>
             </div>
-        </div>
-    </section>
+        `).join('');
 
-    <style>
+        if (num === 0) {
+            resultDiv.textContent = 'Program vége!';
+            resultDiv.style.borderColor = 'var(--info)';
+            document.getElementById('number-input').disabled = true;
+            const submitButton = document.getElementById('number-submit');
+            if (submitButton) submitButton.disabled = true;
+        } else {
+            resultDiv.textContent = `Az általad adott szám: ${num}`;
+            resultDiv.style.borderColor = 'var(--success)';
+        }
+
+        document.getElementById('number-input').value = '';
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése
+    document.getElementById('counter-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') countToTen();
+    });
+
+    document.getElementById('password-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkPassword();
+    });
+
+    document.getElementById('number-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') processNumber();
+    });
+</script>
+<!-- Gyakorló feladatok szekció -->
+<section class="section" id="gyakorlo">
+<h1 class="section-title">
+<i class="fas fa-tasks"></i>
+        Gyakorló feladatok
+    </h1>
+<div class="card">
+<h2>Feladatok megoldása</h2>
+<p>Az alábbi feladatok segítenek a ciklusok gyakorlásában. Minden feladatnál megtalálod a leírást, a példakódot, és ki is próbálhatod őket.</p>
+<!-- 1. Feladat -->
+<div class="exercise">
+<div class="exercise-header" onclick="toggleExercise(1)">
+<h3>1. Feladat: Szorzótábla</h3>
+<i class="fas fa-chevron-down"></i>
+</div>
+<div class="exercise-content" id="exercise-1">
+<div class="task-description">
+<p>Készíts egy programot, amely kiírja egy tetszőleges szám szorzótábláját 1-től 10-ig!</p>
+</div>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Szorzótábla készítése
+bekert_szam = int(input("Melyik szám szorzótábláját szeretnéd? "))
+
+for i in range(1, 11):
+    print(f"{i} * {bekert_szam} = {i * bekert_szam}")</code></pre>
+</div>
+<div class="practice-area">
+<h4>Próbáld ki!</h4>
+<div class="form-group">
+<label>Add meg a számot:</label>
+<div class="input-group">
+<input class="input" id="multiplication-input" max="100" min="1" placeholder="Pl.: 5" type="number"/>
+<button class="btn" onclick="showMultiplicationTable()">
+<i class="fas fa-calculator"></i> Számolás
+                            </button>
+</div>
+</div>
+<div class="result" id="multiplication-result"></div>
+</div>
+</div>
+</div>
+<!-- 2. Feladat -->
+<div class="exercise">
+<div class="exercise-header" onclick="toggleExercise(2)">
+<h3>2. Feladat: Páros számok listázása</h3>
+<i class="fas fa-chevron-down"></i>
+</div>
+<div class="exercise-content" id="exercise-2">
+<div class="task-description">
+<p>Írd ki az összes páros számot egy megadott határig!</p>
+</div>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Páros számok kiírása
+hatar = int(input("Add meg a határt: "))
+
+for szam in range(2, hatar + 1, 2):
+    print(szam)</code></pre>
+</div>
+<div class="practice-area">
+<h4>Próbáld ki!</h4>
+<div class="form-group">
+<label>Add meg a határt:</label>
+<div class="input-group">
+<input class="input" id="even-limit-input" max="100" min="2" placeholder="Pl.: 10" type="number"/>
+<button class="btn" onclick="showEvenNumbers()">
+<i class="fas fa-list"></i> Listázás
+                            </button>
+</div>
+</div>
+<div class="result" id="even-numbers-result"></div>
+</div>
+</div>
+</div>
+<!-- 3. Feladat -->
+<div class="exercise">
+<div class="exercise-header" onclick="toggleExercise(3)">
+<h3>3. Feladat: Szavak ismétlése</h3>
+<i class="fas fa-chevron-down"></i>
+</div>
+<div class="exercise-content" id="exercise-3">
+<div class="task-description">
+<p>Írj egy programot, amely egy megadott szót többször kiír egymás után!</p>
+</div>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Szó ismétlése
+szo = input("Adj meg egy szót: ")
+ismetles = int(input("Hányszor ismételjem? "))
+
+for i in range(ismetles):
+    print(szo)</code></pre>
+</div>
+<div class="practice-area">
+<h4>Próbáld ki!</h4>
+<div class="form-group">
+<div class="word-repeat-inputs">
+<input class="input" id="word-input" placeholder="Szó" type="text"/>
+<input class="input" id="repeat-input" max="10" min="1" placeholder="Ismétlések száma" type="number"/>
+</div>
+<button class="btn" onclick="repeatWord()">
+<i class="fas fa-redo"></i> Ismétlés
+                        </button>
+</div>
+<div class="result" id="word-repeat-result"></div>
+</div>
+</div>
+</div>
+<!-- További feladatok itt folytatódnak... -->
+</div>
+<style>
         .exercise {
             margin: 2rem 0;
             background: var(--bg-primary);
@@ -680,305 +1156,703 @@ for i in range(1, 11): # 1-től 11-ig megy (a 11 már nem fut le)
             padding: 1.5rem;
             background: var(--bg-secondary);
             cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .exercise-header:hover {
+            background: var(--highlight);
+        }
+
+        .exercise-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+
+        .exercise-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .exercise-header.active i {
+            transform: rotate(180deg);
         }
 
         .exercise-content {
             padding: 0;
             max-height: 0;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: max-height 0.3s ease, padding 0.3s ease;
         }
 
         .exercise-content.active {
             padding: 1.5rem;
-            max-height: 1000px;
-        }
-    </style>
-
-    <script>
-        function toggleExercise(num) {
-            const content = document.getElementById(`exercise-${num}`);
-            content.classList.toggle('active');
+            max-height: 2000px;
         }
 
-        async function showMultiTable() {
-            const num = parseInt(document.getElementById('multi-input').value);
-            const res = document.getElementById('multi-result');
-            
-            if(isNaN(num)) {
-                res.textContent = "Kérlek adj meg egy számot!";
-                res.classList.add('show');
-                return;
-            }
-
-            res.classList.add('show');
-            let output = `A ${num} szorzótáblája:\n`;
-            res.textContent = output;
-
-            for(let i=1; i<=10; i++) {
-                output += `${i} * ${num} = ${i*num}\n`;
-                res.textContent = output;
-                await delay(100);
-            }
-        }
-    </script>
-
-    <section id="kombinalt" class="section">
-        <h1 class="section-title">
-            <i class="fas fa-code"></i>
-            Kombinált példák
-        </h1>
-
-        <div class="card">
-            <h2>Találd ki a számot játék</h2>
-            <p>While és for ciklusok használata egy játékban. <strong>Találd ki a számot, és ünnepelj!</strong></p>
-
-            <div class="game-demo">
-                <div class="game-screen">
-                    <div class="game-info">
-                        <div class="game-stats">
-                            <span>Próbálkozások: <span id="attempts">7</span></span>
-                            <span id="guessed-numbers">Tippelt számok: -</span>
-                        </div>
-                        <div class="lives-container">
-                            <div id="lives" class="lives">♥♥♥♥♥♥♥</div>
-                        </div>
-                    </div>
-                    <div id="game-message" class="game-message">
-                        Gondoltam egy számra 1 és 100 között...
-                    </div>
-                    <div class="game-controls">
-                        <input type="number" id="guess-input" class="input" placeholder="Tipp (1-100)" min="1" max="100">
-                        <button class="btn" id="guess-btn">
-                            <i class="fas fa-check"></i> Tippelés
-                        </button>
-                        <button class="btn btn-secondary" id="restart-btn">
-                            <i class="fas fa-redo"></i> Új játék
-                        </button>
-                    </div>
-                    <div class="number-range">
-                        <div class="range-bar">
-                            <div id="range-indicator" class="range-indicator"></div>
-                        </div>
-                        <div class="range-labels">
-                            <span>1</span>
-                            <span>50</span>
-                            <span>100</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <style>
-        .game-demo {
-            margin-top: 2rem;
-            background: var(--bg-primary);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .game-screen {
-            background: var(--bg-secondary);
-            border-radius: 10px;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .lives {
-            color: var(--error);
-            font-size: 1.2rem;
-            letter-spacing: 0.2rem;
-        }
-
-        .game-message {
-            text-align: center;
-            font-size: 1.2rem;
-            color: var(--accent-primary);
-            min-height: 3rem;
+        .task-description {
+            background: var(--highlight);
             padding: 1rem;
-            background: rgba(0,0,0,0.2);
             border-radius: 5px;
+            margin-bottom: 1.5rem;
         }
 
-        .game-controls {
-            display: flex;
+        .word-repeat-inputs {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
             gap: 1rem;
-            justify-content: center;
-        }
-
-        .range-bar {
-            height: 10px;
-            background: var(--bg-primary);
-            border-radius: 5px;
-            position: relative;
-            margin-bottom: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .range-indicator {
-            position: absolute;
-            top: -5px;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-primary);
-            border-radius: 50%;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: left 0.3s ease, background-color 0.3s ease;
-        }
-
-        .range-labels {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
-            .game-info, .game-controls {
-                flex-direction: column;
+            .word-repeat-inputs {
+                grid-template-columns: 1fr;
             }
         }
     </style>
+<script>
+        function toggleExercise(num) {
+            const content = document.getElementById(`exercise-${num}`);
+            const header = content.previousElementSibling;
 
-    <script>
-        // Module pattern a változók védelmére
-        const GameModule = (() => {
-            let targetNumber;
-            let attemptsLeft;
-            const maxAttempts = 7;
-            let guessedNumbers = [];
+            content.classList.toggle('active');
+            header.classList.toggle('active');
+        }
 
-            const ui = {
-                message: document.getElementById("game-message"),
-                lives: document.getElementById("lives"),
-                attempts: document.getElementById("attempts"),
-                guessed: document.getElementById("guessed-numbers"),
-                input: document.getElementById("guess-input"),
-                indicator: document.getElementById("range-indicator"),
-                btn: document.getElementById("guess-btn")
-            };
+        function showMultiplicationTable() {
+            const number = Number(document.getElementById('multiplication-input').value);
+            const resultDiv = document.getElementById('multiplication-result');
 
-            function init() {
-                targetNumber = Math.floor(Math.random() * 100) + 1;
-                attemptsLeft = maxAttempts;
-                guessedNumbers = [];
-                
-                ui.input.value = "";
-                ui.input.disabled = false;
-                ui.btn.disabled = false;
-                ui.input.focus();
-                
-                ui.indicator.style.left = "50%";
-                ui.indicator.style.backgroundColor = "var(--accent-primary)";
-                
-                updateUI();
-                showMessage("Gondoltam egy számra 1 és 100 között...", "var(--accent-primary)");
+            if (!Number.isInteger(number) || number < 1 || number > 100) {
+                resultDiv.textContent = 'Kérlek adj meg egy számot 1 és 100 között!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
             }
 
-            function updateUI() {
-                ui.lives.textContent = "♥".repeat(attemptsLeft);
-                ui.attempts.textContent = attemptsLeft;
-                ui.guessed.textContent = `Tippelt számok: ${guessedNumbers.join(", ") || "-"}`;
+            let output = `A ${number} szorzótáblája:\n\n`;
+            for (let i = 1; i <= 10; i++) {
+                output += `${i} × ${number} = ${i * number}\n`;
             }
 
-            function showMessage(msg, color) {
-                ui.message.textContent = msg;
-                ui.message.style.color = color;
+            resultDiv.innerHTML = `<pre>${output}</pre>`;
+            resultDiv.style.borderColor = 'var(--success)';
+
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        function showEvenNumbers() {
+            const limit = Number(document.getElementById('even-limit-input').value);
+            const resultDiv = document.getElementById('even-numbers-result');
+
+            if (!Number.isInteger(limit) || limit < 2 || limit > 100) {
+                resultDiv.textContent = 'Kérlek adj meg egy számot 2 és 100 között!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
             }
 
-            function triggerConfetti() {
-                // Konfetti effektus
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
+            const evenNumbers = [];
+            for (let i = 2; i <= limit; i += 2) {
+                evenNumbers.push(i);
             }
 
-            function makeGuess() {
-                const guess = parseInt(ui.input.value);
+            resultDiv.innerHTML = `
+                <div>Páros számok ${limit}-ig:</div>
+                <pre>${evenNumbers.join(', ')}</pre>
+            `;
+            resultDiv.style.borderColor = 'var(--success)';
 
-                if (isNaN(guess) || guess < 1 || guess > 100) {
-                    showMessage("Kérlek 1 és 100 közötti számot adj meg!", "var(--error)");
-                    return;
-                }
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
 
-                if(guessedNumbers.includes(guess)) {
-                    showMessage("Ezt már tippelted!", "var(--warning)");
-                    return;
-                }
+        function repeatWord() {
+            const word = document.getElementById('word-input').value;
+            const count = Number(document.getElementById('repeat-input').value);
+            const resultDiv = document.getElementById('word-repeat-result');
 
-                guessedNumbers.push(guess);
-                attemptsLeft--;
-                
-                // Csúszka mozgatása
-                const pos = ((guess - 1) / 99) * 100;
-                ui.indicator.style.left = `${pos}%`;
-
-                if (guess === targetNumber) {
-                    showMessage(`GRATULÁLOK! Eltaláltad ${maxAttempts - attemptsLeft} lépésből!`, "var(--success)");
-                    ui.indicator.style.backgroundColor = "var(--success)";
-                    ui.input.disabled = true;
-                    ui.btn.disabled = true;
-                    triggerConfetti();
-                } else {
-                    if (attemptsLeft === 0) {
-                        showMessage(`Vesztettél! A szám a(z) ${targetNumber} volt.`, "var(--error)");
-                        ui.input.disabled = true;
-                        ui.btn.disabled = true;
-                    } else if (guess < targetNumber) {
-                        showMessage("A gondolt szám NAGYOBB!", "var(--info)");
-                        ui.indicator.style.backgroundColor = "var(--info)";
-                    } else {
-                        showMessage("A gondolt szám KISEBB!", "var(--info)");
-                        ui.indicator.style.backgroundColor = "var(--info)";
-                    }
-                }
-                updateUI();
-                ui.input.value = "";
-                ui.input.focus();
+            if (!word.trim() || !Number.isInteger(count) || count < 1 || count > 10) {
+                resultDiv.textContent = 'Kérlek add meg a szót és egy számot 1 és 10 között!';
+                resultDiv.style.borderColor = 'var(--error)';
+                return;
             }
 
-            // Eseménykezelők beállítása (csak egyszer!)
-            document.getElementById("guess-btn").addEventListener("click", makeGuess);
-            document.getElementById("restart-btn").addEventListener("click", init);
-            ui.input.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") makeGuess();
-            });
+            let output = '';
+            for (let i = 0; i < count; i++) {
+                output += `${word}\n`;
+            }
 
-            return { init };
-        })();
+            resultDiv.innerHTML = `<pre>${output}</pre>`;
+            resultDiv.style.borderColor = 'var(--success)';
 
-        // Indítás
-        document.addEventListener("DOMContentLoaded", GameModule.init);
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('show');
+        }
+
+        // Enter billentyű kezelése
+        document.getElementById('multiplication-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') showMultiplicationTable();
+        });
+
+        document.getElementById('even-limit-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') showEvenNumbers();
+        });
+
+        document.getElementById('word-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('repeat-input').focus();
+        });
+
+        document.getElementById('repeat-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') repeatWord();
+        });
+
+        // Az első feladat megnyitása betöltéskor
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleExercise(1);
+        });
     </script>
-    </main>
+</section>
+<!-- Kombinált példák szekció -->
+<section class="section" id="kombinalt">
+<h1 class="section-title">
+<i class="fas fa-code"></i>
+        Kombinált példák
+    </h1>
+<div class="card">
+<h2>Találd ki a számot játék</h2>
+<p>Ez a példa a while és for ciklusok együttes használatát mutatja be egy egyszerű számkitalálós játékban.</p>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Számkitaláló játék
+import random
 
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-4 mb-md-0">
-                    <h3 class="h5 mb-3">Kapcsolat</h3>
-                    <p class="mb-2">Email: <a href="mailto:infotanar@infotanar.eu" class="footer-link">infotanar@infotanar.eu</a></p>
+# Generálunk egy véletlenszámot 1 és 100 között
+gondolt_szam = random.randint(1, 100)
+tippek_szama = 0
+max_probalkozas = 7
+
+print("Gondoltam egy számra 1 és 100 között.")
+print(f"Maximum {max_probalkozas} tipped lehet!")
+
+# While ciklus a játék futtatásához
+while tippek_szama &lt; max_probalkozas:
+    try:
+        tipp = int(input("Mi a tipped? "))
+        tippek_szama += 1
+
+        if tipp == gondolt_szam:
+            print(f"Gratulálok! Kitaláltad {tippek_szama} próbálkozásból!")
+            break
+        elif tipp &lt; gondolt_szam:
+            print("A gondolt szám nagyobb!")
+        else:
+            print("A gondolt szám kisebb!")
+
+        # For ciklussal jelezzük a maradék próbálkozások számát
+        print("Még ", end="")
+        for i in range(max_probalkozas - tippek_szama):
+            print("♥", end="")
+        print(" életed van.")
+
+    except ValueError:
+        print("Kérlek számot adj meg!")</code></pre>
+</div>
+<div class="game-demo">
+<div class="game-screen">
+<div class="game-info">
+<div class="game-stats">
+<span id="attempts-left">Próbálkozások: <span id="attempts">7</span></span>
+<span id="guessed-numbers">Tippelt számok: -</span>
+</div>
+<div class="lives-container">
+<span>Életek: </span>
+<div class="lives" id="lives">♥♥♥♥♥♥♥</div>
+</div>
+</div>
+<div class="game-message" id="game-message">
+                    Gondoltam egy számra 1 és 100 között...
                 </div>
-                <div class="col-md-6">
-                    <h3 class="h5 mb-3">Információk</h3>
-                    <p class="mb-2">Utolsó frissítés: 2025.01.19.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-</body>
+<div class="game-controls">
+<input class="input" id="guess-input" max="100" min="1" placeholder="Tipp (1-100)" type="number"/>
+<button class="btn" id="guess-button" onclick="makeGuess()">
+<i class="fas fa-check"></i> Tippelés
+                    </button>
+<button class="btn btn-secondary" onclick="newGame()">
+<i class="fas fa-redo"></i> Új játék
+                    </button>
+</div>
+<div class="number-range">
+<div class="range-bar">
+<div class="range-indicator" id="range-indicator"></div>
+</div>
+<div class="range-labels">
+<span>1</span>
+<span>50</span>
+<span>100</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="card">
+<h2>Karácsonyi fa rajzoló</h2>
+<p>Ez a példa a for ciklusok egymásba ágyazásával rajzol egy karácsonyfát.</p>
+<div class="code-container"><button aria-label="Kód másolása" class="copy-btn" type="button"><i class="fas fa-copy"></i></button>
+<pre><code class="language-python"># Karácsonyfa rajzoló
+def karacsonyfa(magassag):
+    # Fa koronája
+    for i in range(magassag):
+        # Szóközök a behúzáshoz
+        for j in range(magassag - i - 1):
+            print(" ", end="")
+        # Csillagok a fa ágaihoz
+        for k in range(2 * i + 1):
+            print("*", end="")
+        print()  # Új sor
+
+    # Fa törzse
+    for i in range(2):
+        for j in range(magassag - 2):
+            print(" ", end="")
+        print("|||")
+
+magassag = int(input("Add meg a fa magasságát: "))
+karacsonyfa(magassag)</code></pre>
+</div>
+<div class="tree-demo">
+<div class="form-group">
+<label>Add meg a fa magasságát (3-10):</label>
+<div class="input-group">
+<input class="input" id="tree-height" max="10" min="3" placeholder="Magasság" type="number"/>
+<button class="btn" onclick="drawTree()">
+<i class="fas fa-tree"></i> Rajzolás
+                    </button>
+</div>
+</div>
+<div class="tree-display">
+<div class="result monospace" id="tree-result"></div>
+</div>
+</div>
+</div>
+</section>
+<style>
+    .game-demo {
+        margin-top: 2rem;
+        background: var(--bg-primary);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-screen {
+        background: var(--bg-secondary);
+        border-radius: 10px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .game-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .game-stats {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .lives {
+        color: var(--error);
+        font-size: 1.2rem;
+        letter-spacing: 0.2rem;
+    }
+
+    .game-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--accent-primary);
+        min-height: 3rem;
+    }
+
+    .game-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .number-range {
+        margin-top: 2rem;
+    }
+
+    .range-bar {
+        height: 10px;
+        background: var(--bg-primary);
+        border-radius: 5px;
+        position: relative;
+        margin-bottom: 0.5rem;
+    }
+
+    .range-indicator {
+        position: absolute;
+        top: -5px;
+        width: 20px;
+        height: 20px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        transition: left 0.3s ease;
+    }
+
+    .range-labels {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-secondary);
+    }
+
+    .tree-demo {
+        margin-top: 2rem;
+    }
+
+    .tree-display {
+        margin-top: 1rem;
+        min-height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .game-controls {
+            flex-direction: column;
+        }
+
+        .game-info {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .game-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>
+<script>
+
+// Számkitaláló játék változók
+let targetNumber; // Véletlenszám 1-100 között
+let attemptsLeft; // Maradék próbálkozások száma
+const maxAttempts = 7; // Maximális próbálkozások
+let guessedNumbers = []; // Eddigi tippek tárolása
+
+// Játék inicializálása
+function initGame() {
+    targetNumber = Math.floor(Math.random() * 100) + 1; // Véletlenszám generálása
+    attemptsLeft = maxAttempts; // Próbálkozások alaphelyzete
+    guessedNumbers = []; // Történeti lista alaphelyzete
+    updateGameUI(); // Kezdeti UI frissítése
+    showMessage("Gondoltam egy számra 1 és 100 között..."); // Kezdő üzenet
+    resetInput(true); // Input mező törlése, fókusz nélkül
+}
+
+// Tippelés kezelése
+function makeGuess() {
+    const guessInput = document.getElementById("guess-input");
+    const guess = Number(guessInput.value);
+
+    // Hibakezelés: ha nem szám vagy kívül esik a tartományon
+    if (!Number.isInteger(guess) || guess < 1 || guess > 100) {
+        showMessage("Kérlek adj meg egy számot 1 és 100 között!", "error");
+        return;
+    }
+
+    guessedNumbers.push(guess); // Tipp mentése
+    attemptsLeft--; // Maradék próbálkozások csökkentése
+
+    // Tippelés eredményei
+    if (guess === targetNumber) {
+        showMessage(`Gratulálok! Kitaláltad ${maxAttempts - attemptsLeft} próbálkozásból!`, "success");
+        endGame();
+    } else if (attemptsLeft === 0) {
+        showMessage(`Sajnos nem találtad ki! A szám ${targetNumber} volt.`, "error");
+        endGame();
+    } else if (guess < targetNumber) {
+        showMessage("A gondolt szám nagyobb!");
+    } else {
+        showMessage("A gondolt szám kisebb!");
+    }
+
+    updateRangeIndicator(guess); // Csúszka frissítése
+    updateGameUI(); // UI frissítése
+    resetInput(); // Tipp mező törlése
+}
+
+// Játék UI frissítése
+function updateGameUI() {
+    const livesDiv = document.getElementById("lives");
+    const attemptsDiv = document.getElementById("attempts");
+    const guessedNumbersDiv = document.getElementById("guessed-numbers");
+
+    // Életek és tippek megjelenítése
+    livesDiv.textContent = "♥".repeat(attemptsLeft);
+    attemptsDiv.textContent = attemptsLeft;
+    guessedNumbersDiv.textContent = `Tippelt számok: ${guessedNumbers.join(", ") || "-"}`;
+}
+
+// Üzenetek megjelenítése
+function showMessage(message, type = "info") {
+    const messageDiv = document.getElementById("game-message");
+    messageDiv.textContent = message;
+    messageDiv.className = `game-message ${type}`;
+}
+
+// Csúszka alaphelyzetbe állítása
+function resetRangeIndicator() {
+    const indicator = document.getElementById("range-indicator");
+    indicator.style.left = "50%"; // Csúszka középre állítása
+    indicator.style.backgroundColor = "var(--accent-primary)";
+}
+
+// Csúszka frissítése
+function updateRangeIndicator(guess) {
+    const indicator = document.getElementById("range-indicator");
+    const position = 2 + ((guess - 1) / 99) * 96; // 2–98%, hogy a jelölő ne lógjon ki
+    indicator.style.left = `${position}%`;
+
+    // Csúszka színe a tipp alapján
+    if (guess < targetNumber) {
+        indicator.style.backgroundColor = "var(--accent-primary)"; // Túl kicsi
+    } else if (guess > targetNumber) {
+        indicator.style.backgroundColor = "var(--error)"; // Túl nagy
+    } else {
+        indicator.style.backgroundColor = "var(--success)"; // Helyes
+    }
+}
+
+// Input mező alaphelyzetbe állítása
+function resetInput(avoidFocus = false) {
+    const guessInput = document.getElementById("guess-input");
+    guessInput.value = ""; // Mező törlése
+
+    // Fókusz beállítása, kivéve, ha tiltva van
+    if (!avoidFocus) {
+        guessInput.focus();
+    }
+}
+
+// Játék lezárása
+function endGame() {
+    const guessInput = document.getElementById("guess-input");
+    guessInput.disabled = true; // Input mező lezárása
+    const guessButton = document.getElementById("guess-button");
+    if (guessButton) guessButton.disabled = true;
+}
+
+// Új játék indítása
+function newGame() {
+    const guessInput = document.getElementById("guess-input");
+    guessInput.disabled = false; // Input mező engedélyezése
+    const guessButton = document.getElementById("guess-button");
+    if (guessButton) guessButton.disabled = false;
+    resetRangeIndicator();
+    initGame(); // Játék újrainicializálása
+}
+
+// Enter billentyű támogatása
+document.getElementById("guess-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") makeGuess();
+});
+
+// Játék inicializálása a DOM betöltése után
+document.addEventListener("DOMContentLoaded", () => {
+    initGame();
+});
+
+
+
+
+    // Karácsonyfa rajzoló
+    function drawTree() {
+        const height = Number(document.getElementById('tree-height').value);
+        const resultDiv = document.getElementById('tree-result');
+
+        if (!Number.isInteger(height) || height < 3 || height > 10) {
+            resultDiv.textContent = 'Kérlek adj meg egy számot 3 és 10 között!';
+            resultDiv.style.borderColor = 'var(--error)';
+            return;
+        }
+
+        let tree = '';
+        // Fa koronája
+        for (let i = 0; i < height; i++) {
+            // Szóközök
+            tree += ' '.repeat(height - i - 1);
+            // Csillagok
+            tree += '*'.repeat(2 * i + 1);
+            tree += '\n';
+        }
+
+        // Fa törzse
+        for (let i = 0; i < 2; i++) {
+            tree += ' '.repeat(height - 2);
+            tree += '|||\n';
+        }
+
+        resultDiv.innerHTML = `<pre>${tree}</pre>`;
+        resultDiv.style.borderColor = 'var(--success)';
+
+        // Animáció visszaállítása
+        resultDiv.classList.remove('show');
+        void resultDiv.offsetWidth;
+        resultDiv.classList.add('show');
+    }
+
+    // Enter billentyű kezelése a fa rajzolásához
+    document.getElementById('tree-height').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') drawTree();
+    });
+</script>
+</main>
+<footer>
+<div class="container">
+<div class="row">
+<div class="col-md-6 mb-4 mb-md-0">
+<h3 class="h5 mb-3">Kapcsolat</h3>
+<p class="mb-2">Email: <a class="footer-link" href="mailto:infotanar@infotanar.eu">infotanar@infotanar.eu</a></p>
+</div>
+<div class="col-md-6">
+<h3 class="h5 mb-3">Információk</h3>
+<p class="mb-2">Utolsó frissítés: 2025.01.19.</p>
+<p>License: <a class="footer-link" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GNU General Public License v3.0</a></p>
+</div>
+</div>
+</div>
+</footer>
+<style>
+        /* Footer stílusok */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .mb-md-0 {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+<!-- Lezáró script az oldal végén -->
+<script>
+        // Prism újratöltése amikor új kód jelenik meg
+        function refreshPrism() {
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+        }
+
+        // Oldal betöltésekor
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshPrism();
+
+            // Smooth scroll a navigációs linkekhez
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const code = button.closest('.code-container')?.querySelector('pre code')?.textContent ?? '';
+            if (!code) return;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(code);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = code;
+                    area.style.position = 'fixed';
+                    area.style.opacity = '0';
+                    document.body.appendChild(area);
+                    area.select();
+                    document.execCommand('copy');
+                    area.remove();
+                }
+                button.classList.add('copied');
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 1200);
+            } catch (error) {
+                console.warn('A kód másolása nem sikerült:', error);
+            }
+        });
+    });
+});
+</script></body>
 </html>
