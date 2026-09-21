@@ -8,7 +8,6 @@
     <!-- Külső stílusok -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
     <!-- Külső scriptek -->
@@ -62,12 +61,27 @@
             align-items: center;
             justify-content: flex-start;
             gap: 2rem;
-            padding: 4rem 1rem 2rem;
+            padding: 5.5rem 1rem 2rem;
             margin: 0;
+            overflow-x: hidden;
         }
 
         code {
             font-family: 'Fira Code', monospace;
+        }
+
+        pre {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        input, select, button {
+            min-width: 0;
+        }
+
+        .section {
+            width: 100%;
+            scroll-margin-top: 5.5rem;
         }
 
         .container {
@@ -217,7 +231,8 @@
             position: relative;
             margin: 1rem 0;
             border-radius: 10px;
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: hidden;
         }
 
         /* Másolás gomb */
@@ -262,19 +277,44 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding-top: 8rem;
+            }
+
             .container {
                 padding: 1rem;
             }
 
+            .nav {
+                padding: 0.65rem 0;
+            }
+
             .nav-container {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 0.5rem;
+                padding: 0 1rem;
+            }
+
+            .nav-logo {
+                font-size: 1.15rem;
             }
 
             .nav-links {
-                flex-direction: column;
+                width: 100%;
+                flex-direction: row;
                 gap: 1rem;
-                text-align: center;
+                overflow-x: auto;
+                padding-bottom: 0.25rem;
+                white-space: nowrap;
+                scrollbar-width: thin;
+            }
+
+            .nav-link {
+                flex: 0 0 auto;
+            }
+
+            .section {
+                scroll-margin-top: 8rem;
             }
 
             .section-title {
@@ -290,7 +330,7 @@
 <body>
     <nav class="nav">
         <div class="nav-container">
-            <a href="#" class="nav-logo">
+            <a href="#bevezeto" class="nav-logo">
                 <i class="fas fa-random"></i> Python Random Modul
             </a>
             <ul class="nav-links">
@@ -312,7 +352,7 @@
 
     <div class="card">
         <h2>Mi az a Random modul?</h2>
-        <p>A Random modul a Python egyik beépített könyvtára, amely lehetővé teszi véletlenszerű számok generálását és véletlenszerű választások meghozatalát. Ez a modul nélkülözhetetlen olyan alkalmazásokban, ahol véletlenszerűségre van szükség, például játékokban, szimulációkban vagy adatok véletlenszerű mintavételezésében.</p>
+        <p>A <code>random</code> a Python standard könyvtárának egyik modulja, amellyel pszeudovéletlen számokat generálhatunk és véletlenszerű választásokat végezhetünk. Hasznos például játékokban, szimulációkban vagy adatok véletlenszerű mintavételezésében.</p>
 
         <div class="features">
             <div class="feature">
@@ -345,8 +385,13 @@
 import random
 
 # Most már használhatjuk a random modul függvényeit
-veletlenszam = random.random()  # 0 és 1 közötti lebegőpontos szám
+veletlenszam = random.random()  # 0.0 <= veletlenszam < 1.0
 print(veletlenszam)</code></pre>
+        </div>
+
+        <div class="random-note">
+            <i class="fas fa-info-circle"></i>
+            <div><strong>Fontos:</strong> a <code>random</code> pszeudovéletlen értékeket ad. Játékokhoz és gyakorláshoz megfelelő, de jelszavakhoz, tokenekhez vagy más biztonsági célhoz a <code>secrets</code> modul való.</div>
         </div>
 
         <div id="random-demo" class="interactive-demo">
@@ -450,6 +495,22 @@ print(f"Maximum: {maximum:.4f}")</code></pre>
             border-top: 1px solid var(--border-color);
         }
 
+        .random-note {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--highlight);
+            border-left: 4px solid var(--info);
+            border-radius: 0 5px 5px 0;
+        }
+
+        .random-note i {
+            color: var(--info);
+            margin-top: 0.25rem;
+        }
+
         .distribution-demo {
             margin-top: 2rem;
         }
@@ -521,6 +582,7 @@ print(f"Maximum: {maximum:.4f}")</code></pre>
             const grid = document.getElementById('number-grid');
             const resultDiv = document.getElementById('distribution-result');
             const numbers = Array.from({length: 10}, () => Math.random());
+            grid.replaceChildren();
 
             numbers.forEach(num => {
                 const cell = document.createElement('div');
@@ -531,7 +593,8 @@ print(f"Maximum: {maximum:.4f}")</code></pre>
 
             // Statisztika számítása
             const avg = numbers.reduce((a, b) => a + b) / numbers.length;
-            resultDiv.innerHTML = `Átlag: ${avg.toFixed(4)}<br>Minimum: ${Math.min(...numbers).toFixed(4)}<br>Maximum: ${Math.max(...numbers).toFixed(4)}`;
+            resultDiv.textContent = `Átlag: ${avg.toFixed(4)}\nMinimum: ${Math.min(...numbers).toFixed(4)}\nMaximum: ${Math.max(...numbers).toFixed(4)}`;
+            resultDiv.style.whiteSpace = 'pre-line';
             resultDiv.style.borderColor = 'var(--success)';
 
             resultDiv.classList.remove('show');
@@ -542,33 +605,11 @@ print(f"Maximum: {maximum:.4f}")</code></pre>
         function clearGrid() {
             const grid = document.getElementById('number-grid');
             const resultDiv = document.getElementById('distribution-result');
-            grid.innerHTML = '';
-            resultDiv.innerHTML = '';
+            grid.replaceChildren();
+            resultDiv.textContent = '';
             resultDiv.classList.remove('show');
         }
 
-        // Másolás gomb funkcionalitás
-        document.querySelectorAll('.copy-btn').forEach(button => {
-            button.addEventListener('click', async () => {
-                const codeBlock = button.nextElementSibling;
-                const code = codeBlock.textContent;
-
-                try {
-                    await navigator.clipboard.writeText(code);
-
-                    const originalContent = button.innerHTML;
-                    button.innerHTML = '<i class="fas fa-check"></i>';
-                    button.style.color = 'var(--success)';
-
-                    setTimeout(() => {
-                        button.innerHTML = originalContent;
-                        button.style.color = '';
-                    }, 2000);
-                } catch (err) {
-                    console.error('Sikertelen másolás:', err);
-                }
-            });
-        });
     </script>
 </section>
 
@@ -581,13 +622,13 @@ print(f"Maximum: {maximum:.4f}")</code></pre>
 
     <div class="card">
         <h2>random() - Lebegőpontos véletlenszám</h2>
-        <p>A <code>random()</code> függvény 0.0 és 1.0 közötti lebegőpontos véletlenszámot generál (1.0 már nincs benne a tartományban).</p>
+        <p>A <code>random()</code> függvény a <code>0.0 &lt;= x &lt; 1.0</code> tartományból ad vissza lebegőpontos pszeudovéletlen számot: a 0.0 lehetséges, az 1.0 már nem.</p>
 
         <div class="code-container">
             <button class="copy-btn" data-code="random-float">
                 <i class="fas fa-copy"></i>
             </button>
-            <pre><code class="language-python"># 0.0 és 1.0 közötti véletlenszámok generálása
+            <pre><code class="language-python"># Véletlenszámok generálása a 0.0 <= x < 1.0 tartományból
 import random
 
 # Alap véletlenszám
@@ -595,7 +636,7 @@ szam = random.random()
 print(f"Véletlenszám: {szam}")
 
 # Példa: Véletlenszám skálázása más tartományra (pl. 1-10 között)
-skalazott = 1 + (random.random() * 9)  # 1 és 10 közötti lebegőpontos szám
+skalazott = 1 + (random.random() * 9)  # 1.0 <= skalazott < 10.0
 print(f"Skálázott véletlenszám: {skalazott}")</code></pre>
         </div>
 
@@ -822,7 +863,7 @@ print(f"Véletlenszerűen választott gyümölcs: {valasztott_gyumolcs}")</code>
             const row = document.createElement('div');
             row.className = 'item-row';
             row.innerHTML = `
-                <input type="text" class="input" placeholder="Írd be az elemet">
+                <input type="text" class="input item-input" placeholder="Írd be az elemet">
                 <button class="remove-item" onclick="removeListItem(this)">
                     <i class="fas fa-times"></i>
                 </button>
@@ -875,11 +916,12 @@ print(f"Véletlenszerűen választott gyümölcs: {valasztott_gyumolcs}")</code>
         }
 
         // Enter billentyű kezelése
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                if (e.target.classList.contains('item-input')) {
-                    addListItem();
-                }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.classList.contains('item-input')) {
+                e.preventDefault();
+                addListItem();
+                const inputs = document.querySelectorAll('.list-items .item-input');
+                inputs[inputs.length - 1]?.focus();
             }
         });
     </script>
@@ -903,30 +945,22 @@ print(f"Véletlenszerűen választott gyümölcs: {valasztott_gyumolcs}")</code>
            <pre><code class="language-python"># Kő-Papír-Olló játék
 import random
 
-lehetoseg = ["kő","papír","olló"]
-gep = random.choice(lehetoseg)
+lehetosegek = ["kő", "papír", "olló"]
+felhasznalo = input("Mit választasz? Kő, papír vagy olló? ").strip().lower()
 
-felhasznalo = input("Mit választasz? Kő, papír vagy olló? ")
-
-if gep == felhasznalo:
-   print(f"A gép választása: {gep}, a te választásod: {felhasznalo}. Döntetlen!")
-elif gep == "kő":
-   if felhasznalo == "papír":
-       print(f"A gép választása: {gep}. Nyertél!")
-   else:
-       print(f"A gép választása: {gep}. Vesztettél")
-elif gep == "papír":
-   if felhasznalo == "olló":
-       print(f"A gép választása: {gep}. Nyertél!")
-   else:
-       print(f"A gép választása: {gep}. Vesztettél")
-elif gep == "olló":
-   if felhasznalo == "kő":
-       print(f"A gép választása: {gep}. Nyertél!")
-   else:
-       print(f"A gép választása: {gep}. Vesztettél")
+if felhasznalo not in lehetosegek:
+    print("Hibás adatot adtál meg!")
 else:
-   print("Hibás adatot adtál meg!")</code></pre>
+    gep = random.choice(lehetosegek)
+
+    if gep == felhasznalo:
+        print(f"A gép választása: {gep}. Döntetlen!")
+    elif (felhasznalo == "kő" and gep == "olló") or \
+         (felhasznalo == "papír" and gep == "kő") or \
+         (felhasznalo == "olló" and gep == "papír"):
+        print(f"A gép választása: {gep}. Nyertél!")
+    else:
+        print(f"A gép választása: {gep}. Vesztettél!")</code></pre>
        </div>
 
        <div id="rps-game" class="interactive-demo">
@@ -1168,6 +1202,9 @@ print(f"Gratulálok! Megtaláltad a kincset {probalkozasok} próbálkozás után
        function checkCell(x, y) {
            if (gameOver) return;
 
+           const cell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+           if (cell.classList.contains('revealed')) return;
+
            attempts++;
            document.getElementById('attempts').textContent = attempts;
            const resultDiv = document.getElementById('treasure-result');
@@ -1178,7 +1215,6 @@ print(f"Gratulálok! Megtaláltad a kincset {probalkozasok} próbálkozás után
                resultDiv.textContent = `Gratulálok! Megtaláltad a kincset ${attempts} próbálkozás után!`;
                resultDiv.style.borderColor = 'var(--success)';
            } else {
-               const cell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
                cell.classList.add('revealed');
                let hint = '';
 
@@ -1285,36 +1321,76 @@ print(f"Gratulálok! Megtaláltad a kincset {probalkozasok} próbálkozás után
             </div>
             <div class="col-md-6">
                 <h3 class="h5 mb-3">Információk</h3>
-                <p class="mb-2">Utolsó frissítés: 2025.01.18.</p>
-                <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="footer-link">GNU General Public License v3.0</a></p>
+                <p class="mb-2">Utolsó frissítés: 2026.09.21.</p>
+                <p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer" class="footer-link">GNU General Public License v3.0</a></p>
             </div>
         </div>
     </div>
 </footer>
 
-</main>
-
 <!-- Lezáró script -->
 <script>
-   document.addEventListener('DOMContentLoaded', () => {
-       refreshPrism();
+    async function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return;
+        }
 
-       // Smooth scroll a navigációs linkekhez
-       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-           anchor.addEventListener('click', function (e) {
-               e.preventDefault();
-               const targetId = this.getAttribute('href');
-               const targetElement = document.querySelector(targetId);
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+    }
 
-               if (targetElement) {
-                   targetElement.scrollIntoView({
-                       behavior: 'smooth',
-                       block: 'start'
-                   });
-               }
-           });
-       });
-   });
+    document.addEventListener('click', async (event) => {
+        const button = event.target.closest('.copy-btn');
+        if (!button) return;
+
+        const code = button.parentElement?.querySelector('code');
+        if (!code) return;
+
+        const originalContent = button.innerHTML;
+        try {
+            await copyText(code.textContent);
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.style.color = 'var(--success)';
+        } catch (error) {
+            button.innerHTML = '<i class="fas fa-times"></i>';
+            button.style.color = 'var(--error)';
+        } finally {
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.style.color = '';
+            }, 1500);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (!targetElement) return;
+
+                e.preventDefault();
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    });
 </script>
 </body>
 </html>
